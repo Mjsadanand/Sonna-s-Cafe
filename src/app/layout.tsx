@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "FoodieHub - Fresh Food Delivered Fast",
+  title: "Sonna's Cafe - Fresh Food Delivered Fast",
   description: "Order delicious food from Sonna's Hotel. Fast delivery, fresh ingredients, and amazing flavors.",
 };
 
