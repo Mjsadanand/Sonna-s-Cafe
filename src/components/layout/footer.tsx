@@ -98,14 +98,31 @@ export function Footer() {
                 <p className="font-semibold text-white">Hours:</p>
                 <p className="hover:text-purple-400 transition-colors duration-300">Mon-Sun: 9:00 AM - 11:00 PM</p>
               </div>
+              
+              {/* Location Map */}
+              <div className="pt-4">
+                <p className="font-semibold text-white mb-2">Find Us:</p>
+                <div className="rounded-lg overflow-hidden shadow-lg border border-gray-700/50">
+                  <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3481.6494853554373!2d75.10756127458652!3d15.357632458095749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bb8d710688f2fbf%3A0xaf8bbe49e1a55b99!2sSonna&#39;s%20Patisserie%20and%20Cafe!5e1!3m2!1sen!2sin!4v1752840657196!5m2!1sen!2sin" 
+                    width="100%" 
+                    height="200" 
+                    allowFullScreen={true}
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Sonna's Patisserie and Cafe Location"
+                    className="w-full border-0"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center animate-fade-in-up delay-300">
           <p className="text-gray-400 text-sm hover:text-white transition-colors duration-300">
-            © 2024 FoodieHub. All rights reserved.
+            © 2025 Sonna&apos;s Patisserie and Cafe. All rights reserved.
           </p>
+           <span>Created by Sam with ❤️</span>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link href="/privacy" className="text-gray-400 hover:text-green-400 text-sm transition-all duration-300 hover:scale-110 transform relative group">
               Privacy Policy

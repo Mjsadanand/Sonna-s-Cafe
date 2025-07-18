@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Footer } from '@/components/layout/footer'
 import { Testimonials } from '@/components/ui/testimonials'
 import { ChefHat, Clock, Star, Shield, Heart, ArrowRight, TrendingUp } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export default function Home() {
   const features = [
@@ -41,7 +42,7 @@ export default function Home() {
     {
       name: "Artisan Pizza",
       image: "https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg?auto=compress&cs=tinysrgb&w=400",
-      price: "$24.99",
+      price: "₹499",
       rating: 4.9,
       category: "Italian",
       time: "25-30 min"
@@ -49,7 +50,7 @@ export default function Home() {
     {
       name: "Gourmet Burger",
       image: "https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=400", 
-      price: "$18.99",
+      price: "₹349",
       rating: 4.8,
       category: "American",
       time: "15-20 min"
@@ -57,7 +58,7 @@ export default function Home() {
     {
       name: "Fresh Sushi",
       image: "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg?auto=compress&cs=tinysrgb&w=400",
-      price: "$32.99", 
+      price: "₹699", 
       rating: 4.7,
       category: "Japanese",
       time: "20-25 min"
@@ -93,7 +94,7 @@ export default function Home() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-black dark:bg-white text-white dark:text-black px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 hover-lift">
               <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span>Trending #1 Food Delivery App</span>
+              <span>Trending &nbsp;#Sonna&apos;spatisserieandcafe</span>
             </div>
             
             {/* Main Heading - Mobile First */}
@@ -104,7 +105,7 @@ export default function Home() {
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Simple</span>
             </h1>
             
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 dark:text-gray-400 mb-8 sm:mb-10 md:mb-12 max-w-2xl lg:max-w-3xl mx-auto text-balance leading-relaxed px-4 sm:px-0">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-black dark:text-white mb-8 sm:mb-10 md:mb-12 max-w-2xl lg:max-w-3xl mx-auto text-balance leading-relaxed px-4 sm:px-0">
               Experience the future of food delivery with our premium hotel dining and lightning-fast service.
             </p>
             
@@ -125,18 +126,30 @@ export default function Home() {
 
             {/* Stats - Mobile First Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl sm:max-w-4xl mx-auto px-4 sm:px-0">
-              <div className="text-center p-4 sm:p-0">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">50K+</div>
-                <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Happy Customers</div>
+                <div className="text-center p-4 sm:p-0">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 bg-clip-text text-transparent drop-shadow">
+                  50K+
+                </div>
+                <div className="text-sm sm:text-base font-semibold bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 bg-clip-text text-transparent drop-shadow-sm">
+                  Happy Customers
+                </div>
               </div>
-              <div className="text-center p-4 sm:p-0">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">500+</div>
-                <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Quality Dishes</div>
-              </div>
-              <div className="text-center p-4 sm:p-0">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">24/7</div>
-                <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Service Available</div>
-              </div>
+                <div className="text-center p-4 sm:p-0">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-yellow-400 via-red-400 to-pink-500 bg-clip-text text-transparent drop-shadow">
+                  500+
+                </div>
+                <div className="text-sm sm:text-base text-yellow-700 dark:text-yellow-300 font-semibold">
+                  Quality Dishes
+                </div>
+                </div>
+                <div className="text-center p-4 sm:p-0">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-pink-500 via-yellow-400 to-red-500 bg-clip-text text-transparent drop-shadow">
+                  24/7
+                </div>
+                <div className="text-sm sm:text-base text-pink-700 dark:text-yellow-300 font-semibold">
+                  Service Available
+                </div>
+                </div>
             </div>
           </div>
         </div>
@@ -149,12 +162,52 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4 sm:mb-6 text-balance px-4 sm:px-0">
               Why Choose Our Platform
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0">
+            <p className="text-base sm:text-lg md:text-xl max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0 font-semibold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow">
               We have revolutionized food delivery with cutting-edge technology and premium service standards.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4 sm:px-0">
+          {/* Mobile: Horizontal Scroll */}
+          <div className="block lg:hidden overflow-hidden pb-4 px-4">
+            <motion.div 
+              className="flex gap-4 w-max"
+              animate={{
+                translateX: "-50%",
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear",
+                repeatType: "loop",
+              }}
+            >
+              {/* Duplicate features array for seamless loop */}
+              {[...features, ...features].map((feature, index) => (
+                <Card key={index} className="bg-white/80 dark:bg-black/80 backdrop-blur-sm border border-gray-200/30 dark:border-gray-800/30 rounded-2xl shadow-lg text-center group interactive w-64 h-48 flex-shrink-0">
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-center mb-3">
+                      <div className={`
+                        p-2 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300
+                        ${feature.color === 'blue' ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white' : ''}
+                        ${feature.color === 'purple' ? 'bg-gradient-to-br from-purple-600 to-purple-700 text-white' : ''}
+                        ${feature.color === 'orange' ? 'bg-gradient-to-br from-orange-600 to-orange-700 text-white' : ''}
+                        ${feature.color === 'green' ? 'bg-gradient-to-br from-green-600 to-green-700 text-white' : ''}
+                      `}>
+                        <div className="w-5 h-5">{feature.icon}</div>
+                      </div>
+                    </div>
+                    <CardTitle className="text-lg font-bold text-black dark:text-white">{feature.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-4">
+                    <CardDescription className="text-gray-600 dark:text-gray-400 text-sm">{feature.description}</CardDescription>
+                  </CardContent>
+                </Card>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Desktop: Grid */}
+          <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4 sm:px-0">
             {features.map((feature, index) => (
               <Card key={index} className="bg-white/80 dark:bg-black/80 backdrop-blur-sm border border-gray-200/30 dark:border-gray-800/30 rounded-2xl shadow-lg text-center group interactive p-4 sm:p-6">
                 <CardHeader className="pb-3 sm:pb-4">
@@ -187,7 +240,9 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4 sm:mb-6 text-balance px-4 sm:px-0">
               Trending This Week
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 text-balance px-4 sm:px-0">Discover what everyone&apos;s ordering right now</p>
+            <p className="text-base sm:text-lg md:text-xl text-balance px-4 sm:px-0 font-semibold bg-gradient-to-r from-pink-500 via-yellow-400 to-green-400 bg-clip-text text-transparent drop-shadow">
+              Discover what everyone&apos;s ordering right now
+            </p>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto px-4 sm:px-0">
@@ -257,7 +312,7 @@ export default function Home() {
               Ready to Order?
             </h2>
             
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 sm:mb-12 text-gray-300 dark:text-gray-700 max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 sm:mb-12 max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0 font-semibold bg-gradient-to-r from-yellow-300 via-pink-400 to-purple-500 bg-clip-text text-transparent drop-shadow">
               Join thousands of food lovers and experience premium delivery today.
             </p>
             

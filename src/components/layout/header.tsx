@@ -26,7 +26,7 @@ export function Header() {
                 className="text-lg sm:text-xl font-bold text-black dark:text-white"
                 style={{ fontFamily: "'Alex Brush', cursive" }}
               >
-                Sonna&apos;s Hotel
+                Sonna&apos;s Patisserie and Cafe
               </span>
             </Link>
 

@@ -76,9 +76,9 @@ const Testimonials = () => {
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tighter mt-5 text-center">
             What our customers say
           </h2>
-          <p className="text-center mt-5 opacity-75">
+            <p className="text-center mt-5 opacity-90 text-gradient bg-gradient-to-r from-orange-400 via-pink-500 to-yellow-400 bg-clip-text text-transparent font-semibold">
             Discover why thousands of food lovers choose Sonna&apos;s Hotel for their dining experience.
-          </p>
+            </p>
         </motion.div>
 
         <div className="flex justify-center gap-6 mt-10 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)] max-h-[740px] overflow-hidden">
