@@ -1,0 +1,433 @@
+# Food Ordering Website - Complete Project Structure
+
+food-ordering-app/
+├── .env.local                          # Environment variables
+├── .env.example                        # Example environment file
+├── .gitignore                          # Git ignore file
+├── .eslintrc.json                      # ESLint configuration
+├── .prettierrc                         # Prettier configuration
+├── next.config.js                      # Next.js configuration
+├── package.json                        # Project dependencies
+├── package-lock.json                   # Lock file
+├── README.md                           # Project documentation
+├── tsconfig.json                       # TypeScript configuration
+├── tailwind.config.js                  # Tailwind CSS configuration
+├── postcss.config.js                   # PostCSS configuration
+├── components.json                     # ShadcnUI configuration
+├── middleware.ts                       # Clerk middleware
+├── Dockerfile                          # Docker configuration
+├── docker-compose.yml                  # Docker Compose configuration
+├── .dockerignore                       # Docker ignore file
+│
+├── prisma/                             # Database configuration
+│   ├── schema.prisma                   # Prisma schema
+│   ├── seed.ts                         # Database seed script
+│   └── migrations/                     # Database migrations
+│       └── [timestamp]_init/
+│           └── migration.sql
+│
+├── public/                             # Static assets
+│   ├── favicon.ico
+│   ├── logo.svg
+│   ├── images/
+│   │   ├── hero-bg.jpg
+│   │   ├── placeholder-food.jpg
+│   │   └── admin-avatar.png
+│   └── icons/
+│       ├── apple-touch-icon.png
+│       └── favicon-32x32.png
+│
+├── app/                                # Next.js App Router
+│   ├── globals.css                     # Global styles
+│   ├── layout.tsx                      # Root layout
+│   ├── page.tsx                        # Home page
+│   ├── loading.tsx                     # Loading UI
+│   ├── error.tsx                       # Error UI
+│   ├── not-found.tsx                   # 404 page
+│   │
+│   ├── (auth)/                         # Authentication routes
+│   │   ├── layout.tsx                  # Auth layout
+│   │   ├── sign-in/
+│   │   │   └── [[...sign-in]]/
+│   │   │       └── page.tsx            # Sign in page
+│   │   └── sign-up/
+│   │       └── [[...sign-up]]/
+│   │           └── page.tsx            # Sign up page
+│   │
+│   ├── menu/                           # Menu routes
+│   │   ├── page.tsx                    # Menu listing page
+│   │   ├── loading.tsx                 # Menu loading state
+│   │   └── [category]/
+│   │       └── page.tsx                # Category-specific menu
+│   │
+│   ├── cart/                           # Cart routes
+│   │   ├── page.tsx                    # Cart page
+│   │   └── loading.tsx                 # Cart loading state
+│   │
+│   ├── checkout/                       # Checkout routes
+│   │   ├── page.tsx                    # Checkout page
+│   │   └── loading.tsx                 # Checkout loading state
+│   │
+│   ├── orders/                         # User orders
+│   │   ├── page.tsx                    # Orders listing
+│   │   ├── loading.tsx                 # Orders loading state
+│   │   └── [id]/
+│   │       ├── page.tsx                # Order details
+│   │       └── track/
+│   │           └── page.tsx            # Order tracking
+│   │
+│   ├── success/                        # Payment success
+│   │   └── page.tsx                    # Success page
+│   │
+│   ├── cancel/                         # Payment cancel
+│   │   └── page.tsx                    # Cancel page
+│   │
+│   ├── profile/                        # User profile
+│   │   ├── page.tsx                    # Profile page
+│   │   └── edit/
+│   │       └── page.tsx                # Edit profile
+│   │
+│   ├── admin/                          # Admin routes
+│   │   ├── layout.tsx                  # Admin layout
+│   │   ├── page.tsx                    # Admin dashboard
+│   │   ├── loading.tsx                 # Admin loading state
+│   │   │
+│   │   ├── login/                      # Admin login
+│   │   │   └── page.tsx                # Admin login page
+│   │   │
+│   │   ├── menu/                       # Menu management
+│   │   │   ├── page.tsx                # Menu items list
+│   │   │   ├── loading.tsx             # Menu loading state
+│   │   │   ├── new/
+│   │   │   │   └── page.tsx            # Add new menu item
+│   │   │   └── [id]/
+│   │   │       ├── page.tsx            # Menu item details
+│   │   │       ├── edit/
+│   │   │       │   └── page.tsx        # Edit menu item
+│   │   │       └── delete/
+│   │   │           └── page.tsx        # Delete confirmation
+│   │   │
+│   │   ├── categories/                 # Category management
+│   │   │   ├── page.tsx                # Categories list
+│   │   │   ├── new/
+│   │   │   │   └── page.tsx            # Add new category
+│   │   │   └── [id]/
+│   │   │       ├── edit/
+│   │   │       │   └── page.tsx        # Edit category
+│   │   │       └── delete/
+│   │   │           └── page.tsx        # Delete category
+│   │   │
+│   │   ├── orders/                     # Order management
+│   │   │   ├── page.tsx                # Orders list
+│   │   │   ├── loading.tsx             # Orders loading state
+│   │   │   └── [id]/
+│   │   │       ├── page.tsx            # Order details
+│   │   │       └── invoice/
+│   │   │           └── page.tsx        # Order invoice
+│   │   │
+│   │   ├── users/                      # User management
+│   │   │   ├── page.tsx                # Users list
+│   │   │   ├── loading.tsx             # Users loading state
+│   │   │   └── [id]/
+│   │   │       ├── page.tsx            # User details
+│   │   │       └── orders/
+│   │   │           └── page.tsx        # User orders
+│   │   │
+│   │   ├── reports/                    # Reports & Analytics
+│   │   │   ├── page.tsx                # Reports dashboard
+│   │   │   ├── loading.tsx             # Reports loading state
+│   │   │   ├── sales/
+│   │   │   │   └── page.tsx            # Sales reports
+│   │   │   ├── inventory/
+│   │   │   │   └── page.tsx            # Inventory reports
+│   │   │   └── customers/
+│   │   │       └── page.tsx            # Customer reports
+│   │   │
+│   │   └── settings/                   # Admin settings
+│   │       ├── page.tsx                # Settings page
+│   │       ├── general/
+│   │       │   └── page.tsx            # General settings
+│   │       ├── payment/
+│   │       │   └── page.tsx            # Payment settings
+│   │       └── notifications/
+│   │           └── page.tsx            # Notification settings
+│   │
+│   └── api/                            # API routes
+│       ├── auth/
+│       │   └── webhook/
+│       │       └── route.ts            # Clerk webhook
+│       │
+│       ├── checkout/
+│       │   └── route.ts                # Stripe checkout
+│       │
+│       ├── orders/
+│       │   ├── route.ts                # Orders CRUD
+│       │   └── [id]/
+│       │       ├── route.ts            # Single order
+│       │       └── status/
+│       │           └── route.ts        # Update order status
+│       │
+│       ├── menu/
+│       │   ├── route.ts                # Menu items CRUD
+│       │   └── [id]/
+│       │       └── route.ts            # Single menu item
+│       │
+│       ├── categories/
+│       │   ├── route.ts                # Categories CRUD
+│       │   └── [id]/
+│       │       └── route.ts            # Single category
+│       │
+│       ├── users/
+│       │   ├── route.ts                # Users CRUD
+│       │   └── [id]/
+│       │       └── route.ts            # Single user
+│       │
+│       ├── upload/
+│       │   └── route.ts                # Image upload (Cloudinary)
+│       │
+│       ├── reports/
+│       │   ├── sales/
+│       │   │   └── route.ts            # Sales reports
+│       │   ├── inventory/
+│       │   │   └── route.ts            # Inventory reports
+│       │   └── export/
+│       │       └── route.ts            # Export reports (PDF)
+│       │
+│       ├── notifications/
+│       │   ├── sms/
+│       │   │   └── route.ts            # SMS notifications
+│       │   └── whatsapp/
+│       │       └── route.ts            # WhatsApp notifications
+│       │
+│       └── webhooks/
+│           ├── stripe/
+│           │   └── route.ts            # Stripe webhook
+│           ├── clerk/
+│           │   └── route.ts            # Clerk webhook
+│           └── twilio/
+│               └── route.ts            # Twilio webhook
+│
+├── components/                         # Reusable components
+│   ├── ui/                            # ShadcnUI components
+│   │   ├── accordion.tsx
+│   │   ├── alert.tsx
+│   │   ├── alert-dialog.tsx
+│   │   ├── avatar.tsx
+│   │   ├── badge.tsx
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── checkbox.tsx
+│   │   ├── dialog.tsx
+│   │   ├── dropdown-menu.tsx
+│   │   ├── form.tsx
+│   │   ├── input.tsx
+│   │   ├── label.tsx
+│   │   ├── select.tsx
+│   │   ├── separator.tsx
+│   │   ├── sheet.tsx
+│   │   ├── skeleton.tsx
+│   │   ├── table.tsx
+│   │   ├── tabs.tsx
+│   │   ├── textarea.tsx
+│   │   ├── toast.tsx
+│   │   ├── toaster.tsx
+│   │   ├── tooltip.tsx
+│   │   └── use-toast.ts
+│   │
+│   ├── layout/                        # Layout components
+│   │   ├── header.tsx                 # Main header
+│   │   ├── footer.tsx                 # Main footer
+│   │   ├── navigation.tsx             # Navigation menu
+│   │   ├── mobile-menu.tsx            # Mobile navigation
+│   │   └── sidebar.tsx                # Sidebar component
+│   │
+│   ├── auth/                          # Authentication components
+│   │   ├── sign-in-form.tsx           # Sign in form
+│   │   ├── sign-up-form.tsx           # Sign up form
+│   │   ├── auth-guard.tsx             # Route protection
+│   │   └── user-profile.tsx           # User profile component
+│   │
+│   ├── menu/                          # Menu components
+│   │   ├── menu-item-card.tsx         # Menu item display
+│   │   ├── menu-grid.tsx              # Menu grid layout
+│   │   ├── menu-filters.tsx           # Menu filters
+│   │   ├── menu-search.tsx            # Menu search
+│   │   ├── category-tabs.tsx          # Category navigation
+│   │   └── menu-item-skeleton.tsx     # Loading skeleton
+│   │
+│   ├── cart/                          # Cart components
+│   │   ├── cart-item.tsx              # Cart item display
+│   │   ├── cart-summary.tsx           # Cart summary
+│   │   ├── cart-drawer.tsx            # Cart side drawer
+│   │   ├── add-to-cart-button.tsx     # Add to cart button
+│   │   └── quantity-selector.tsx      # Quantity input
+│   │
+│   ├── checkout/                      # Checkout components
+│   │   ├── checkout-form.tsx          # Checkout form
+│   │   ├── payment-form.tsx           # Payment form
+│   │   ├── order-summary.tsx          # Order summary
+│   │   ├── shipping-form.tsx          # Shipping information
+│   │   └── payment-methods.tsx        # Payment methods
+│   │
+│   ├── orders/                        # Order components
+│   │   ├── order-card.tsx             # Order display card
+│   │   ├── order-list.tsx             # Orders list
+│   │   ├── order-details.tsx          # Order details
+│   │   ├── order-tracking.tsx         # Order tracking
+│   │   ├── order-status-badge.tsx     # Status badge
+│   │   └── order-timeline.tsx         # Order timeline
+│   │
+│   ├── admin/                         # Admin components
+│   │   ├── admin-header.tsx           # Admin header
+│   │   ├── admin-sidebar.tsx          # Admin sidebar
+│   │   ├── admin-nav.tsx              # Admin navigation
+│   │   ├── stats-cards.tsx            # Statistics cards
+│   │   ├── quick-actions.tsx          # Quick actions
+│   │   │
+│   │   ├── menu/                      # Menu management
+│   │   │   ├── menu-item-form.tsx     # Menu item form
+│   │   │   ├── menu-item-table.tsx    # Menu items table
+│   │   │   ├── menu-item-actions.tsx  # Menu item actions
+│   │   │   ├── category-form.tsx      # Category form
+│   │   │   ├── category-select.tsx    # Category selector
+│   │   │   └── image-upload.tsx       # Image upload component
+│   │   │
+│   │   ├── orders/                    # Order management
+│   │   │   ├── orders-table.tsx       # Orders table
+│   │   │   ├── order-actions.tsx      # Order actions
+│   │   │   ├── order-filters.tsx      # Order filters
+│   │   │   ├── status-updater.tsx     # Status update component
+│   │   │   └── order-details-modal.tsx # Order details modal
+│   │   │
+│   │   ├── users/                     # User management
+│   │   │   ├── users-table.tsx        # Users table
+│   │   │   ├── user-actions.tsx       # User actions
+│   │   │   ├── user-details.tsx       # User details
+│   │   │   └── user-orders.tsx        # User orders
+│   │   │
+│   │   ├── reports/                   # Reports components
+│   │   │   ├── sales-chart.tsx        # Sales chart
+│   │   │   ├── analytics-cards.tsx    # Analytics cards
+│   │   │   ├── popular-items.tsx      # Popular items
+│   │   │   ├── revenue-chart.tsx      # Revenue chart
+│   │   │   ├── date-range-picker.tsx  # Date range picker
+│   │   │   └── export-buttons.tsx     # Export buttons
+│   │   │
+│   │   └── settings/                  # Settings components
+│   │       ├── settings-form.tsx      # Settings form
+│   │       ├── payment-settings.tsx   # Payment settings
+│   │       ├── notification-settings.tsx # Notification settings
+│   │       └── general-settings.tsx   # General settings
+│   │
+│   ├── common/                        # Common components
+│   │   ├── loading-spinner.tsx        # Loading spinner
+│   │   ├── error-boundary.tsx         # Error boundary
+│   │   ├── confirm-dialog.tsx         # Confirmation dialog
+│   │   ├── data-table.tsx             # Data table
+│   │   ├── pagination.tsx             # Pagination
+│   │   ├── search-input.tsx           # Search input
+│   │   ├── file-upload.tsx            # File upload
+│   │   ├── image-gallery.tsx          # Image gallery
+│   │   └── breadcrumb.tsx             # Breadcrumb navigation
+│   │
+│   └── forms/                         # Form components
+│       ├── contact-form.tsx           # Contact form
+│       ├── feedback-form.tsx          # Feedback form
+│       ├── newsletter-form.tsx        # Newsletter signup
+│       └── form-field.tsx             # Form field wrapper
+│
+├── contexts/                          # React contexts
+│   ├── cart-context.tsx              # Cart state management
+│   ├── auth-context.tsx              # Authentication context
+│   ├── theme-context.tsx             # Theme context
+│   ├── notification-context.tsx      # Notification context
+│   └── websocket-context.tsx         # WebSocket context
+│
+├── hooks/                             # Custom hooks
+│   ├── use-cart.ts                    # Cart hook
+│   ├── use-auth.ts                    # Authentication hook
+│   ├── use-orders.ts                  # Orders hook
+│   ├── use-menu.ts                    # Menu hook
+│   ├── use-debounce.ts                # Debounce hook
+│   ├── use-local-storage.ts           # Local storage hook
+│   ├── use-websocket.ts               # WebSocket hook
+│   └── use-pagination.ts              # Pagination hook
+│
+├── lib/                               # Utility libraries
+│   ├── auth.ts                        # Authentication helpers
+│   ├── db.ts                          # Database client
+│   ├── stripe.ts                      # Stripe configuration
+│   ├── cloudinary.ts                  # Cloudinary configuration
+│   ├── twilio.ts                      # Twilio configuration
+│   ├── email.ts                       # Email service
+│   ├── utils.ts                       # General utilities
+│   ├── constants.ts                   # App constants
+│   ├── validations.ts                 # Validation schemas
+│   ├── api-client.ts                  # API client
+│   ├── websocket.ts                   # WebSocket utilities
+│   ├── notifications.ts               # Notification utilities
+│   ├── reports.ts                     # Report generation
+│   ├── pdf-generator.ts               # PDF generation
+│   ├── image-utils.ts                 # Image utilities
+│   ├── date-utils.ts                  # Date utilities
+│   ├── format-utils.ts                # Formatting utilities
+│   └── error-handler.ts               # Error handling
+│
+├── actions/                           # Server actions
+│   ├── auth-actions.ts                # Authentication actions
+│   ├── menu-actions.ts                # Menu actions
+│   ├── order-actions.ts               # Order actions
+│   ├── user-actions.ts                # User actions
+│   ├── category-actions.ts            # Category actions
+│   ├── report-actions.ts              # Report actions
+│   └── notification-actions.ts        # Notification actions
+│
+├── types/                             # TypeScript types
+│   ├── index.ts                       # Main types export
+│   ├── auth.ts                        # Authentication types
+│   ├── menu.ts                        # Menu types
+│   ├── order.ts                       # Order types
+│   ├── user.ts                        # User types
+│   ├── api.ts                         # API types
+│   ├── database.ts                    # Database types
+│   └── global.ts                      # Global types
+│
+├── styles/                            # Styles
+│   ├── globals.css                    # Global styles
+│   ├── components.css                 # Component styles
+│   └── admin.css                      # Admin specific styles
+│
+├── config/                            # Configuration files
+│   ├── database.ts                    # Database config
+│   ├── auth.ts                        # Auth config
+│   ├── stripe.ts                      # Stripe config
+│   ├── cloudinary.ts                  # Cloudinary config
+│   ├── twilio.ts                      # Twilio config
+│   └── app.ts                         # App config
+│
+├── utils/                             # Utility functions
+│   ├── api.ts                         # API utilities
+│   ├── auth.ts                        # Auth utilities
+│   ├── validation.ts                  # Validation utilities
+│   ├── formatting.ts                  # Formatting utilities
+│   ├── constants.ts                   # Constants
+│   └── helpers.ts                     # Helper functions
+│
+├── data/                              # Static data
+│   ├── menu-items.json               # Sample menu items
+│   ├── categories.json               # Sample categories
+│   └── testimonials.json             # Customer testimonials
+│
+├── docs/                              # Documentation
+│   ├── api.md                         # API documentation
+│   ├── deployment.md                  # Deployment guide
+│   ├── development.md                 # Development guide
+│   └── features.md                    # Features documentation
+│
+└── tests/                             # Test files
+    ├── __mocks__/                     # Mock files
+    ├── components/                    # Component tests
+    ├── pages/                         # Page tests
+    ├── api/                           # API tests
+    ├── utils/                         # Utility tests
+    └── setup.ts                       # Test setup

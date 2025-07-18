@@ -1,0 +1,32 @@
+[
+  {
+    "id": "cat_1",
+    "name": "Small Bites",
+    "slug": "small-bites",
+    "description": "Light appetizers and starters"
+  },
+  {
+    "id": "cat_2", 
+    "name": "Pizza",
+    "slug": "pizza",
+    "description": "Handcrafted pizzas with fresh ingredients"
+  },
+  {
+    "id": "cat_3",
+    "name": "Indian",
+    "slug": "indian",
+    "description": "Authentic Indian cuisine"
+  },
+  {
+    "id": "cat_4",
+    "name": "Beverages",
+    "slug": "beverages", 
+    "description": "Refreshing drinks and specialty beverages"
+  },
+  {
+    "id": "cat_5",
+    "name": "Desserts",
+    "slug": "desserts",
+    "description": "Sweet treats and desserts"
+  }
+]

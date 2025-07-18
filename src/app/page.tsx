@@ -1,103 +1,288 @@
-import Image from "next/image";
+"use client"
+
+import Link from 'next/link'
+import Image from 'next/image'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { ChefHat, Clock, Star, Shield, Heart, ArrowRight, TrendingUp } from 'lucide-react'
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const features = [
+    {
+      icon: <ChefHat className="w-6 h-6" />,
+      title: "Premium Quality",
+      description: "Finest ingredients sourced from trusted suppliers worldwide",
+      color: "blue"
+    },
+    {
+      icon: <Clock className="w-6 h-6" />,
+      title: "Lightning Fast",
+      description: "Express delivery in 15-30 minutes guaranteed",
+      color: "purple"
+    },
+    {
+      icon: <Star className="w-6 h-6" />,
+      title: "5-Star Rated",
+      description: "Rated #1 by 50,000+ satisfied customers",
+      color: "orange"
+    },
+    {
+      icon: <Shield className="w-6 h-6" />,
+      title: "100% Secure",
+      description: "Bank-level security with contactless delivery",
+      color: "green"
+    }
+  ]
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const popularItems = [
+    {
+      name: "Artisan Pizza",
+      image: "https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg?auto=compress&cs=tinysrgb&w=400",
+      price: "$24.99",
+      rating: 4.9,
+      category: "Italian",
+      time: "25-30 min"
+    },
+    {
+      name: "Gourmet Burger",
+      image: "https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=400", 
+      price: "$18.99",
+      rating: 4.8,
+      category: "American",
+      time: "15-20 min"
+    },
+    {
+      name: "Fresh Sushi",
+      image: "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg?auto=compress&cs=tinysrgb&w=400",
+      price: "$32.99", 
+      rating: 4.7,
+      category: "Japanese",
+      time: "20-25 min"
+    }
+  ]
+
+  return (
+    <div className="min-h-screen modern-bg floating-shapes">
+      {/* Hero Section */}
+      <section className="relative py-16 px-3 sm:py-20 md:py-24 lg:py-32 overflow-hidden">
+        {/* Background Video */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-70 dark:opacity-60"
+            poster="https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <source src="https://videos.pexels.com/video-files/3031969/3031969-hd_1920_1080_24fps.mp4" type="video/mp4" />
+            <source src="https://videos.pexels.com/video-files/1111421/1111421-hd_1920_1080_30fps.mp4" type="video/mp4" />
+            <source src="https://videos.pexels.com/video-files/3031969/3031969-hd_1920_1080_24fps.webm" type="video/webm" />
+          </video>
+          <div className="absolute inset-0 bg-white/10 dark:bg-black/20"></div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="container mx-auto text-center relative z-10">
+          <div className="max-w-4xl mx-auto fade-in">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 bg-black dark:bg-white text-white dark:text-black px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 hover-lift">
+              <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span>Trending #1 Food Delivery App</span>
+            </div>
+            
+            {/* Main Heading - Mobile First */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 sm:mb-8 text-balance leading-tight">
+              <span className="text-black dark:text-white">Food Delivery</span>
+              <br />
+              <span className="text-black dark:text-white">Made</span>
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Simple</span>
+            </h1>
+            
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 dark:text-gray-400 mb-8 sm:mb-10 md:mb-12 max-w-2xl lg:max-w-3xl mx-auto text-balance leading-relaxed px-4 sm:px-0">
+              Experience the future of food delivery with our premium hotel dining and lightning-fast service.
+            </p>
+            
+            {/* CTA Buttons - Mobile First Stack */}
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-12 sm:mb-14 md:mb-16 px-4 sm:px-0">
+              <Link href="/menu" className="w-full sm:w-auto">
+                <Button size="lg" className="btn-gradient-blue px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full w-full sm:min-w-[200px] interactive">
+                  Order Now
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+                </Button>
+              </Link>
+              <Link href="/menu" className="w-full sm:w-auto">
+                <Button variant="outline" size="lg" className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full w-full sm:min-w-[200px] border-2 border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black interactive">
+                  Browse Menu
+                </Button>
+              </Link>
+            </div>
+
+            {/* Stats - Mobile First Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl sm:max-w-4xl mx-auto px-4 sm:px-0">
+              <div className="text-center p-4 sm:p-0">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">50K+</div>
+                <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Happy Customers</div>
+              </div>
+              <div className="text-center p-4 sm:p-0">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">500+</div>
+                <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Quality Dishes</div>
+              </div>
+              <div className="text-center p-4 sm:p-0">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">24/7</div>
+                <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Service Available</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-16 px-3 sm:py-20 md:py-24">
+        <div className="container mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4 sm:mb-6 text-balance px-4 sm:px-0">
+              Why Choose Our Platform
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0">
+              We have revolutionized food delivery with cutting-edge technology and premium service standards.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4 sm:px-0">
+            {features.map((feature, index) => (
+              <Card key={index} className="glass-card text-center group interactive border-0 shadow-xl p-4 sm:p-6">
+                <CardHeader className="pb-3 sm:pb-4">
+                  <div className="flex justify-center mb-4 sm:mb-6">
+                    <div className={`
+                      p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300
+                      ${feature.color === 'blue' ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white' : ''}
+                      ${feature.color === 'purple' ? 'bg-gradient-to-br from-purple-600 to-purple-700 text-white' : ''}
+                      ${feature.color === 'orange' ? 'bg-gradient-to-br from-orange-600 to-orange-700 text-white' : ''}
+                      ${feature.color === 'green' ? 'bg-gradient-to-br from-green-600 to-green-700 text-white' : ''}
+                    `}>
+                      <div className="w-5 h-5 sm:w-6 sm:h-6">{feature.icon}</div>
+                    </div>
+                  </div>
+                  <CardTitle className="text-lg sm:text-xl font-bold text-black dark:text-white">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-gray-600 dark:text-gray-400 text-base">{feature.description}</CardDescription>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Items Section */}
+      <section className="py-16 px-3 sm:py-20 md:py-24">
+        <div className="container mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4 sm:mb-6 text-balance px-4 sm:px-0">
+              Trending This Week
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 text-balance px-4 sm:px-0">Discover what everyone&apos;s ordering right now</p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto px-4 sm:px-0">
+            {popularItems.map((item, index) => (
+              <Card key={index} className="glass-card group overflow-hidden border-0 shadow-xl interactive">
+                <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement
+                      target.src = 'https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&w=400'
+                    }}
+                  />
+                  <Badge className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white/95 text-black border-0 shadow-lg z-20 text-xs sm:text-sm">
+                    <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
+                    {item.rating}
+                  </Badge>
+                  <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20">
+                    <Badge className="bg-black/80 text-white border-0 text-xs sm:text-sm">{item.category}</Badge>
+                  </div>
+                  <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                    <p className="text-xs sm:text-sm font-medium">⏱️ {item.time}</p>
+                  </div>
+                </div>
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex justify-between items-start mb-3 sm:mb-4">
+                    <h3 className="font-bold text-lg sm:text-xl text-black dark:text-white flex-1 mr-2">{item.name}</h3>
+                    <span className="text-lg sm:text-2xl font-bold text-black dark:text-white">{item.price}</span>
+                  </div>
+                  <Button className="w-full btn-gradient-green rounded-xl interactive text-sm sm:text-base py-2 sm:py-3">
+                    Add to Cart
+                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          
+          <div className="text-center mt-8 sm:mt-12 px-4 sm:px-0">
+            <Link href="/menu">
+              <Button variant="outline" size="lg" className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full border-2 border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black interactive">
+                View All Items
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 px-3 sm:py-20 md:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-black dark:bg-white"></div>
+        <div className="absolute inset-0 pattern-dots opacity-20"></div>
+        
+        <div className="container mx-auto text-center relative z-10">
+          <div className="max-w-4xl mx-auto">
+            <Heart className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-6 sm:mb-8 text-white dark:text-black" />
+            
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-6 sm:mb-8 text-white dark:text-black text-balance px-4 sm:px-0">
+              Ready to Order?
+            </h2>
+            
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 sm:mb-12 text-gray-300 dark:text-gray-700 max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0">
+              Join thousands of food lovers and experience premium delivery today.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center px-4 sm:px-0">
+              <Link href="/menu" className="w-full sm:w-auto">
+                <Button size="lg" className="btn-gradient-blue px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full w-full sm:min-w-[200px] interactive">
+                  Start Ordering
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+                </Button>
+              </Link>
+              <Link href="/auth/sign-up" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full w-full sm:min-w-[200px] border-2 border-white dark:border-black text-black dark:text-black hover:bg-white hover:text-black dark:hover:bg-black dark:hover:text-white interactive">
+                  Create Account
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer CTA */}
+      <section className="py-8 sm:py-12 px-3 sm:px-4 border-t border-gray-200 dark:border-gray-800">
+        <div className="container mx-auto text-center">
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-500 mb-3 sm:mb-4">Hotel Partner?</p>
+          <Link href="/admin/login">
+            <Button variant="link" className="text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 interactive text-sm sm:text-base">
+              Partner Dashboard
+              <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2" />
+            </Button>
+          </Link>
+        </div>
+      </section>
     </div>
-  );
+  )
 }
