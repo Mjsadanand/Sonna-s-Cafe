@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Footer } from '@/components/layout/footer'
+import { Testimonials } from '@/components/ui/testimonials'
 import { ChefHat, Clock, Star, Shield, Heart, ArrowRight, TrendingUp } from 'lucide-react'
 
 export default function Home() {
@@ -63,25 +65,28 @@ export default function Home() {
   ]
 
   return (
-    <div className="min-h-screen modern-bg floating-shapes">
+    <>
+      {/* Global Fixed Video Background */}
+      <div className="fixed inset-0 w-full h-full overflow-hidden z-0">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          poster="https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+        >
+          <source src="https://videos.pexels.com/video-files/3031969/3031969-hd_1920_1080_24fps.mp4" type="video/mp4" />
+          <source src="https://videos.pexels.com/video-files/1111421/1111421-hd_1920_1080_30fps.mp4" type="video/mp4" />
+          <source src="https://videos.pexels.com/video-files/3031969/3031969-hd_1920_1080_24fps.webm" type="video/webm" />
+        </video>
+        {/* Subtle overlay for better readability */}
+        <div className="absolute inset-0 bg-white/30 dark:bg-black/40"></div>
+      </div>
+
+      <div className="min-h-screen relative z-10">
       {/* Hero Section */}
       <section className="relative py-16 px-3 sm:py-20 md:py-24 lg:py-32 overflow-hidden">
-        {/* Background Video */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover opacity-70 dark:opacity-60"
-            poster="https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-          >
-            <source src="https://videos.pexels.com/video-files/3031969/3031969-hd_1920_1080_24fps.mp4" type="video/mp4" />
-            <source src="https://videos.pexels.com/video-files/1111421/1111421-hd_1920_1080_30fps.mp4" type="video/mp4" />
-            <source src="https://videos.pexels.com/video-files/3031969/3031969-hd_1920_1080_24fps.webm" type="video/webm" />
-          </video>
-          <div className="absolute inset-0 bg-white/10 dark:bg-black/20"></div>
-        </div>
 
         <div className="container mx-auto text-center relative z-10">
           <div className="max-w-4xl mx-auto fade-in">
@@ -138,8 +143,8 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-3 sm:py-20 md:py-24">
-        <div className="container mx-auto">
+      <section className="py-16 px-3 sm:py-20 md:py-24 relative overflow-hidden">
+        <div className="container mx-auto relative z-10">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4 sm:mb-6 text-balance px-4 sm:px-0">
               Why Choose Our Platform
@@ -151,7 +156,7 @@ export default function Home() {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4 sm:px-0">
             {features.map((feature, index) => (
-              <Card key={index} className="glass-card text-center group interactive border-0 shadow-xl p-4 sm:p-6">
+              <Card key={index} className="bg-white/80 dark:bg-black/80 backdrop-blur-sm border border-gray-200/30 dark:border-gray-800/30 rounded-2xl shadow-lg text-center group interactive p-4 sm:p-6">
                 <CardHeader className="pb-3 sm:pb-4">
                   <div className="flex justify-center mb-4 sm:mb-6">
                     <div className={`
@@ -176,8 +181,8 @@ export default function Home() {
       </section>
 
       {/* Popular Items Section */}
-      <section className="py-16 px-3 sm:py-20 md:py-24">
-        <div className="container mx-auto">
+      <section className="py-16 px-3 sm:py-20 md:py-24 relative overflow-hidden">
+        <div className="container mx-auto relative z-10">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4 sm:mb-6 text-balance px-4 sm:px-0">
               Trending This Week
@@ -187,7 +192,7 @@ export default function Home() {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto px-4 sm:px-0">
             {popularItems.map((item, index) => (
-              <Card key={index} className="glass-card group overflow-hidden border-0 shadow-xl interactive">
+              <Card key={index} className="bg-white/80 dark:bg-black/80 backdrop-blur-sm border border-gray-200/30 dark:border-gray-800/30 rounded-2xl shadow-lg group overflow-hidden interactive">
                 <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
                   <Image
@@ -237,9 +242,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <Testimonials />
+
       {/* CTA Section */}
       <section className="py-16 px-3 sm:py-20 md:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black dark:bg-white"></div>
         <div className="absolute inset-0 pattern-dots opacity-20"></div>
         
         <div className="container mx-auto text-center relative z-10">
@@ -262,7 +269,11 @@ export default function Home() {
                 </Button>
               </Link>
               <Link href="/auth/sign-up" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full w-full sm:min-w-[200px] border-2 border-white dark:border-black text-black dark:text-black hover:bg-white hover:text-black dark:hover:bg-black dark:hover:text-white interactive">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full w-full sm:min-w-[200px] border-2 border-white dark:border-black text-black dark:text-white hover:bg-white hover:text-black dark:hover:bg-black dark:hover:text-white interactive"
+                >
                   Create Account
                 </Button>
               </Link>
@@ -272,8 +283,8 @@ export default function Home() {
       </section>
 
       {/* Footer CTA */}
-      <section className="py-8 sm:py-12 px-3 sm:px-4 border-t border-gray-200 dark:border-gray-800">
-        <div className="container mx-auto text-center">
+      <section className="py-8 sm:py-12 px-3 sm:px-4 border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
+        <div className="container mx-auto text-center relative z-10">
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-500 mb-3 sm:mb-4">Hotel Partner?</p>
           <Link href="/admin/login">
             <Button variant="link" className="text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 interactive text-sm sm:text-base">
@@ -283,6 +294,10 @@ export default function Home() {
           </Link>
         </div>
       </section>
-    </div>
+      </div>
+      <div className="relative z-10">
+        <Footer />
+      </div>
+    </>
   )
 }

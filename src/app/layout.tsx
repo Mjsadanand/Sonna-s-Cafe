@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/contexts/cart-context";
 import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -37,7 +36,6 @@ export default function RootLayout({
               <main className="flex-grow">
                 {children}
               </main>
-              <Footer />
             </div>
             <Toaster />
           </CartProvider>

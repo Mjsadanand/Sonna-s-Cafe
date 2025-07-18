@@ -62,10 +62,12 @@ export function Header() {
                   </Button>
                 </Link>
 
-                <Button className="btn-gradient-blue interactive">
+                <Link href="/auth/sign-in">
+                  <Button className="btn-gradient-blue interactive">
                   <User className="w-4 h-4 mr-2" />
                   Sign In
-                </Button>
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
