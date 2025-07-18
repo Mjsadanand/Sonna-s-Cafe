@@ -121,7 +121,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
             {item.name}
           </CardTitle>
           <span className="text-xl font-bold text-black dark:text-white">
-            ${item.price}
+            ₹{item.price}
           </span>
         </div>
       </CardHeader>
@@ -185,7 +185,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
               className="w-full btn-gradient-green interactive"
               size="lg"
             >
-              Add to Cart - ${(item.price * quantity).toFixed(2)}
+              Add to Cart - ₹{(item.price * quantity).toFixed(2)}
             </Button>
           </div>
         ) : (

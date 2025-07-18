@@ -52,7 +52,7 @@ export function CartItemComponent({ item }: CartItemComponentProps) {
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-base sm:text-lg text-black dark:text-white line-clamp-1">{item.menuItem.name}</h3>
               <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">{item.menuItem.description}</p>
-              <p className="text-green-600 dark:text-green-400 font-semibold text-sm mt-1">${item.menuItem.price.toFixed(2)} each</p>
+              <p className="text-green-600 dark:text-green-400 font-semibold text-sm mt-1">₹{item.menuItem.price.toFixed(2)} each</p>
             </div>
           </div>
 
@@ -80,7 +80,7 @@ export function CartItemComponent({ item }: CartItemComponentProps) {
             </div>
             
             <div className="flex items-center space-x-3">
-              <p className="font-semibold text-lg text-black dark:text-white">${itemTotal.toFixed(2)}</p>
+              <p className="font-semibold text-lg text-black dark:text-white">₹{itemTotal.toFixed(2)}</p>
               <Button
                 variant="ghost"
                 size="sm"
@@ -113,7 +113,7 @@ export function CartItemComponent({ item }: CartItemComponentProps) {
           <div className="flex-grow min-w-0">
             <h3 className="font-semibold text-lg text-black dark:text-white">{item.menuItem.name}</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1">{item.menuItem.description}</p>
-            <p className="text-green-600 dark:text-green-400 font-semibold">${item.menuItem.price.toFixed(2)} each</p>
+            <p className="text-green-600 dark:text-green-400 font-semibold">₹{item.menuItem.price.toFixed(2)} each</p>
           </div>
 
           {/* Quantity Controls */}
@@ -140,7 +140,7 @@ export function CartItemComponent({ item }: CartItemComponentProps) {
 
           {/* Item Total */}
           <div className="text-right flex-shrink-0">
-            <p className="font-semibold text-lg text-black dark:text-white">${itemTotal.toFixed(2)}</p>
+            <p className="font-semibold text-lg text-black dark:text-white">₹{itemTotal.toFixed(2)}</p>
             <Button
               variant="ghost"
               size="sm"

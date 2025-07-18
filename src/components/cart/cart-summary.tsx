@@ -27,20 +27,20 @@ export function CartSummary({ showCheckoutButton = true, onCheckout }: CartSumma
         <div className="space-y-2">
           <div className="flex justify-between">
             <span>Subtotal</span>
-            <span>${state.subtotal.toFixed(2)}</span>
+            <span>₹{state.subtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Tax</span>
-            <span>${state.tax.toFixed(2)}</span>
+            <span>₹{state.tax.toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Delivery Fee</span>
-            <span>${state.deliveryFee.toFixed(2)}</span>
+            <span>₹{state.deliveryFee.toFixed(2)}</span>
           </div>
           <Separator />
           <div className="flex justify-between font-semibold text-lg">
             <span>Total</span>
-            <span>${state.total.toFixed(2)}</span>
+            <span>₹{state.total.toFixed(2)}</span>
           </div>
         </div>
 
@@ -55,7 +55,7 @@ export function CartSummary({ showCheckoutButton = true, onCheckout }: CartSumma
         )}
 
         <div className="text-xs text-gray-500 text-center">
-          <p>• Free delivery on orders over $25</p>
+          <p>• Free delivery on orders over ₹500</p>
           <p>• Estimated delivery: 30-45 minutes</p>
         </div>
       </CardContent>

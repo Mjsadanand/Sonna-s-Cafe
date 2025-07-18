@@ -130,7 +130,7 @@ export default function CartPage() {
                 </li>
                 <li className="flex items-center">
                   <span className="w-1 h-1 bg-green-500 rounded-full mr-2"></span>
-                  Free delivery on orders over $25
+                  Free delivery on orders over ₹500
                 </li>
                 <li className="flex items-center">
                   <span className="w-1 h-1 bg-green-500 rounded-full mr-2"></span>

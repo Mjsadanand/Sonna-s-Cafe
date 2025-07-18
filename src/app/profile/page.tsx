@@ -246,7 +246,7 @@ export default function ProfilePage() {
                         <h4 className="font-medium text-gray-900 dark:text-white">{item.name}</h4>
                         <p className="text-sm text-gray-600 dark:text-gray-400">{item.category}</p>
                         <div className="flex items-center space-x-2 mt-1">
-                          <span className="font-semibold text-green-600">${item.price}</span>
+                          <span className="font-semibold text-green-600">₹{item.price}</span>
                           <div className="flex items-center space-x-1">
                             <Star className="w-4 h-4 text-yellow-400 fill-current" />
                             <span className="text-sm text-gray-600 dark:text-gray-400">4.8</span>
@@ -278,7 +278,7 @@ export default function ProfilePage() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600 dark:text-gray-400">Total Spent</span>
-                    <span className="font-semibold dark:text-white">${orderStats.totalSpent.toFixed(2)}</span>
+                    <span className="font-semibold dark:text-white">₹{orderStats.totalSpent.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600 dark:text-gray-400">Favorite Items</span>

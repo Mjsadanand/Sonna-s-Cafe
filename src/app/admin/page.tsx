@@ -97,7 +97,7 @@ export default function AdminDashboard() {
           <Card>
             <CardHeader className="pb-2">
               <CardDescription>Total Revenue</CardDescription>
-              <CardTitle className="text-2xl">${stats.totalRevenue.toLocaleString()}</CardTitle>
+              <CardTitle className="text-2xl">₹{stats.totalRevenue.toLocaleString()}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center text-green-600">
@@ -123,7 +123,7 @@ export default function AdminDashboard() {
           <Card>
             <CardHeader className="pb-2">
               <CardDescription>Today&apos;s Revenue</CardDescription>
-              <CardTitle className="text-2xl">${stats.todayRevenue.toLocaleString()}</CardTitle>
+              <CardTitle className="text-2xl">₹{stats.todayRevenue.toLocaleString()}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center text-purple-600">
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium">${order.total}</p>
+                        <p className="font-medium">₹{order.total}</p>
                         <p className="text-sm text-gray-500">{order.items} items • {order.time}</p>
                       </div>
                     </div>

@@ -317,7 +317,7 @@ export default function CheckoutPage() {
                           <p className="text-xs sm:text-sm text-gray-500">Qty: {item.quantity}</p>
                         </div>
                         <span className="text-sm sm:text-base font-medium">
-                          ${(item.menuItem.price * item.quantity).toFixed(2)}
+                          ₹{(item.menuItem.price * item.quantity).toFixed(2)}
                         </span>
                       </div>
                     ))}
@@ -329,20 +329,20 @@ export default function CheckoutPage() {
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm sm:text-base">
                       <span>Subtotal</span>
-                      <span>${state.subtotal.toFixed(2)}</span>
+                      <span>₹{state.subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm sm:text-base">
                       <span>Tax</span>
-                      <span>${state.tax.toFixed(2)}</span>
+                      <span>₹{state.tax.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm sm:text-base">
                       <span>Delivery Fee</span>
-                      <span>${state.deliveryFee.toFixed(2)}</span>
+                      <span>₹{state.deliveryFee.toFixed(2)}</span>
                     </div>
                     <Separator />
                     <div className="flex justify-between font-semibold text-base sm:text-lg">
                       <span>Total</span>
-                      <span>${state.total.toFixed(2)}</span>
+                      <span>₹{state.total.toFixed(2)}</span>
                     </div>
                   </div>
 
@@ -361,7 +361,7 @@ export default function CheckoutPage() {
                     ) : (
                       <div className="flex items-center">
                         <Lock className="w-4 h-4 mr-2" />
-                        Place Order - ${state.total.toFixed(2)}
+                        Place Order - ₹{state.total.toFixed(2)}
                       </div>
                     )}
                   </Button>

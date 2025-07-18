@@ -177,7 +177,7 @@ export default function OrdersPage() {
                               <p>Estimated delivery: {order.estimatedDelivery}</p>
                             </div>
                             <div className="text-right">
-                              <p className="font-semibold text-lg">${order.total.toFixed(2)}</p>
+                              <p className="font-semibold text-lg">₹{order.total.toFixed(2)}</p>
                             </div>
                           </div>
 
@@ -237,7 +237,7 @@ export default function OrdersPage() {
                             <p>Delivered in: {order.actualDelivery}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-semibold text-lg">${order.total.toFixed(2)}</p>
+                            <p className="font-semibold text-lg">₹{order.total.toFixed(2)}</p>
                           </div>
                         </div>
 

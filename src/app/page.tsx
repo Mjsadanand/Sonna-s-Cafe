@@ -94,7 +94,7 @@ export default function Home() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-black dark:bg-white text-white dark:text-black px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 hover-lift">
               <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span>Trending &nbsp;#Sonna&apos;spatisserieandcafe</span>
+              <span>Trending #Sonna&apos;s Patisserie and Cafe </span>
             </div>
             
             {/* Main Heading - Mobile First */}
@@ -105,8 +105,8 @@ export default function Home() {
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Simple</span>
             </h1>
             
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-black dark:text-white mb-8 sm:mb-10 md:mb-12 max-w-2xl lg:max-w-3xl mx-auto text-balance leading-relaxed px-4 sm:px-0">
-              Experience the future of food delivery with our premium hotel dining and lightning-fast service.
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-black dark:text-white mb-8 sm:mb-10 md:mb-12 max-w-2xl lg:max-w-3xl mx-auto text-balance leading-relaxed px-4 sm:px-0 tracking-tight">
+              <span className="font-bold">Experience the future of food delivery</span> with our premium hotel dining and <span className="font-bold">lightning-fast service</span>.
             </p>
             
             {/* CTA Buttons - Mobile First Stack */}
@@ -126,30 +126,18 @@ export default function Home() {
 
             {/* Stats - Mobile First Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl sm:max-w-4xl mx-auto px-4 sm:px-0">
-                <div className="text-center p-4 sm:p-0">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 bg-clip-text text-transparent drop-shadow">
-                  50K+
-                </div>
-                <div className="text-sm sm:text-base font-semibold bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 bg-clip-text text-transparent drop-shadow-sm">
-                  Happy Customers
-                </div>
+              <div className="text-center p-4 sm:p-0">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">50K+</div>
+              <div className="text-sm sm:text-base font-semibold text-black dark:text-white">Happy Customers</div>
               </div>
-                <div className="text-center p-4 sm:p-0">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-yellow-400 via-red-400 to-pink-500 bg-clip-text text-transparent drop-shadow">
-                  500+
-                </div>
-                <div className="text-sm sm:text-base text-yellow-700 dark:text-yellow-300 font-semibold">
-                  Quality Dishes
-                </div>
-                </div>
-                <div className="text-center p-4 sm:p-0">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-pink-500 via-yellow-400 to-red-500 bg-clip-text text-transparent drop-shadow">
-                  24/7
-                </div>
-                <div className="text-sm sm:text-base text-pink-700 dark:text-yellow-300 font-semibold">
-                  Service Available
-                </div>
-                </div>
+              <div className="text-center p-4 sm:p-0">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">500+</div>
+              <div className="text-sm sm:text-base font-semibold text-black dark:text-white">Quality Dishes</div>
+              </div>
+              <div className="text-center p-4 sm:p-0">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">24/7</div>
+              <div className="text-sm sm:text-base font-semibold text-black dark:text-white">Service Available</div>
+              </div>
             </div>
           </div>
         </div>
@@ -162,8 +150,10 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4 sm:mb-6 text-balance px-4 sm:px-0">
               Why Choose Our Platform
             </h2>
-            <p className="text-base sm:text-lg md:text-xl max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0 font-semibold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow">
-              We have revolutionized food delivery with cutting-edge technology and premium service standards.
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0">
+              <span className="text-gray-800 dark:text-gray-200" style={{ fontFamily: "'Montserrat', 'Poppins', 'Segoe UI', 'Arial', sans-serif" }}>
+                We have revolutionized food delivery with cutting-edge technology and premium service standards.
+              </span>
             </p>
           </div>
           
@@ -240,7 +230,7 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4 sm:mb-6 text-balance px-4 sm:px-0">
               Trending This Week
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-balance px-4 sm:px-0 font-semibold bg-gradient-to-r from-pink-500 via-yellow-400 to-green-400 bg-clip-text text-transparent drop-shadow">
+            <p className="text-base sm:text-lg md:text-xl text-white dark:text-black font-semibold bg-black/80 dark:bg-white/80 rounded-xl px-6 py-3 inline-block shadow-lg text-balance">
               Discover what everyone&apos;s ordering right now
             </p>
           </div>
@@ -312,7 +302,7 @@ export default function Home() {
               Ready to Order?
             </h2>
             
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 sm:mb-12 max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0 font-semibold bg-gradient-to-r from-yellow-300 via-pink-400 to-purple-500 bg-clip-text text-transparent drop-shadow">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 dark:text-gray-700 mb-8 sm:mb-12 text-gray-300 dark:text-gray-700 max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0">
               Join thousands of food lovers and experience premium delivery today.
             </p>
             
@@ -340,7 +330,7 @@ export default function Home() {
       {/* Footer CTA */}
       <section className="py-8 sm:py-12 px-3 sm:px-4 border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
         <div className="container mx-auto text-center relative z-10">
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-500 mb-3 sm:mb-4">Hotel Partner?</p>
+            <p className="text-xs sm:text-sm text-black dark:text-white font-semibold mb-3 sm:mb-4">Hotel Partner?</p>
           <Link href="/admin/login">
             <Button variant="link" className="text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 interactive text-sm sm:text-base">
               Partner Dashboard
@@ -350,9 +340,9 @@ export default function Home() {
         </div>
       </section>
       </div>
-      <div className="relative z-10">
-        <Footer />
-      </div>
+      
+      {/* Footer */}
+      <Footer />
     </>
   )
 }
