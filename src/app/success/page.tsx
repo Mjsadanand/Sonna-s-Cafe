@@ -1,15 +1,83 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { CheckCircle, Package, Clock, MapPin } from 'lucide-react'
+import { CheckCircle, Package, Clock, MapPin, Loader2 } from 'lucide-react'
+import { apiClient } from '@/lib/api/client'
+import { formatCurrency, parsePrice } from '@/lib/utils'
+import { toast } from 'sonner'
+
+interface OrderDetails {
+  id: string
+  orderNumber: string
+  status: string
+  totalAmount: string
+  createdAt: string
+  estimatedDeliveryTime: string | null
+  items: Array<{
+    id: string
+    quantity: number
+    price: string
+    menuItem: {
+      name: string
+      image?: string
+    }
+  }>
+}
 
 export default function SuccessPage() {
-  // In a real app, you'd get the order details from the URL params or API
-  const orderNumber = "FH-" + Math.random().toString(36).substr(2, 9).toUpperCase()
-  const estimatedDelivery = new Date(Date.now() + 45 * 60 * 1000).toLocaleTimeString([], { 
-    hour: '2-digit', 
-    minute: '2-digit' 
-  })
+  const searchParams = useSearchParams()
+  const orderId = searchParams.get('orderId')
+  const [order, setOrder] = useState<OrderDetails | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      if (!orderId) {
+        setIsLoading(false)
+        return
+      }
+
+      try {
+        const response = await apiClient.orders.getOrder(orderId)
+        if (response.success && response.data) {
+          setOrder(response.data as OrderDetails)
+        } else {
+          toast.error('Failed to load order details')
+        }
+      } catch (error) {
+        console.error('Error fetching order:', error)
+        toast.error('Failed to load order details')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchOrder()
+  }, [orderId])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    )
+  }
+
+  // Fallback for orders without ID or failed loading
+  const orderNumber = order?.orderNumber || "FH-" + Math.random().toString(36).substr(2, 9).toUpperCase()
+  const estimatedDelivery = order?.estimatedDeliveryTime 
+    ? new Date(order.estimatedDeliveryTime).toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      })
+    : new Date(Date.now() + 45 * 60 * 1000).toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      })
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -40,9 +108,15 @@ export default function SuccessPage() {
               <div className="flex justify-between items-center">
                 <span className="font-medium">Status:</span>
                 <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
-                  Preparing
+                  {order?.status === 'pending' ? 'Preparing' : order?.status || 'Preparing'}
                 </span>
               </div>
+              {order?.totalAmount && (
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Total Amount:</span>
+                  <span className="font-bold">{formatCurrency(parsePrice(order.totalAmount))}</span>
+                </div>
+              )}
               <div className="flex justify-between items-center">
                 <span className="font-medium flex items-center">
                   <Clock className="w-4 h-4 mr-1" />

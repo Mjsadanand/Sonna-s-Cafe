@@ -3,164 +3,196 @@
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { useCart } from '@/contexts/cart-context'
-import { CartItem } from '@/types'
+import { useCart } from '@/contexts/cart-context-new'
+import { MenuItem } from '@/types'
 import { Plus, Minus, Trash2 } from 'lucide-react'
+import { formatCurrency } from '@/lib/utils'
+
+interface CartItemWithDetails {
+  id: string
+  quantity: number
+  unitPrice: string
+  specialInstructions?: string | null
+  addOns?: string[] | null
+  menuItem: MenuItem
+}
 
 interface CartItemComponentProps {
-  item: CartItem
+  item: CartItemWithDetails
 }
 
 export function CartItemComponent({ item }: CartItemComponentProps) {
-  const { updateQuantity, removeItem } = useCart()
+  const { updateCartItem, removeFromCart } = useCart()
 
-  const handleIncrement = () => {
-    updateQuantity(item.id, item.quantity + 1)
+  const handleIncrement = async () => {
+    await updateCartItem(item.id, item.quantity + 1, item.specialInstructions || undefined)
   }
 
-  const handleDecrement = () => {
+  const handleDecrement = async () => {
     if (item.quantity > 1) {
-      updateQuantity(item.id, item.quantity - 1)
+      await updateCartItem(item.id, item.quantity - 1, item.specialInstructions || undefined)
     }
   }
 
-  const handleRemove = () => {
-    removeItem(item.id)
+  const handleRemove = async () => {
+    await removeFromCart(item.id)
   }
 
-  const itemTotal = item.menuItem.price * item.quantity
+  const price = parseFloat(item.unitPrice)
+  const itemTotal = price * item.quantity
 
   return (
-    <Card className="mb-3 sm:mb-4 glass-card border-0 shadow-lg overflow-hidden">
-      <CardContent className="p-3 sm:p-4">
-        {/* Mobile Layout - Stacked */}
-        <div className="flex flex-col sm:hidden space-y-3">
-          {/* Top row - Image and basic info */}
-          <div className="flex items-start space-x-3">
-            <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg overflow-hidden">
+    <>
+      {/* Desktop Card */}
+      <Card className="hidden sm:block hover:shadow-lg transition-shadow duration-200 border border-gray-200 dark:border-gray-700">
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex gap-4 sm:gap-6">
+            {/* Item Image */}
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
               <Image
-                src={item.menuItem.image}
+                src={item.menuItem.image || '/images/placeholder-food.jpg'}
                 alt={item.menuItem.name}
                 fill
                 className="object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement
-                  target.src = '/images/placeholder-food.jpg'
+                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                  e.currentTarget.src = '/images/placeholder-food.jpg'
                 }}
               />
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-base sm:text-lg text-black dark:text-white line-clamp-1">{item.menuItem.name}</h3>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">{item.menuItem.description}</p>
-              <p className="text-green-600 dark:text-green-400 font-semibold text-sm mt-1">₹{item.menuItem.price.toFixed(2)} each</p>
-            </div>
-          </div>
 
-          {/* Bottom row - Controls and total */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDecrement}
-                disabled={item.quantity <= 1}
-                className="h-8 w-8 p-0 rounded-full"
-              >
-                <Minus className="w-3 h-3" />
-              </Button>
-              <span className="w-8 text-center font-medium text-sm">{item.quantity}</span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleIncrement}
-                className="h-8 w-8 p-0 rounded-full"
-              >
-                <Plus className="w-3 h-3" />
-              </Button>
+            {/* Item Details */}
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-lg text-black dark:text-white mb-1 leading-tight">
+                {item.menuItem.name}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mb-2 line-clamp-2">
+                {item.menuItem.description}
+              </p>
+              <p className="text-green-600 dark:text-green-400 font-semibold text-sm mt-1">{formatCurrency(price)} each</p>
+              {item.specialInstructions && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Special: {item.specialInstructions}
+                </p>
+              )}
             </div>
-            
-            <div className="flex items-center space-x-3">
-              <p className="font-semibold text-lg text-black dark:text-white">₹{itemTotal.toFixed(2)}</p>
-              <Button
-                variant="ghost"
-                size="sm"
+
+            {/* Quantity Controls */}
+            <div className="flex flex-col items-end gap-3">
+              <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={handleDecrement}
+                  className="w-7 h-7 p-0 hover:bg-gray-200 dark:hover:bg-gray-600"
+                >
+                  <Minus className="w-3 h-3" />
+                </Button>
+                <span className="min-w-[2rem] text-center font-semibold text-sm">
+                  {item.quantity}
+                </span>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={handleIncrement}
+                  className="w-7 h-7 p-0 hover:bg-gray-200 dark:hover:bg-gray-600"
+                >
+                  <Plus className="w-3 h-3" />
+                </Button>
+              </div>
+              
+              <p className="font-semibold text-lg text-black dark:text-white">{formatCurrency(itemTotal)}</p>
+
+              <Button 
+                variant="ghost" 
+                size="sm" 
                 onClick={handleRemove}
-                className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 h-8 w-8 p-0 rounded-full"
+                className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900 p-1 h-auto"
               >
                 <Trash2 className="w-3 h-3" />
               </Button>
             </div>
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Desktop Layout - Horizontal */}
-        <div className="hidden sm:flex items-center space-x-4">
-          {/* Item Image */}
-          <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg overflow-hidden">
-            <Image
-              src={item.menuItem.image}
-              alt={item.menuItem.name}
-              fill
-              className="object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement
-                target.src = '/images/placeholder-food.jpg'
-              }}
-            />
-          </div>
+      {/* Mobile Card */}
+      <Card className="block sm:hidden hover:shadow-lg transition-shadow duration-200 border border-gray-200 dark:border-gray-700">
+        <CardContent className="p-3">
+          <div className="flex gap-3">
+            {/* Item Image */}
+            <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+              <Image
+                src={item.menuItem.image || '/images/placeholder-food.jpg'}
+                alt={item.menuItem.name}
+                fill
+                className="object-cover"
+                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                  e.currentTarget.src = '/images/placeholder-food.jpg'
+                }}
+              />
+            </div>
 
-          {/* Item Details */}
-          <div className="flex-grow min-w-0">
-            <h3 className="font-semibold text-lg text-black dark:text-white">{item.menuItem.name}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1">{item.menuItem.description}</p>
-            <p className="text-green-600 dark:text-green-400 font-semibold">₹{item.menuItem.price.toFixed(2)} each</p>
+            {/* Item Details & Controls */}
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between items-start mb-2">
+                <div className="flex-1 pr-2">
+                  <h3 className="font-semibold text-base text-black dark:text-white leading-tight">
+                    {item.menuItem.name}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-xs mt-1 line-clamp-1">
+                    {item.menuItem.description}
+                  </p>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={handleRemove}
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900 p-1 h-auto shrink-0"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-green-600 dark:text-green-400 font-semibold">{formatCurrency(price)} each</p>
+                  {item.specialInstructions && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Special: {item.specialInstructions}
+                    </p>
+                  )}
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={handleDecrement}
+                      className="w-8 h-8 p-0 hover:bg-gray-200 dark:hover:bg-gray-600"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                    <span className="min-w-[1.5rem] text-center font-semibold text-sm">
+                      {item.quantity}
+                    </span>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={handleIncrement}
+                      className="w-8 h-8 p-0 hover:bg-gray-200 dark:hover:bg-gray-600"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              
+              <p className="font-semibold text-lg text-black dark:text-white">{formatCurrency(itemTotal)}</p>
+            </div>
           </div>
-
-          {/* Quantity Controls */}
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDecrement}
-              disabled={item.quantity <= 1}
-              className="h-9 w-9 p-0 rounded-full"
-            >
-              <Minus className="w-4 h-4" />
-            </Button>
-            <span className="w-8 text-center font-medium">{item.quantity}</span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleIncrement}
-              className="h-9 w-9 p-0 rounded-full"
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
-          </div>
-
-          {/* Item Total */}
-          <div className="text-right flex-shrink-0">
-            <p className="font-semibold text-lg text-black dark:text-white">₹{itemTotal.toFixed(2)}</p>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleRemove}
-              className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 mt-1"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-
-        {/* Special Instructions */}
-        {item.specialInstructions && (
-          <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              <span className="font-medium text-gray-800 dark:text-gray-200">Special Instructions:</span> {item.specialInstructions}
-            </p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </>
   )
 }

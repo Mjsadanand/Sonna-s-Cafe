@@ -5,10 +5,11 @@ import Image from 'next/image'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useCart } from '@/contexts/cart-context'
+import { useCart } from '@/contexts/cart-context-new'
 import { MenuItem } from '@/types'
 import { Plus, Minus, Clock, Leaf, Flame, Star, Heart } from 'lucide-react'
 import { toast } from 'sonner'
+import { formatCurrency, parsePrice } from '@/lib/utils'
 
 interface MenuItemCardProps {
   item: MenuItem
@@ -17,10 +18,10 @@ interface MenuItemCardProps {
 export function MenuItemCard({ item }: MenuItemCardProps) {
   const [quantity, setQuantity] = useState(1)
   const [isFavorite, setIsFavorite] = useState(false)
-  const { addItem } = useCart()
+  const { addToCart } = useCart()
 
-  const handleAddToCart = () => {
-    addItem(item, quantity)
+  const handleAddToCart = async () => {
+    await addToCart(item, quantity)
     toast.success(`${quantity}x ${item.name} added to cart`)
     setQuantity(1)
   }
@@ -121,7 +122,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
             {item.name}
           </CardTitle>
           <span className="text-xl font-bold text-black dark:text-white">
-            ₹{item.price}
+            {formatCurrency(item.price)}
           </span>
         </div>
       </CardHeader>
@@ -185,7 +186,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
               className="w-full btn-gradient-green interactive"
               size="lg"
             >
-              Add to Cart - ₹{(item.price * quantity).toFixed(2)}
+              Add to Cart - {formatCurrency(parsePrice(item.price) * quantity)}
             </Button>
           </div>
         ) : (

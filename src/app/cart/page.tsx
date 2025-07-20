@@ -4,12 +4,12 @@ import { useRouter } from 'next/navigation'
 import { CartItemComponent } from '@/components/cart/cart-item'
 import { CartSummary } from '@/components/cart/cart-summary'
 import { Button } from '@/components/ui/button'
-import { useCart } from '@/contexts/cart-context'
+import { useCart } from '@/contexts/cart-context-new'
 import { ShoppingBag, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default function CartPage() {
-  const { state, clearCart } = useCart()
+  const { cart, clearCart } = useCart()
   const router = useRouter()
 
   const handleCheckout = () => {
@@ -22,7 +22,7 @@ export default function CartPage() {
     }
   }
 
-  if (state.items.length === 0) {
+  if (!cart || cart.items.length === 0) {
     return (
       <div className="min-h-screen modern-bg floating-shapes">
         <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-12 sm:py-16">
@@ -64,7 +64,7 @@ export default function CartPage() {
             <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"> Cart</span>
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0">
-            {state.items.length} delicious item{state.items.length !== 1 ? 's' : ''} ready for checkout
+            {cart.items.length} delicious item{cart.items.length !== 1 ? 's' : ''} ready for checkout
           </p>
         </div>
 
@@ -88,7 +88,7 @@ export default function CartPage() {
           {/* Cart Items */}
           <div className="lg:col-span-2">
             <div className="space-y-3 sm:space-y-4">
-              {state.items.map((item, index) => (
+              {cart.items.map((item, index) => (
                 <div key={item.id} className="fade-in" data-delay={index * 0.1}>
                   <CartItemComponent item={item} />
                 </div>

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { CartProvider } from "@/contexts/cart-context";
-import { Header } from "@/components/layout/header";
+import { ClerkProvider } from "@clerk/nextjs";
+import { CartProvider } from "@/contexts/cart-context-new";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { UserSync } from "@/components/auth/user-sync";
+import { ConditionalLayout } from "@/components/layout";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -22,25 +24,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <CartProvider>
-            <div className="min-h-screen flex flex-col">
-              <Header />
-              <main className="flex-grow">
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${inter.variable} font-sans antialiased`}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <CartProvider>
+              <ConditionalLayout>
                 {children}
-              </main>
-            </div>
-            <Toaster />
-          </CartProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+              </ConditionalLayout>
+              <Toaster />
+              <UserSync />
+            </CartProvider>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -21,60 +21,161 @@ import {
   X,
   Phone,
   Mail,
-  Star
+  Star,
+  Loader2
 } from 'lucide-react'
+import { formatCurrency } from '@/lib/utils'
+import { useUser } from '@clerk/nextjs'
+import { toast } from 'sonner'
+
+interface UserProfile {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string;
+  phone: string | null;
+  loyaltyPoints: number;
+  createdAt: string;
+}
+
+interface OrderStats {
+  totalOrders: number;
+  totalSpent: number;
+  completedOrders: number;
+  pendingOrders: number;
+  loyaltyPoints: number;
+  availableDiscount: number;
+}
+
+interface FavoriteItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+  orderCount: number;
+  totalQuantity: number;
+}
+
+interface RecentOrder {
+  id: string;
+  orderNumber: string;
+  status: string;
+  total: number;
+  createdAt: string;
+  itemCount: number;
+}
+
+interface ProfileData {
+  user: UserProfile;
+  statistics: OrderStats;
+  favoriteItems: FavoriteItem[];
+  recentOrders: RecentOrder[];
+}
 
 export default function ProfilePage() {
+  const { user: clerkUser, isLoaded } = useUser()
   const [isEditing, setIsEditing] = useState(false)
-  const [userInfo, setUserInfo] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "+1 (555) 123-4567",
-    address: "123 Main Street, City, State 12345"
+  const [isLoading, setIsLoading] = useState(true)
+  const [profileData, setProfileData] = useState<ProfileData | null>(null)
+  const [editForm, setEditForm] = useState({
+    firstName: '',
+    lastName: '',
+    phone: ''
   })
 
-  const [editForm, setEditForm] = useState(userInfo)
+  // Fetch profile data
+  const fetchProfileData = async () => {
+    try {
+      setIsLoading(true)
+      const response = await fetch('/api/user/profile/stats')
+      if (!response.ok) {
+        throw new Error('Failed to fetch profile data')
+      }
+      const data = await response.json()
+      setProfileData(data)
+      
+      // Initialize edit form
+      setEditForm({
+        firstName: data.user.firstName || '',
+        lastName: data.user.lastName || '',
+        phone: data.user.phone || ''
+      })
+    } catch (error) {
+      console.error('Error fetching profile data:', error)
+      toast.error('Failed to load profile data')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
-  const handleSave = () => {
-    setUserInfo(editForm)
-    setIsEditing(false)
+  useEffect(() => {
+    if (isLoaded && clerkUser) {
+      fetchProfileData()
+    }
+  }, [isLoaded, clerkUser])
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editForm),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update profile')
+      }
+
+      const updatedUser = await response.json()
+      setProfileData(prev => prev ? {
+        ...prev,
+        user: { ...prev.user, ...editForm }
+      } : null)
+      
+      setIsEditing(false)
+      toast.success('Profile updated successfully')
+    } catch (error) {
+      console.error('Error updating profile:', error)
+      toast.error('Failed to update profile')
+    }
   }
 
   const handleCancel = () => {
-    setEditForm(userInfo)
+    if (profileData) {
+      setEditForm({
+        firstName: profileData.user.firstName || '',
+        lastName: profileData.user.lastName || '',
+        phone: profileData.user.phone || ''
+      })
+    }
     setIsEditing(false)
   }
 
-  // Mock data
-  const favoriteItems = [
-    {
-      id: 1,
-      name: "Margherita Pizza",
-      category: "Pizza",
-      price: 16.99,
-      image: "/images/placeholder-food.jpg"
-    },
-    {
-      id: 2,
-      name: "Butter Chicken",
-      category: "Main Course",
-      price: 18.99,
-      image: "/images/placeholder-food.jpg"
-    },
-    {
-      id: 3,
-      name: "Caesar Salad",
-      category: "Salads",
-      price: 12.99,
-      image: "/images/placeholder-food.jpg"
-    }
-  ]
+  if (!isLoaded || isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">Loading profile...</p>
+        </div>
+      </div>
+    )
+  }
 
-  const orderStats = {
-    totalOrders: 47,
-    totalSpent: 1284.50,
-    favoriteItems: 8,
-    loyaltyPoints: 2450
+  if (!clerkUser || !profileData) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 dark:text-gray-400">Unable to load profile data</p>
+          <Button asChild className="mt-4">
+            <Link href="/">Go Home</Link>
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -151,36 +252,27 @@ export default function ProfilePage() {
                 {isEditing ? (
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Full Name</label>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">First Name</label>
                       <Input
-                        value={editForm.name}
-                        onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-                        placeholder="Enter your full name"
+                        value={editForm.firstName}
+                        onChange={(e) => setEditForm({...editForm, firstName: e.target.value})}
+                        placeholder="Enter your first name"
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Email</label>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Last Name</label>
                       <Input
-                        type="email"
-                        value={editForm.email}
-                        onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                        placeholder="Enter your email"
+                        value={editForm.lastName}
+                        onChange={(e) => setEditForm({...editForm, lastName: e.target.value})}
+                        placeholder="Enter your last name"
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Phone</label>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Phone</label>
                       <Input
                         value={editForm.phone}
                         onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
                         placeholder="Enter your phone number"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-700">Address</label>
-                      <Input
-                        value={editForm.address}
-                        onChange={(e) => setEditForm({...editForm, address: e.target.value})}
-                        placeholder="Enter your address"
                       />
                     </div>
                     <div className="flex space-x-2 pt-4">
@@ -197,19 +289,17 @@ export default function ProfilePage() {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                       <User className="w-5 h-5 text-gray-400" />
-                      <span className="text-gray-900 dark:text-white">{userInfo.name}</span>
+                      <span className="text-gray-900 dark:text-white">
+                        {profileData.user.firstName} {profileData.user.lastName}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <Mail className="w-5 h-5 text-gray-400" />
-                      <span className="text-gray-900 dark:text-white">{userInfo.email}</span>
+                      <span className="text-gray-900 dark:text-white">{profileData.user.email}</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <Phone className="w-5 h-5 text-gray-400" />
-                      <span className="text-gray-900 dark:text-white">{userInfo.phone}</span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <MapPin className="w-5 h-5 text-gray-400" />
-                      <span className="text-gray-900 dark:text-white">{userInfo.address}</span>
+                      <span className="text-gray-900 dark:text-white">{profileData.user.phone || 'Not provided'}</span>
                     </div>
                   </div>
                 )}
@@ -231,33 +321,40 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {favoriteItems.map((item) => (
-                    <div key={item.id} className="flex items-center space-x-4 p-3 rounded-lg border hover:bg-gray-50 dark:hover:bg-gray-800">
-                      <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
-                        <Image 
-                          src={item.image} 
-                          alt={item.name}
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-medium text-gray-900 dark:text-white">{item.name}</h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{item.category}</p>
-                        <div className="flex items-center space-x-2 mt-1">
-                          <span className="font-semibold text-green-600">₹{item.price}</span>
-                          <div className="flex items-center space-x-1">
-                            <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                            <span className="text-sm text-gray-600 dark:text-gray-400">4.8</span>
+                  {profileData.favoriteItems.length > 0 ? (
+                    profileData.favoriteItems.map((item) => (
+                      <div key={item.id} className="flex items-center space-x-4 p-3 rounded-lg border hover:bg-gray-50 dark:hover:bg-gray-800">
+                        <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                          <Image 
+                            src={item.image || '/images/placeholder-food.jpg'} 
+                            alt={item.name}
+                            width={64}
+                            height={64}
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900 dark:text-white">{item.name}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{item.category}</p>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <span className="font-semibold text-green-600">{formatCurrency(item.price)}</span>
+                            <span className="text-sm text-gray-500">
+                              Ordered {item.orderCount} times
+                            </span>
                           </div>
                         </div>
+                        <Button size="sm" variant="outline">
+                          Order Again
+                        </Button>
                       </div>
-                      <Button size="sm" variant="outline">
-                        Order Again
-                      </Button>
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <Heart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500 dark:text-gray-400">No favorite items yet</p>
+                      <p className="text-sm text-gray-400 dark:text-gray-500">Start ordering to see your favorites here!</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -274,22 +371,33 @@ export default function ProfilePage() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600 dark:text-gray-400">Total Orders</span>
-                    <span className="font-semibold dark:text-white">{orderStats.totalOrders}</span>
+                    <span className="font-semibold dark:text-white">{profileData.statistics.totalOrders}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600 dark:text-gray-400">Total Spent</span>
-                    <span className="font-semibold dark:text-white">₹{orderStats.totalSpent.toFixed(2)}</span>
+                    <span className="font-semibold dark:text-white">{formatCurrency(profileData.statistics.totalSpent)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600 dark:text-gray-400">Favorite Items</span>
-                    <span className="font-semibold dark:text-white">{orderStats.favoriteItems}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Completed Orders</span>
+                    <span className="font-semibold dark:text-white">{profileData.statistics.completedOrders}</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600 dark:text-gray-400">Loyalty Points</span>
-                    <Badge variant="secondary" className="bg-green-100 text-green-800">
-                      {orderStats.loyaltyPoints} pts
+                    <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                      {profileData.statistics.loyaltyPoints} pts
                     </Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">Available Discount</span>
+                    <span className="font-semibold text-green-600 dark:text-green-400">
+                      {formatCurrency(profileData.statistics.availableDiscount)}
+                    </span>
+                  </div>
+                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <p className="text-xs text-blue-600 dark:text-blue-400 text-center">
+                      Earn 1 point for every ₹1 spent • 1000 points = ₹10 discount
+                    </p>
                   </div>
                 </div>
               </CardContent>

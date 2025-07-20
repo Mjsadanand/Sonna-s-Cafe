@@ -3,13 +3,20 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useCart } from '@/contexts/cart-context'
+import { useCart } from '@/contexts/cart-context-new'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { ShoppingCart, User } from 'lucide-react'
+import { 
+  SignInButton, 
+  SignUpButton, 
+  UserButton, 
+  SignedIn, 
+  SignedOut 
+} from "@clerk/nextjs"
 
 export function Header() {
-  const { getItemCount } = useCart()
-  const cartItemCount = getItemCount()
+  const { getCartItemCount } = useCart()
+  const cartItemCount = getCartItemCount()
 
   return (
     <>
@@ -62,12 +69,23 @@ export function Header() {
                   </Button>
                 </Link>
 
-                <Link href="/auth/sign-in">
-                  <Button className="btn-gradient-blue interactive">
-                  <User className="w-4 h-4 mr-2" />
-                  Sign In
-                  </Button>
-                </Link>
+                {/* Clerk Authentication */}
+                <SignedOut>
+                  <SignInButton>
+                    <Button variant="outline" size="sm" className="border-2 border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black interactive">
+                      <User className="w-4 h-4 mr-2" />
+                      Sign In
+                    </Button>
+                  </SignInButton>
+                  <SignUpButton>
+                    <Button className="btn-gradient-blue interactive">
+                      Sign Up
+                    </Button>
+                  </SignUpButton>
+                </SignedOut>
+                <SignedIn>
+                  <UserButton afterSignOutUrl="/" />
+                </SignedIn>
               </div>
             </div>
           </div>
@@ -110,13 +128,25 @@ export function Header() {
             <span className="text-xs font-medium">Cart</span>
           </Link>
 
-          {/* Profile */}
-            <Link href="/profile" className="flex flex-col items-center py-2 px-3 min-w-[60px] text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group">
-            <div className="w-6 h-6 mb-1">
-              <User className="w-full h-full" />
+          {/* Profile/Auth */}
+          <SignedOut>
+            <SignInButton>
+              <div className="flex flex-col items-center py-2 px-3 min-w-[60px] text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group cursor-pointer">
+                <div className="w-6 h-6 mb-1">
+                  <User className="w-full h-full" />
+                </div>
+                <span className="text-xs font-medium">Sign In</span>
+              </div>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <div className="flex flex-col items-center py-2 px-3 min-w-[60px] text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group">
+              <div className="w-6 h-6 mb-1 flex items-center justify-center">
+                <UserButton afterSignOutUrl="/" />
+              </div>
+              <span className="text-xs font-medium">Profile</span>
             </div>
-            <span className="text-xs font-medium">Profile</span>
-            </Link>
+          </SignedIn>
 
           {/* Theme */}
           <div className="flex flex-col items-center py-2 px-3 min-w-[60px]">

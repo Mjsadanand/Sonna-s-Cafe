@@ -226,6 +226,56 @@ NEXT_PUBLIC_STRIPE_KEY=your_stripe_key
 - Caching strategies
 - Performance monitoring
 
+## 🔐 Authentication & Database Integration
+
+### **Clerk Authentication**
+The application uses [Clerk](https://clerk.com/) for authentication with automatic database synchronization:
+
+**Features:**
+- OAuth sign-in (Google, GitHub, etc.)
+- Email/password authentication
+- User profile management
+- Role-based access control
+- Automatic user sync to database
+
+**Implementation:**
+- `ClerkProvider` wraps the application in `app/layout.tsx`
+- `clerkMiddleware()` handles authentication routing
+- Protected routes require authentication
+- User data automatically synced to PostgreSQL
+
+**Database Sync:**
+- Users are automatically created in the database upon sign-up
+- Real-time sync between Clerk and PostgreSQL
+- Webhook endpoints handle user updates/deletions
+- Manual sync available via API endpoints
+
+**Key Files:**
+```typescript
+// Authentication utilities
+src/lib/auth/sync.ts          # User sync functions
+src/lib/services/user.service.ts  # Database operations
+src/app/api/webhooks/clerk/   # Clerk webhooks
+src/middleware.ts             # Clerk middleware
+
+// Protected pages example
+src/app/protected/page.tsx    # Shows user data from both Clerk and DB
+src/app/db-status/page.tsx    # Database user overview
+```
+
+**Environment Variables:**
+```bash
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+CLERK_WEBHOOK_SECRET=whsec_...
+```
+
+**Testing User Sync:**
+1. Visit `/sign-up` to create a new account
+2. Go to `/protected` to see Clerk + Database user data
+3. Check `/db-status` to view all database users
+4. API endpoint `/api/user/sync` for manual sync
+
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -251,3 +301,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Built with ❤️ using Next.js, TypeScript, and Tailwind CSS**
 
 For questions or support, please visit our [Help page](http://localhost:3000/help) or contact us at support@foodhaven.com.
+
+
+
+Set Up Authentication (Clerk)
+Configure Image Upload (Cloudinary)
+Add Payment Processing (Stripe)
+Enable Notifications (Twilio WhatsApp)

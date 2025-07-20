@@ -17,10 +17,10 @@ export function Footer() {
             <div className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center shadow-lg hover:shadow-white/30 transition-all duration-300 animate-bounce-slow border border-gray-300">
               <span className="font-bold text-lg">S</span>
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Sonna&apos;s Hotel</span>
+            <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Sonna&apos;s Patisserie & Café</span>
           </div>
           <p className="text-gray-400 text-base leading-relaxed hover:text-gray-300 transition-colors duration-300 max-w-2xl">
-            Delicious food delivered fresh to your doorstep. Experience the best flavors from around the world.
+            Exquisite eggless cakes, artisanal desserts, and premium café delights crafted with the finest ingredients. Experience homey atmosphere with authentic flavors delivered fresh to your doorstep.
           </p>
         </div>
 
@@ -64,20 +64,20 @@ export function Footer() {
               <h3 className="font-semibold text-base mb-2 text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text group-hover:from-blue-300 group-hover:to-purple-300 transition-all duration-300">Categories</h3>
               <ul className="space-y-1">
                 <li>
-                  <Link href="/menu?category=pizza" className="text-gray-400 hover:text-blue-400 transition-all duration-300 hover:translate-x-1 inline-block relative group/link text-sm">
-                    <span className="relative z-10">Pizza</span>
+                  <Link href="/menu?category=premium-eggless-cakes" className="text-gray-400 hover:text-blue-400 transition-all duration-300 hover:translate-x-1 inline-block relative group/link text-sm">
+                    <span className="relative z-10">Premium Cakes</span>
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-400 group-hover/link:w-full transition-all duration-300"></span>
                   </Link>
                 </li>
                 <li>
-                  <Link href="/menu?category=indian" className="text-gray-400 hover:text-blue-400 transition-all duration-300 hover:translate-x-1 inline-block relative group/link text-sm">
-                    <span className="relative z-10">Indian</span>
+                  <Link href="/menu?category=desserts" className="text-gray-400 hover:text-blue-400 transition-all duration-300 hover:translate-x-1 inline-block relative group/link text-sm">
+                    <span className="relative z-10">Desserts</span>
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-400 group-hover/link:w-full transition-all duration-300"></span>
                   </Link>
                 </li>
                 <li>
-                  <Link href="/menu?category=small-bites" className="text-gray-400 hover:text-blue-400 transition-all duration-300 hover:translate-x-1 inline-block relative group/link text-sm">
-                    <span className="relative z-10">Small Bites</span>
+                  <Link href="/menu?category=pizza-pasta" className="text-gray-400 hover:text-blue-400 transition-all duration-300 hover:translate-x-1 inline-block relative group/link text-sm">
+                    <span className="relative z-10">Pizza & Pasta</span>
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-400 group-hover/link:w-full transition-all duration-300"></span>
                   </Link>
                 </li>
@@ -97,14 +97,16 @@ export function Footer() {
             
             <div className="space-y-3 text-gray-400 text-sm">
               <div className="space-y-2">
-                <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">📍 123 Food Street, Cuisine City, FC 12345</p>
-                <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">📞 (555) 123-4567</p>
-                <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">✉️ hello@foodiehub.com</p>
+                <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">📍 Shop 5/6/7, Akshay Colony, Vidya Nagar, Hubli, Karnataka 580021</p>
+                <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">📞 +91 91132 31424</p>
+                <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">✉️ hello@sonnaspatisserie.com</p>
               </div>
               
               <div className="pt-2 space-y-1">
                 <p className="font-semibold text-white">Hours:</p>
-                <p className="hover:text-purple-400 transition-colors duration-300">Mon-Sun: 9:00 AM - 11:00 PM</p>
+                <p className="hover:text-purple-400 transition-colors duration-300">Mon, Wed-Sat: 2:00 PM - 10:00 PM</p>
+                <p className="hover:text-purple-400 transition-colors duration-300">Sunday: 1:00 PM - 10:30 PM</p>
+                <p className="hover:text-purple-400 transition-colors duration-300">Tuesday: Closed</p>
               </div>
               
               {/* Location Map */}
@@ -163,20 +165,20 @@ export function Footer() {
               <h3 className="font-semibold text-base mb-2 text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text group-hover:from-blue-300 group-hover:to-purple-300 transition-all duration-300">Categories</h3>
               <ul className="space-y-1">
                 <li>
-                  <Link href="/menu?category=pizza" className="text-gray-400 hover:text-blue-400 transition-all duration-300 hover:translate-x-1 inline-block relative group/link text-xs">
-                    <span className="relative z-10">Pizza</span>
+                  <Link href="/menu?category=premium-eggless-cakes" className="text-gray-400 hover:text-blue-400 transition-all duration-300 hover:translate-x-1 inline-block relative group/link text-xs">
+                    <span className="relative z-10">Premium Cakes</span>
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-400 group-hover/link:w-full transition-all duration-300"></span>
                   </Link>
                 </li>
                 <li>
-                  <Link href="/menu?category=indian" className="text-gray-400 hover:text-blue-400 transition-all duration-300 hover:translate-x-1 inline-block relative group/link text-xs">
-                    <span className="relative z-10">Indian</span>
+                  <Link href="/menu?category=desserts" className="text-gray-400 hover:text-blue-400 transition-all duration-300 hover:translate-x-1 inline-block relative group/link text-xs">
+                    <span className="relative z-10">Desserts</span>
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-400 group-hover/link:w-full transition-all duration-300"></span>
                   </Link>
                 </li>
                 <li>
-                  <Link href="/menu?category=small-bites" className="text-gray-400 hover:text-blue-400 transition-all duration-300 hover:translate-x-1 inline-block relative group/link text-xs">
-                    <span className="relative z-10">Small Bites</span>
+                  <Link href="/menu?category=pizza-pasta" className="text-gray-400 hover:text-blue-400 transition-all duration-300 hover:translate-x-1 inline-block relative group/link text-xs">
+                    <span className="relative z-10">Pizza & Pasta</span>
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-400 group-hover/link:w-full transition-all duration-300"></span>
                   </Link>
                 </li>
@@ -197,13 +199,15 @@ export function Footer() {
               <div className="flex items-start space-x-4">
                 {/* Contact Details */}
                 <div className="flex-shrink-0 space-y-1 text-gray-400 text-xs">
-                  <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">📍 123 Food Street, Cuisine City</p>
-                  <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">📞 (555) 123-4567</p>
-                  <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">✉️ hello@foodiehub.com</p>
+                  <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">📍 Akshay Colony, Vidya Nagar, Hubli</p>
+                  <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">📞 +91 91132 31424</p>
+                  <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">✉️ hello@sonnaspatisserie.com</p>
                   {/* Hours */}
                   <div className="flex-shrink-0 space-y-1 text-gray-400 text-xs">
                     <p className="font-semibold text-white text-xs">Hours:</p>
-                    <p className="hover:text-purple-400 transition-colors duration-300">Mon-Sun: 9AM-11PM</p>
+                    <p className="hover:text-purple-400 transition-colors duration-300">Mon,Wed-Sat: 2PM-10PM</p>
+                    <p className="hover:text-purple-400 transition-colors duration-300">Sun: 1PM-10:30PM</p>
+                    <p className="hover:text-purple-400 transition-colors duration-300">Tue: Closed</p>
                   </div>
                 </div>
           
@@ -229,7 +233,7 @@ export function Footer() {
 
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center animate-fade-in-up delay-300">
           <p className="text-gray-400 text-sm hover:text-white transition-colors duration-300">
-            © 2025 Sonna&apos;s Patisserie and Cafe. All rights reserved.
+            © 2025 Sonna&apos;s Patisserie & Café. All rights reserved.
           </p>
           <span className="text-gray-400 text-sm hover:text-white transition-colors duration-300">
             Created by Sam with ❤️

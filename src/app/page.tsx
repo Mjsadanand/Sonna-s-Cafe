@@ -7,61 +7,64 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Footer } from '@/components/layout/footer'
 import { Testimonials } from '@/components/ui/testimonials'
-import { ChefHat, Clock, Star, Shield, Heart, ArrowRight, TrendingUp } from 'lucide-react'
+import { ChefHat, Clock, Star, Heart, ArrowRight, TrendingUp } from 'lucide-react'
 import { motion } from 'framer-motion'
+import LoyaltyDisplay from '@/components/loyalty/LoyaltyDisplay'
+import EnhancedOfferBanner from '@/components/marketing/SpecialOccasionBanner'
+import UrgentOfferPopup from '@/components/marketing/UrgentOfferPopup'
 
 export default function Home() {
   const features = [
     {
       icon: <ChefHat className="w-6 h-6" />,
-      title: "Premium Quality",
-      description: "Finest ingredients sourced from trusted suppliers worldwide",
+      title: "Eggless Speciality",
+      description: "Premium eggless cakes and desserts crafted with finest ingredients",
       color: "blue"
     },
     {
       icon: <Clock className="w-6 h-6" />,
-      title: "Lightning Fast",
-      description: "Express delivery in 15-30 minutes guaranteed",
+      title: "Fresh Daily",
+      description: "Baked fresh daily with traditional recipes and modern techniques",
       color: "purple"
     },
     {
       icon: <Star className="w-6 h-6" />,
-      title: "5-Star Rated",
-      description: "Rated #1 by 50,000+ satisfied customers",
+      title: "4.9★ Rated",
+      description: "Highest rated patisserie in Hubli with 575+ Google reviews",
       color: "orange"
     },
     {
-      icon: <Shield className="w-6 h-6" />,
-      title: "100% Secure",
-      description: "Bank-level security with contactless delivery",
+      icon: <Heart className="w-6 h-6" />,
+      title: "Homey Atmosphere",
+      description: "Cozy café ambiance with contactless delivery option",
       color: "green"
     }
   ]
 
   const popularItems = [
     {
-      name: "Artisan Pizza",
-      image: "https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg?auto=compress&cs=tinysrgb&w=400",
-      price: "₹499",
+      name: "Sonna's Special Chocolate Cake",
+      image: "https://images.pexels.com/photos/291528/pexels-photo-291528.jpeg?auto=compress&cs=tinysrgb&w=400",
+      price: "₹675",
       rating: 4.9,
-      category: "Italian",
-      time: "25-30 min"
+      category: "Premium Cakes",
+      time: "25-40 min"
     },
     {
-      name: "Gourmet Burger",
-      image: "https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=400", 
-      price: "₹349",
+      name: "Nutella Croissant",
+      image: "https://images.pexels.com/photos/2135/food-france-morning-breakfast.jpg?auto=compress&cs=tinysrgb&w=400", 
+      price: "₹265",
       rating: 4.8,
-      category: "American",
+      category: "Desserts",
       time: "15-20 min"
     },
     {
-      name: "Fresh Sushi",
-      image: "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg?auto=compress&cs=tinysrgb&w=400",
-      price: "₹699", 
+      name: "Paneer Tikka Masala Combo",
+      image: "https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg?auto=compress&cs=tinysrgb&w=400",
+      price: "₹299", 
       rating: 4.7,
-      category: "Japanese",
-      time: "20-25 min"
+      category: "Combos",
+      time: "20-30 min"
     }
   ]
 
@@ -94,19 +97,19 @@ export default function Home() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-black dark:bg-white text-white dark:text-black px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 hover-lift">
               <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span>Trending #Sonna&apos;s Patisserie and Cafe </span>
+              <span>🎂 Sonna&apos;s Patisserie & Café - Hubli&apos;s Finest</span>
             </div>
             
             {/* Main Heading - Mobile First */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 sm:mb-8 text-balance leading-tight">
-              <span className="text-black dark:text-white">Food Delivery</span>
+              <span className="text-black dark:text-white">Premium Eggless</span>
               <br />
-              <span className="text-black dark:text-white">Made</span>
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Simple</span>
+              <span className="text-black dark:text-white">Cakes &</span>
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Patisserie</span>
             </h1>
             
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-black dark:text-white mb-8 sm:mb-10 md:mb-12 max-w-2xl lg:max-w-3xl mx-auto text-balance leading-relaxed px-4 sm:px-0 tracking-tight">
-              <span className="font-bold">Experience the future of food delivery</span> with our premium hotel dining and <span className="font-bold">lightning-fast service</span>.
+              <span className="font-bold">Exquisite eggless cakes, artisanal desserts & café delights</span> crafted with finest ingredients in our <span className="font-bold">homey atmosphere</span> - now delivering to your doorstep.
             </p>
             
             {/* CTA Buttons - Mobile First Stack */}
@@ -127,19 +130,32 @@ export default function Home() {
             {/* Stats - Mobile First Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl sm:max-w-4xl mx-auto px-4 sm:px-0">
               <div className="text-center p-4 sm:p-0">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">50K+</div>
-              <div className="text-sm sm:text-base font-semibold text-black dark:text-white">Happy Customers</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">4.9★</div>
+              <div className="text-sm sm:text-base font-semibold text-black dark:text-white">Google Rating (575+ Reviews)</div>
               </div>
               <div className="text-center p-4 sm:p-0">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">500+</div>
-              <div className="text-sm sm:text-base font-semibold text-black dark:text-white">Quality Dishes</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">60+</div>
+              <div className="text-sm sm:text-base font-semibold text-black dark:text-white">Artisanal Items</div>
               </div>
               <div className="text-center p-4 sm:p-0">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">24/7</div>
-              <div className="text-sm sm:text-base font-semibold text-black dark:text-white">Service Available</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">15-30</div>
+              <div className="text-sm sm:text-base font-semibold text-black dark:text-white">Min Delivery</div>
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Enhanced Offer Banner */}
+      <section className="py-8 px-3 relative">
+        <div className="container mx-auto relative z-10">
+          <EnhancedOfferBanner 
+            onOfferClick={(offer) => {
+              console.log('Clicked offer:', offer)
+              // Navigate to relevant section or products
+            }}
+            className="mb-8"
+          />
         </div>
       </section>
 
@@ -151,7 +167,7 @@ export default function Home() {
               Why Choose Our Platform
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0">
-              <span className="text-gray-800 dark:text-gray-200" style={{ fontFamily: "'Montserrat', 'Poppins', 'Segoe UI', 'Arial', sans-serif" }}>
+              <span className="text-gray-800 dark:text-gray-200 font-sans">
                 We have revolutionized food delivery with cutting-edge technology and premium service standards.
               </span>
             </p>
@@ -340,6 +356,22 @@ export default function Home() {
         </div>
       </section>
       </div>
+
+      {/* Floating Loyalty Display - Top Right */}
+      <div className="fixed top-4 right-4 z-50">
+        <LoyaltyDisplay showFull={false} />
+      </div>
+
+      {/* Urgent Offer Popup */}
+      <UrgentOfferPopup
+        onOfferAccept={(offer) => {
+          console.log('Offer accepted:', offer);
+          // Navigate to menu or apply offer
+        }}
+        onClose={() => {
+          console.log('Popup closed');
+        }}
+      />
       
       {/* Footer */}
       <Footer />

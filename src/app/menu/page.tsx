@@ -5,44 +5,115 @@ import { MenuGrid } from '@/components/menu/menu-grid'
 import { CategoryTabs } from '@/components/menu/category-tabs'
 import { MenuSearch } from '@/components/menu/menu-search'
 import { MenuItem, Category } from '@/types'
-import menuItems from '@/data/menu-items.json'
-import categories from '@/data/categories.json'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
+
+interface MenuItemWithCategory extends Omit<MenuItem, 'category'> {
+  category: Category
+}
 
 export default function MenuPage() {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
-  const [filteredItems, setFilteredItems] = useState<MenuItem[]>(menuItems as MenuItem[])
-  const [isLoading, setIsLoading] = useState(false)
+  const [menuItems, setMenuItems] = useState<MenuItemWithCategory[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [filteredItems, setFilteredItems] = useState<MenuItemWithCategory[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
+  // Fetch categories
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/menu/categories?activeOnly=true')
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories')
+      }
+      const result = await response.json()
+      // Handle the wrapped response structure
+      const categoriesData = result.data || result
+      setCategories(Array.isArray(categoriesData) ? categoriesData : [])
+    } catch (error) {
+      console.error('Error fetching categories:', error)
+      setCategories([]) // Set empty array as fallback
+      toast.error('Failed to load categories. Please try again.')
+    }
+  }
+
+  // Fetch menu items
+  const fetchMenuItems = async (categoryId?: string, search?: string) => {
+    try {
+      setIsLoading(true)
+      const params = new URLSearchParams({
+        limit: '100',
+        isAvailable: 'true',
+      })
+      
+      if (categoryId && categoryId !== 'all') {
+        params.append('categoryId', categoryId)
+      }
+      
+      if (search) {
+        params.append('search', search)
+      }
+
+      const response = await fetch(`/api/menu?${params.toString()}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch menu items')
+      }
+      
+      const data = await response.json()
+      setMenuItems(data.items || [])
+      setFilteredItems(data.items || [])
+      setError(null)
+    } catch (error) {
+      console.error('Error fetching menu items:', error)
+      setError('Failed to load menu items. Please try again.')
+      toast.error('Failed to load menu items. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Initial fetch
   useEffect(() => {
-    setIsLoading(true)
-    
-    // Simulate loading delay for better UX
-    const timer = setTimeout(() => {
-      let items = [...(menuItems as MenuItem[])]
+    Promise.all([
+      fetchCategories(),
+      fetchMenuItems()
+    ])
+  }, [])
+
+  // Filter items when category or search changes
+  useEffect(() => {
+    const filterItems = () => {
+      let items = [...menuItems]
 
       // Filter by category
       if (selectedCategory !== 'all') {
-        items = items.filter(item => item.category.slug === selectedCategory)
+        const selectedCategoryData = categories.find(cat => cat.slug === selectedCategory)
+        if (selectedCategoryData) {
+          items = items.filter(item => item.category?.id === selectedCategoryData.id)
+        }
       }
 
       // Filter by search term
       if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase()
         items = items.filter(item =>
-          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.category.name.toLowerCase().includes(searchTerm.toLowerCase())
+          item.name.toLowerCase().includes(searchLower) ||
+          item.description?.toLowerCase().includes(searchLower) ||
+          item.category?.name.toLowerCase().includes(searchLower) ||
+          (item.ingredients && item.ingredients.some((ingredient: string) => 
+            ingredient.toLowerCase().includes(searchLower)
+          ))
         )
       }
 
       setFilteredItems(items)
-      setIsLoading(false)
-    }, 300)
+    }
 
-    return () => clearTimeout(timer)
-  }, [selectedCategory, searchTerm])
+    filterItems()
+  }, [selectedCategory, searchTerm, menuItems, categories])
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category)
@@ -50,6 +121,26 @@ export default function MenuPage() {
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term)
+  }
+
+  if (error && !isLoading) {
+    return (
+      <div className="min-h-screen modern-bg floating-shapes flex items-center justify-center">
+        <Card className="glass-card border-0 shadow-2xl max-w-md mx-auto">
+          <CardContent className="p-12 text-center">
+            <div className="text-6xl mb-6">😔</div>
+            <h3 className="text-2xl font-bold text-black dark:text-white mb-4">Something went wrong</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
+            <Button
+              onClick={() => window.location.reload()}
+              className="btn-gradient-blue interactive"
+            >
+              Try Again
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -83,7 +174,7 @@ export default function MenuPage() {
 
         {/* Category Tabs and Menu Grid */}
         <CategoryTabs
-          categories={categories as Category[]}
+          categories={categories}
           selectedCategory={selectedCategory}
           onCategoryChange={handleCategoryChange}
         >
@@ -111,7 +202,7 @@ export default function MenuPage() {
         </CategoryTabs>
 
         {/* Empty State */}
-        {!isLoading && filteredItems.length === 0 && (
+        {!isLoading && filteredItems.length === 0 && !error && (
           <div className="text-center py-12 sm:py-16 px-4 sm:px-0">
             <Card className="glass-card border-0 shadow-2xl max-w-sm sm:max-w-md mx-auto">
               <CardContent className="p-8 sm:p-12">

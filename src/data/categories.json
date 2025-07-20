@@ -1,32 +1,50 @@
 [
   {
-    "id": "cat_1",
-    "name": "Small Bites",
-    "slug": "small-bites",
-    "description": "Light appetizers and starters"
+    "id": "550e8400-e29b-41d4-a716-446655440001",
+    "name": "Premium Eggless Cakes",
+    "slug": "premium-eggless-cakes",
+    "description": "Exquisite eggless cakes crafted with finest ingredients"
   },
   {
-    "id": "cat_2", 
-    "name": "Pizza",
-    "slug": "pizza",
-    "description": "Handcrafted pizzas with fresh ingredients"
+    "id": "550e8400-e29b-41d4-a716-446655440002",
+    "name": "Baked Savouries",
+    "slug": "baked-savouries",
+    "description": "Freshly baked savory items and specialty buns"
   },
   {
-    "id": "cat_3",
-    "name": "Indian",
-    "slug": "indian",
-    "description": "Authentic Indian cuisine"
+    "id": "550e8400-e29b-41d4-a716-446655440003",
+    "name": "Combos",
+    "slug": "combos",
+    "description": "Complete meal combinations with traditional flavors"
   },
   {
-    "id": "cat_4",
-    "name": "Beverages",
-    "slug": "beverages", 
-    "description": "Refreshing drinks and specialty beverages"
+    "id": "550e8400-e29b-41d4-a716-446655440004",
+    "name": "Snacks",
+    "slug": "snacks",
+    "description": "Crispy snacks and appetizers"
   },
   {
-    "id": "cat_5",
+    "id": "550e8400-e29b-41d4-a716-446655440005",
     "name": "Desserts",
     "slug": "desserts",
-    "description": "Sweet treats and desserts"
+    "description": "Artisanal desserts, pastries and sweet treats"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440006",
+    "name": "Pizza & Pasta",
+    "slug": "pizza-pasta",
+    "description": "Italian classics - pizzas and pasta dishes"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440007",
+    "name": "Burgers & Sandwiches",
+    "slug": "burgers-sandwiches",
+    "description": "Gourmet burgers and croissant sandwiches"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440008",
+    "name": "Beverages",
+    "slug": "beverages",
+    "description": "Refreshing drinks, iced teas and specialty coffees"
   }
 ]

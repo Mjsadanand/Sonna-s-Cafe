@@ -2,8 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { useCart } from '@/contexts/cart-context'
-// Update the import path to the correct location of Separator
+import { useCart } from '@/contexts/cart-context-new'
 import { Separator } from '@/components/ui/separator'
 
 interface CartSummaryProps {
@@ -12,11 +11,13 @@ interface CartSummaryProps {
 }
 
 export function CartSummary({ showCheckoutButton = true, onCheckout }: CartSummaryProps) {
-  const { state } = useCart()
+  const { cart, calculateTotals } = useCart()
 
-  if (state.items.length === 0) {
+  if (!cart || cart.items.length === 0) {
     return null
   }
+
+  const totals = calculateTotals()
 
   return (
     <Card className="sticky top-24">
@@ -27,20 +28,20 @@ export function CartSummary({ showCheckoutButton = true, onCheckout }: CartSumma
         <div className="space-y-2">
           <div className="flex justify-between">
             <span>Subtotal</span>
-            <span>₹{state.subtotal.toFixed(2)}</span>
+            <span>₹{totals.subtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Tax</span>
-            <span>₹{state.tax.toFixed(2)}</span>
+            <span>₹{totals.tax.toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Delivery Fee</span>
-            <span>₹{state.deliveryFee.toFixed(2)}</span>
+            <span>₹{totals.deliveryFee.toFixed(2)}</span>
           </div>
           <Separator />
           <div className="flex justify-between font-semibold text-lg">
             <span>Total</span>
-            <span>₹{state.total.toFixed(2)}</span>
+            <span>₹{totals.total.toFixed(2)}</span>
           </div>
         </div>
 

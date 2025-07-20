@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -15,38 +16,74 @@ import {
   Phone,
   ArrowLeft
 } from 'lucide-react'
+import { formatCurrency, parsePrice } from '@/lib/utils'
+import { apiClient } from '@/lib/api/client'
+import { toast } from 'sonner'
+
+interface OrderItem {
+  id: string
+  menuItemId: string
+  quantity: number
+  unitPrice: string
+  totalPrice: string
+  specialInstructions?: string
+}
+
+interface Order {
+  id: string
+  orderNumber: string
+  status: string
+  total: string
+  createdAt: string | Date
+  estimatedDeliveryTime: string | Date | null
+  actualDeliveryTime: string | Date | null
+  items?: OrderItem[]
+}
 
 export default function OrdersPage() {
-  // Mock orders data
-  const [orders] = useState([
-    {
-      id: "FH-001234",
-      date: "2024-01-15",
-      status: "delivered",
-      items: ["Margherita Pizza", "Buffalo Wings"],
-      total: 34.50,
-      estimatedDelivery: "45 minutes",
-      actualDelivery: "42 minutes"
-    },
-    {
-      id: "FH-001235",
-      date: "2024-01-14",
-      status: "preparing",
-      items: ["Butter Chicken", "Mango Lassi"],
-      total: 24.98,
-      estimatedDelivery: "35 minutes",
-      actualDelivery: null
-    },
-    {
-      id: "FH-001236",
-      date: "2024-01-12",
-      status: "delivered",
-      items: ["Crispy Spring Rolls", "Fresh Lemonade"],
-      total: 13.98,
-      estimatedDelivery: "30 minutes",
-      actualDelivery: "28 minutes"
+  const { user } = useUser()
+  const [orders, setOrders] = useState<Order[]>([])
+
+  // Fetch user orders
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (!user) return
+      
+      try {
+        const response = await apiClient.orders.getUserOrders()
+        if (response.success && response.data) {
+          // The API returns a pagination object with orders array
+          interface OrdersApiResponse {
+            orders?: Order[];
+            [key: string]: unknown;
+          }
+          const responseData = response.data as unknown as OrdersApiResponse;
+          if (responseData.orders && Array.isArray(responseData.orders)) {
+            setOrders(responseData.orders as Order[])
+          } else if (Array.isArray(responseData)) {
+            // Fallback: if it's directly an array
+            setOrders(responseData as Order[])
+          } else {
+            // If neither, set empty array
+            setOrders([])
+          }
+        } else {
+          // API returned success:false, set empty array
+          setOrders([])
+          if (response.error) {
+            console.error('API Error:', response.error)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching orders:', error)
+        // Ensure orders is always an array even on error
+        setOrders([])
+        toast.error('Failed to load orders')
+      }
     }
-  ])
+
+    fetchOrders()
+  }, [user])
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -82,8 +119,8 @@ export default function OrdersPage() {
     }
   }
 
-  const activeOrders = orders.filter(order => order.status !== 'delivered')
-  const pastOrders = orders.filter(order => order.status === 'delivered')
+  const activeOrders = Array.isArray(orders) ? orders.filter(order => order.status !== 'delivered') : []
+  const pastOrders = Array.isArray(orders) ? orders.filter(order => order.status === 'delivered') : []
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -148,9 +185,9 @@ export default function OrdersPage() {
                       <CardHeader>
                         <div className="flex items-center justify-between">
                           <div>
-                            <CardTitle className="text-lg">{order.id}</CardTitle>
+                            <CardTitle className="text-lg">{order.orderNumber}</CardTitle>
                             <CardDescription>
-                              Ordered on {new Date(order.date).toLocaleDateString()}
+                              Ordered on {new Date(order.createdAt).toLocaleDateString()}
                             </CardDescription>
                           </div>
                           <Badge className={`${getStatusColor(order.status)} flex items-center space-x-1`}>
@@ -164,20 +201,26 @@ export default function OrdersPage() {
                           {/* Items */}
                           <div>
                             <h4 className="font-medium mb-2">Items:</h4>
-                            <ul className="text-sm text-gray-600">
-                              {order.items.map((item, index) => (
-                                <li key={index}>• {item}</li>
-                              ))}
-                            </ul>
+                            <div className="text-sm text-gray-600">
+                              {order.items && order.items.length > 0 ? (
+                                <ul>
+                                  {order.items.map((item: OrderItem, index: number) => (
+                                    <li key={index}>• Qty: {item.quantity} - ${item.totalPrice}</li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p>No items available</p>
+                              )}
+                            </div>
                           </div>
 
                           {/* Order Details */}
                           <div className="flex justify-between items-center pt-4 border-t">
                             <div className="text-sm text-gray-600">
-                              <p>Estimated delivery: {order.estimatedDelivery}</p>
+                              <p>Estimated delivery: {order.estimatedDeliveryTime ? new Date(order.estimatedDeliveryTime).toLocaleString() : 'TBD'}</p>
                             </div>
                             <div className="text-right">
-                              <p className="font-semibold text-lg">₹{order.total.toFixed(2)}</p>
+                              <p className="font-semibold text-lg">{formatCurrency(parsePrice(order.total))}</p>
                             </div>
                           </div>
 
@@ -208,9 +251,9 @@ export default function OrdersPage() {
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <div>
-                          <CardTitle className="text-lg">{order.id}</CardTitle>
+                          <CardTitle className="text-lg">{order.orderNumber}</CardTitle>
                           <CardDescription>
-                            Delivered on {new Date(order.date).toLocaleDateString()}
+                            Delivered on {new Date(order.createdAt).toLocaleDateString()}
                           </CardDescription>
                         </div>
                         <Badge className={getStatusColor(order.status)}>
@@ -224,20 +267,26 @@ export default function OrdersPage() {
                         {/* Items */}
                         <div>
                           <h4 className="font-medium mb-2">Items:</h4>
-                          <ul className="text-sm text-gray-600">
-                            {order.items.map((item, index) => (
-                              <li key={index}>• {item}</li>
-                            ))}
-                          </ul>
+                          <div className="text-sm text-gray-600">
+                            {order.items && order.items.length > 0 ? (
+                              <ul>
+                                {order.items.map((item: OrderItem, index: number) => (
+                                  <li key={index}>• Qty: {item.quantity} - ${item.totalPrice}</li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p>No items available</p>
+                            )}
+                          </div>
                         </div>
 
                         {/* Order Details */}
                         <div className="flex justify-between items-center pt-4 border-t">
                           <div className="text-sm text-gray-600">
-                            <p>Delivered in: {order.actualDelivery}</p>
+                            <p>Delivered: {order.actualDeliveryTime ? new Date(order.actualDeliveryTime).toLocaleString() : 'Time not recorded'}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-semibold text-lg">₹{order.total.toFixed(2)}</p>
+                            <p className="font-semibold text-lg">{formatCurrency(parsePrice(order.total))}</p>
                           </div>
                         </div>
 
