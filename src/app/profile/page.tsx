@@ -21,7 +21,6 @@ import {
   X,
   Phone,
   Mail,
-  Star,
   Loader2
 } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
@@ -129,7 +128,7 @@ export default function ProfilePage() {
         throw new Error('Failed to update profile')
       }
 
-      const updatedUser = await response.json()
+      await response.json()
       setProfileData(prev => prev ? {
         ...prev,
         user: { ...prev.user, ...editForm }

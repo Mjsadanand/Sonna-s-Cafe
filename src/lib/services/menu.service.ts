@@ -46,7 +46,7 @@ export class MenuService {
         isPopular
       } = options;
 
-      console.log('Menu filters:', { categoryId, isAvailable, search, isPopular, page, limit });
+
 
       // Build the query conditions
       const conditions = [];
@@ -198,7 +198,7 @@ export class MenuService {
         isPopular
       } = options;
 
-      console.log('Menu filters:', { categoryId, isAvailable, search, isPopular, page, limit });
+
 
       // Build the query conditions
       const conditions = [];

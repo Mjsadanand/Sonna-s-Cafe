@@ -72,12 +72,12 @@ export async function POST(req: NextRequest) {
 
   // Handle the webhook
   const eventType = evt.type;
-  console.log('Webhook received:', eventType);
+
 
   try {
     switch (eventType) {
       case 'user.created':
-        console.log('User created:', evt.data);
+
         // Transform Clerk webhook data to match our service format
         await UserService.syncUserFromClerk({
           id: evt.data.id,
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
         break;
 
       case 'user.updated':
-        console.log('User updated:', evt.data);
+
         // Transform Clerk webhook data to match our service format
         await UserService.syncUserFromClerk({
           id: evt.data.id,
@@ -103,14 +103,14 @@ export async function POST(req: NextRequest) {
         break;
 
       case 'user.deleted':
-        console.log('User deleted:', evt.data);
+
         if (evt.data.id) {
           await UserService.deleteUserByClerkId(evt.data.id);
         }
         break;
 
       default:
-        console.log('Unhandled event type:', eventType);
+
     }
 
     return NextResponse.json({ message: 'Webhook processed successfully' });

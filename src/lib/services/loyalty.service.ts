@@ -19,7 +19,7 @@ export class LoyaltyService {
       .where(eq(users.id, userId))
       .returning();
     
-    console.log(`Awarded ${pointsToAdd} points to user ${userId}`);
+
     return user.loyaltyPoints;
   }
 

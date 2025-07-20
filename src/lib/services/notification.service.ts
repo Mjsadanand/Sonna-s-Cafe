@@ -151,7 +151,7 @@ export class NotificationService {
   static async sendEmail(data: EmailNotification): Promise<{ success: boolean; error?: string }> {
     try {
       // TODO: Integrate with email service (SendGrid, AWS SES, etc.)
-      console.log('Email notification:', data);
+
       
       // For now, just log the email data
       return { success: true };

@@ -1,11 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import AdminLogin from '@/components/admin/AdminLogin'
 
 export default function AdminLoginPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -17,7 +16,6 @@ export default function AdminLoginPage() {
   }, [router])
 
   const handleLogin = () => {
-    setIsAuthenticated(true)
     router.push('/admin')
   }
 

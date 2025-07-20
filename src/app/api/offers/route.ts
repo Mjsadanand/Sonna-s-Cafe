@@ -24,7 +24,7 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
     clerkUserId = authResult.userId;
   } catch {
     // If auth fails (no middleware), continue as guest user
-    console.log('No authentication available, serving guest offers');
+
   }
 
   let offers: Offer[] = [];
@@ -38,8 +38,8 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
       try {
         const dbUser = await UserService.getUserByClerkId(clerkUserId);
         dbUserId = dbUser?.id;
-      } catch (error) {
-        console.log('Error getting user from database:', error);
+      } catch {
+        // Error getting user from database
       }
     }
     
@@ -57,8 +57,8 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
         // For users without database record, show general offers
         offers = await OffersService.getActiveOffers(type || undefined);
       }
-    } catch (error) {
-      console.log('Error getting personalized offers:', error);
+    } catch {
+      // Error getting personalized offers, fallback to general offers
       offers = await OffersService.getActiveOffers(type || undefined);
     }
   } else {

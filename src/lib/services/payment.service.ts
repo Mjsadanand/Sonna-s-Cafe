@@ -134,7 +134,7 @@ export class PaymentService {
           break;
         
         default:
-          console.log(`Unhandled event type: ${event.type}`);
+          // Unhandled event type
       }
 
       return { processed: true, event };
@@ -222,8 +222,6 @@ export class PaymentService {
       // TODO: Send confirmation email/SMS
       // TODO: Trigger WhatsApp notification to admin
       // TODO: Update inventory if needed
-      
-      console.log(`Payment succeeded for order ${orderId}`);
     } catch (error) {
       console.error('Failed to handle payment success:', error);
     }
@@ -242,8 +240,6 @@ export class PaymentService {
       await OrderService.updateOrderStatus(orderId, 'cancelled', 'Payment failed');
       
       // TODO: Send payment failure notification
-      
-      console.log(`Payment failed for order ${orderId}`);
     } catch (error) {
       console.error('Failed to handle payment failure:', error);
     }
@@ -261,7 +257,7 @@ export class PaymentService {
       // Update order status to cancelled
       await OrderService.updateOrderStatus(orderId, 'cancelled', 'Payment cancelled');
       
-      console.log(`Payment cancelled for order ${orderId}`);
+      // TODO: Send cancellation notification
     } catch (error) {
       console.error('Failed to handle payment cancellation:', error);
     }
@@ -277,8 +273,6 @@ export class PaymentService {
       }
 
       // TODO: Send notification about required action
-      
-      console.log(`Payment requires action for order ${orderId}`);
     } catch (error) {
       console.error('Failed to handle payment action requirement:', error);
     }

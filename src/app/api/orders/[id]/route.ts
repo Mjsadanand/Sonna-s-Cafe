@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { OrderService } from '@/lib/services/order-real.service';
-import { createSuccessResponse, createErrorResponse, withErrorHandler, AuthenticationError, AuthorizationError, NotFoundError } from '@/lib/errors';
+import { createSuccessResponse, createErrorResponse, withErrorHandler, AuthenticationError, AuthorizationError } from '@/lib/errors';
 import { z } from 'zod';
 
 const updateOrderSchema = z.object({

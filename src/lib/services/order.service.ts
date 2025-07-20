@@ -250,7 +250,6 @@ export class OrderService {
   }> {
     try {
       // TODO: Implement with actual Drizzle ORM and analytics queries
-      console.log('Getting analytics for date range:', { dateFrom, dateTo });
       
       // Mock response for now
       return {
@@ -309,7 +308,6 @@ export class OrderService {
 
   private static async createOrderTracking(orderId: string, status: string): Promise<void> {
     // TODO: Implement order tracking
-    console.log('Creating order tracking for:', { orderId, status });
     // const trackingData = {
     //   orderId,
     //   status,

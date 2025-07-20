@@ -19,7 +19,7 @@ export async function authenticateUser(request: NextRequest): Promise<{ userId: 
     }
 
     // Log request info for debugging (can be removed in production)
-    console.log('Authenticating request:', request.url);
+
 
     // Sync user to database and get user data
     const dbUser = await syncCurrentUser();
@@ -90,7 +90,7 @@ async function checkIfUserIsAdmin(userId: string): Promise<boolean> {
   if (!adminEmail) return false;
   
   // Placeholder: In production, check userId against admin role in database
-  console.log('Checking admin status for user:', userId);
+
   
   // For development, we'll use a simple admin email check
   

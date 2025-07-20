@@ -73,13 +73,11 @@ Please do not share this code with anyone.
 
 - Sonna's Cafe Team`;
 
-      const twilioMessage = await getTwilioClient().messages.create({
+      await getTwilioClient().messages.create({
         from: twilioPhoneNumber,
         to: cleanPhone,
         body: message,
       });
-
-      console.log(`✅ OTP sent to ${cleanPhone}: ${otp} (SID: ${twilioMessage.sid})`);
 
       return {
         success: true,
@@ -140,8 +138,6 @@ Please do not share this code with anyone.
       // OTP is correct
       storedData.verified = true;
       otpStorage.set(cleanPhone, storedData);
-
-      console.log(`✅ OTP verified successfully for ${cleanPhone}`);
 
       return {
         success: true,

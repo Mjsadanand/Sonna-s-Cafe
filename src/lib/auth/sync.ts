@@ -37,7 +37,7 @@ export async function syncCurrentUser() {
       publicMetadata: clerkUser.publicMetadata,
     });
 
-    console.log('User synced to database:', syncedUser.id);
+
     return syncedUser;
   } catch (error) {
     console.error('Error syncing user:', error);

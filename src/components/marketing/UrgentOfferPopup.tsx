@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { X, Timer, Gift, Zap } from 'lucide-react';
-import { useAuth } from '@clerk/nextjs';
 
 interface Offer {
   id: string;
@@ -22,7 +21,6 @@ interface UrgentOfferPopupProps {
 }
 
 export default function UrgentOfferPopup({ onClose, onOfferAccept, className = '' }: UrgentOfferPopupProps) {
-  const { userId } = useAuth();
   const [currentOffer, setCurrentOffer] = useState<Offer | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);

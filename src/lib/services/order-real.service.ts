@@ -194,7 +194,7 @@ export class OrderService {
           NotificationService.sendOrderNotificationToAdmin(notificationData)
             .then(result => {
               if (result.success) {
-                console.log('✅ WhatsApp notification sent to admin successfully:', result.messageId);
+
               } else {
                 console.error('❌ Failed to send WhatsApp notification to admin:', result.error);
               }
