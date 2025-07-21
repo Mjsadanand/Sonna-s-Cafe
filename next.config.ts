@@ -9,7 +9,8 @@ const nextConfig: NextConfig = {
       'images.unsplash.com',
       'res.cloudinary.com',
       'upload.wikimedia.org',
-      'melam.com'
+      'melam.com',
+      'polanddaily24.com'
       // add other domains as needed
     ]
   }

@@ -24,7 +24,8 @@ import {
   Loader2
 } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
-import { useUser } from '@clerk/nextjs'
+import { useUser, useAuth } from '@clerk/nextjs'
+import { SignedOut } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import { apiClient } from '@/lib/api/client'
 
@@ -75,6 +76,7 @@ interface ProfileData {
 
 export default function ProfilePage() {
   const { user: clerkUser, isLoaded } = useUser()
+  const { signOut } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [profileData, setProfileData] = useState<ProfileData | null>(null)
@@ -446,7 +448,12 @@ export default function ProfilePage() {
                   Account Settings
                 </Button>
                 <Separator />
-                <Button variant="outline" className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    signOut();
+                  }}
+                >
                   <LogOut className="w-4 h-4 mr-2" />
                   Sign Out
                 </Button>

@@ -25,6 +25,7 @@ export default function Home() {
   const { theme } = useTheme()
   const [searchQuery, setSearchQuery] = useState('')
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,7 +69,7 @@ export default function Home() {
     {
       id: 2,
       name: "South Indian Delights",
-      image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop",
+      image: "https://polanddaily24.com/wp-content/uploads/2024/06/alexandra-khudyntseva-u95-mqfuaqg-unsplash-e1719348481711.jpg?w=400&h=300&fit=crop",
       rating: 4.6,
       time: "20-25 mins",
       discount: "50% OFF",
@@ -245,10 +246,10 @@ export default function Home() {
           <div className="flex justify-between items-center mb-12">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
-                Featured Restaurants
+                Featured Items
               </h2>
               <p className="text-gray-600 dark:text-gray-400 mt-2">
-                Top-rated restaurants in your area
+                Top-rated items in Sonna&apos;s Café
               </p>
             </div>
             <Link href="/menu">
@@ -307,7 +308,7 @@ export default function Home() {
           <div className="text-center mt-8 md:hidden">
             <Link href="/menu">
               <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full">
-                View All Restaurants
+                View All Items
               </Button>
             </Link>
           </div>
@@ -373,11 +374,32 @@ export default function Home() {
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
-              <Link href="/auth/sign-up">
-                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-green-600 px-10 py-4 text-lg rounded-full font-semibold transform transition-all duration-300 hover:scale-105 min-w-[200px]">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-2 border-white text-green-700 dark:text-green-200 hover:bg-white hover:text-green-600 px-10 py-4 text-lg rounded-full font-semibold transform transition-all duration-300 hover:scale-105 min-w-[200px] flex items-center justify-center gap-2"
+                  disabled={isLoading}
+                  onClick={async () => {
+                  setIsLoading(true)
+                  try {
+                    if (window.Clerk?.user) {
+                    router.push('/profile')
+                    } else {
+                    router.push('/auth/sign-up')
+                    }
+                  } finally {
+                    setIsLoading(false)
+                  }
+                  }}
+                >
+                  {isLoading ? (
+                  <svg className="animate-spin h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                  </svg>
+                  ) : null}
                   Sign Up Free
                 </Button>
-              </Link>
             </div>
 
             {/* Trust Indicators */}
