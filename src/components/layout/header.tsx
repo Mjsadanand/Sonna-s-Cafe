@@ -9,7 +9,6 @@ import { ShoppingCart, User } from 'lucide-react'
 import { 
   SignInButton, 
   SignUpButton, 
-  UserButton, 
   SignedIn, 
   SignedOut 
 } from "@clerk/nextjs"
@@ -84,7 +83,12 @@ export function Header() {
                   </SignUpButton>
                 </SignedOut>
                 <SignedIn>
-                  <UserButton afterSignOutUrl="/" />
+                  <Link href="/profile">
+                    <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      Profile
+                    </Button>
+                  </Link>
                 </SignedIn>
               </div>
             </div>
@@ -140,12 +144,12 @@ export function Header() {
             </SignInButton>
           </SignedOut>
           <SignedIn>
-            <div className="flex flex-col items-center py-2 px-3 min-w-[60px] text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group">
-              <div className="w-6 h-6 mb-1 flex items-center justify-center">
-                <UserButton afterSignOutUrl="/" />
+            <Link href="/profile" className="flex flex-col items-center py-2 px-3 min-w-[60px] text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group">
+              <div className="w-6 h-6 mb-1">
+                <User className="w-full h-full" />
               </div>
               <span className="text-xs font-medium">Profile</span>
-            </div>
+            </Link>
           </SignedIn>
 
           {/* Theme */}

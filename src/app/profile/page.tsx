@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -26,6 +26,7 @@ import {
 import { formatCurrency } from '@/lib/utils'
 import { useUser } from '@clerk/nextjs'
 import { toast } from 'sonner'
+import { apiClient } from '@/lib/api/client'
 
 interface UserProfile {
   id: string;
@@ -77,65 +78,83 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [profileData, setProfileData] = useState<ProfileData | null>(null)
+  const [databaseUserId, setDatabaseUserId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({
     firstName: '',
     lastName: '',
     phone: ''
   })
 
+  // Get database user ID when user is available
+  useEffect(() => {
+    if (clerkUser && isLoaded) {
+      fetch('/api/user/sync')
+        .then(res => res.json())
+        .then(data => {
+          if (data.user?.id) {
+            setDatabaseUserId(data.user.id)
+          }
+        })
+        .catch(error => {
+          console.error('Failed to get database user ID:', error)
+        })
+    }
+  }, [clerkUser, isLoaded])
+
   // Fetch profile data
-  const fetchProfileData = async () => {
+  const fetchProfileData = useCallback(async () => {
+    if (!databaseUserId) return
+    
     try {
       setIsLoading(true)
-      const response = await fetch('/api/user/profile/stats')
-      if (!response.ok) {
-        throw new Error('Failed to fetch profile data')
+      const response = await apiClient.auth.getProfileStats({ userId: databaseUserId })
+      if (response.success && response.data) {
+        const profileData = response.data as ProfileData
+        setProfileData(profileData)
+        
+        // Initialize edit form
+        setEditForm({
+          firstName: profileData.user.firstName || '',
+          lastName: profileData.user.lastName || '',
+          phone: profileData.user.phone || ''
+        })
+      } else {
+        throw new Error(response.error || 'Failed to fetch profile data')
       }
-      const data = await response.json()
-      setProfileData(data)
-      
-      // Initialize edit form
-      setEditForm({
-        firstName: data.user.firstName || '',
-        lastName: data.user.lastName || '',
-        phone: data.user.phone || ''
-      })
     } catch (error) {
       console.error('Error fetching profile data:', error)
       toast.error('Failed to load profile data')
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [databaseUserId])
 
   useEffect(() => {
-    if (isLoaded && clerkUser) {
+    if (databaseUserId) {
       fetchProfileData()
     }
-  }, [isLoaded, clerkUser])
+  }, [fetchProfileData, databaseUserId])
 
   const handleSave = async () => {
+    if (!databaseUserId) {
+      toast.error('User not authenticated')
+      return
+    }
+
     try {
-      const response = await fetch('/api/user/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(editForm),
-      })
+      const response = await apiClient.auth.updateProfile(editForm, { userId: databaseUserId })
 
-      if (!response.ok) {
-        throw new Error('Failed to update profile')
+      if (response.success) {
+        setProfileData(prev => prev ? {
+          ...prev,
+          user: { ...prev.user, ...editForm }
+        } : null)
+        
+        setIsEditing(false)
+        toast.success('Profile updated successfully')
+      } else {
+        throw new Error(response.error || 'Failed to update profile')
       }
-
-      await response.json()
-      setProfileData(prev => prev ? {
-        ...prev,
-        user: { ...prev.user, ...editForm }
-      } : null)
-      
-      setIsEditing(false)
-      toast.success('Profile updated successfully')
     } catch (error) {
       console.error('Error updating profile:', error)
       toast.error('Failed to update profile')

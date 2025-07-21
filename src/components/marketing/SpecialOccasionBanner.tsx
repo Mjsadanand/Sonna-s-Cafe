@@ -56,10 +56,12 @@ export default function EnhancedOfferBanner({ onClose, onOfferClick, className =
         },
       });
       if (response.ok) {
-        const data = await response.json();
-        setOffers(data.offers || []);
-        if (data.offers?.length > 0) {
-          trackInteraction(data.offers[0].id, 'viewed');
+        const result = await response.json();
+        console.log('Banner API response:', result); // Debug log
+        const offersData = result.success ? result.data : [];
+        setOffers(offersData);
+        if (offersData.length > 0) {
+          trackInteraction(offersData[0].id, 'viewed');
         }
       }
     } catch (error) {
@@ -149,7 +151,10 @@ export default function EnhancedOfferBanner({ onClose, onOfferClick, className =
     }
   };
 
-  if (!isVisible || offers.length === 0) return null;
+  if (!isVisible || offers.length === 0) {
+    console.log('Banner not showing:', { isVisible, offersLength: offers.length }); // Debug log
+    return null;
+  }
 
   const currentOffer = offers[currentOfferIndex];
   const colors = getGradientColors(currentOffer.occasionType);

@@ -12,6 +12,7 @@ import { motion } from 'framer-motion'
 import LoyaltyDisplay from '@/components/loyalty/LoyaltyDisplay'
 import EnhancedOfferBanner from '@/components/marketing/SpecialOccasionBanner'
 import UrgentOfferPopup from '@/components/marketing/UrgentOfferPopup'
+import MenuItemOfferBanner from '@/components/marketing/MenuItemOfferBanner'
 
 export default function Home() {
   const features = [
@@ -283,10 +284,22 @@ export default function Home() {
                     <h3 className="font-bold text-lg sm:text-xl text-black dark:text-white flex-1 mr-2">{item.name}</h3>
                     <span className="text-lg sm:text-2xl font-bold text-black dark:text-white">{item.price}</span>
                   </div>
-                  <Button className="w-full btn-gradient-green rounded-xl interactive text-sm sm:text-base py-2 sm:py-3">
-                    Add to Cart
-                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2" />
-                  </Button>
+                  
+                  {/* Enhanced Add to Cart with Offer Banner */}
+                  <MenuItemOfferBanner
+                    menuItem={{
+                      id: `home-item-${item.name.toLowerCase().replace(/\s+/g, '-')}`,
+                      name: item.name,
+                      price: item.price,
+                      image: item.image,
+                      categoryId: item.category.toLowerCase().replace(/\s+/g, '-')
+                    }}
+                    onAddToCart={(menuItem) => {
+                      console.log('Add to cart from home page:', menuItem);
+                      // You can add custom logic here or use the cart context
+                    }}
+                    className="mt-2"
+                  />
                 </CardContent>
               </Card>
             ))}

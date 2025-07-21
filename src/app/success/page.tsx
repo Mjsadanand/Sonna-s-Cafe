@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle, Package, Clock, MapPin, Loader2 } from 'lucide-react'
 import { apiClient } from '@/lib/api/client'
 import { formatCurrency, parsePrice } from '@/lib/utils'
-import { toast } from 'sonner'
+// import { toast } from 'sonner'
 
 interface OrderDetails {
   id: string
@@ -46,11 +46,11 @@ function SuccessPageContent() {
         if (response.success && response.data) {
           setOrder(response.data as OrderDetails)
         } else {
-          toast.error('Failed to load order details')
+          // toast.error('Failed to load order details')
         }
       } catch (error) {
         console.error('Error fetching order:', error)
-        toast.error('Failed to load order details')
+        // toast.error('Failed to load order details')
       } finally {
         setIsLoading(false)
       }

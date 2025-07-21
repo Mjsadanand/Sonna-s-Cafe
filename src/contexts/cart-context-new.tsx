@@ -131,7 +131,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }, authContext)
 
       if (response.success) {
-        toast.success(`${menuItem.name} added to cart`)
         await refreshCart()
       } else {
         throw new Error(response.error || 'Failed to add item to cart')
@@ -157,7 +156,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }, authContext)
 
       if (response.success) {
-        toast.success('Cart updated')
         await refreshCart()
       } else {
         throw new Error(response.error || 'Failed to update cart item')
@@ -176,7 +174,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const response = await apiClient.cart.removeFromCart(cartItemId, authContext)
 
       if (response.success) {
-        toast.success('Item removed from cart')
         await refreshCart()
       } else {
         throw new Error(response.error || 'Failed to remove item from cart')

@@ -7,6 +7,7 @@ import { useCart } from '@/contexts/cart-context-new'
 import { MenuItem } from '@/types'
 import { Plus, Minus, Trash2 } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface CartItemWithDetails {
   id: string
@@ -36,6 +37,7 @@ export function CartItemComponent({ item }: CartItemComponentProps) {
 
   const handleRemove = async () => {
     await removeFromCart(item.id)
+    toast.success(`${item.menuItem.name} removed from cart`)
   }
 
   const price = parseFloat(item.unitPrice)

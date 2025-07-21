@@ -211,13 +211,17 @@ class ApiClient {
         body: JSON.stringify(userData),
       }),
 
-    getProfile: () => this.request('/user/profile'),
+    getProfile: (authContext?: { userId?: string; sessionId?: string }) => 
+      this.request('/user/profile', {}, authContext),
 
-    updateProfile: (data: UpdateProfileRequest) =>
+    getProfileStats: (authContext?: { userId?: string; sessionId?: string }) => 
+      this.request('/user/profile/stats', {}, authContext),
+
+    updateProfile: (data: UpdateProfileRequest, authContext?: { userId?: string; sessionId?: string }) =>
       this.request('/user/profile', {
         method: 'PUT',
         body: JSON.stringify(data),
-      }),
+      }, authContext),
   };
 
   // Menu endpoints
