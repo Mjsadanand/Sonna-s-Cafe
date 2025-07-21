@@ -1,393 +1,405 @@
 "use client"
 
+declare global {
+  interface Window {
+    Clerk?: {
+      user?: unknown
+    }
+  }
+}
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
 import { Footer } from '@/components/layout/footer'
-import { Testimonials } from '@/components/ui/testimonials'
-import { ChefHat, Clock, Star, Heart, ArrowRight, TrendingUp } from 'lucide-react'
-import { motion } from 'framer-motion'
-import LoyaltyDisplay from '@/components/loyalty/LoyaltyDisplay'
-import EnhancedOfferBanner from '@/components/marketing/SpecialOccasionBanner'
-import UrgentOfferPopup from '@/components/marketing/UrgentOfferPopup'
-import MenuItemOfferBanner from '@/components/marketing/MenuItemOfferBanner'
+import { Search, MapPin, Clock, Star, ArrowRight, ChefHat, Truck, Shield, Users, Heart, Sparkles, TrendingUp } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
 
 export default function Home() {
-  const features = [
+  const router = useRouter()
+  const { theme } = useTheme()
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/menu?search=${encodeURIComponent(searchQuery)}`)
+    } else {
+      router.push('/menu')
+    }
+  }
+
+  // Popular food categories
+  const foodCategories = [
+    { id: 'pizza', name: 'Pizza', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Pizza-3007395.jpg/1200px-Pizza-3007395.jpg?w=200&h=200&fit=crop' },
+    { id: 'burgers', name: 'Burgers', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&h=200&fit=crop' },
+    { id: 'biryani', name: 'Biryani', image: 'https://melam.com/wp-content/uploads/2022/12/ambur-biriyani.jpg?w=200&h=200&fit=crop' },
+    { id: 'chinese', name: 'Chinese', image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=200&h=200&fit=crop' },
+    { id: 'desserts', name: 'Desserts', image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=200&h=200&fit=crop' },
+    { id: 'beverages', name: 'Drinks', image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=200&h=200&fit=crop' },
+  ]
+
+  // Featured restaurants/sections
+  const featuredItems = [
     {
-      icon: <ChefHat className="w-6 h-6" />,
-      title: "Eggless Speciality",
-      description: "Premium eggless cakes and desserts crafted with finest ingredients",
-      color: "blue"
+      id: 1,
+      name: "Sonna's Special Cakes",
+      image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop",
+      rating: 4.8,
+      time: "25-30 mins",
+      discount: "60% OFF",
+      cuisine: "Bakery • Desserts",
+      priceRange: "₹200 for two"
     },
     {
-      icon: <Clock className="w-6 h-6" />,
-      title: "Fresh Daily",
-      description: "Baked fresh daily with traditional recipes and modern techniques",
-      color: "purple"
+      id: 2,
+      name: "South Indian Delights",
+      image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop",
+      rating: 4.6,
+      time: "20-25 mins",
+      discount: "50% OFF",
+      cuisine: "South Indian • Healthy",
+      priceRange: "₹150 for two"
     },
     {
-      icon: <Star className="w-6 h-6" />,
-      title: "4.9★ Rated",
-      description: "Highest rated patisserie in Hubli with 575+ Google reviews",
-      color: "orange"
-    },
-    {
-      icon: <Heart className="w-6 h-6" />,
-      title: "Homey Atmosphere",
-      description: "Cozy café ambiance with contactless delivery option",
-      color: "green"
+      id: 3,
+      name: "Continental Cuisine",
+      image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop",
+      rating: 4.7,
+      time: "30-35 mins",
+      discount: "40% OFF",
+      cuisine: "Continental • Italian",
+      priceRange: "₹300 for two"
     }
   ]
 
-  const popularItems = [
+  const features = [
     {
-      name: "Sonna's Special Chocolate Cake",
-      image: "https://images.pexels.com/photos/291528/pexels-photo-291528.jpeg?auto=compress&cs=tinysrgb&w=400",
-      price: "₹675",
-      rating: 4.9,
-      category: "Premium Cakes",
-      time: "25-40 min"
+      icon: <Truck className="w-6 h-6" />,
+      title: "Fast Delivery",
+      description: "30 minutes or free",
+      color: "bg-blue-500"
     },
     {
-      name: "Nutella Croissant",
-      image: "https://images.pexels.com/photos/2135/food-france-morning-breakfast.jpg?auto=compress&cs=tinysrgb&w=400", 
-      price: "₹265",
-      rating: 4.8,
-      category: "Desserts",
-      time: "15-20 min"
+      icon: <Shield className="w-6 h-6" />,
+      title: "Safe & Hygienic",
+      description: "100% safe delivery",
+      color: "bg-green-500"
     },
     {
-      name: "Paneer Tikka Masala Combo",
-      image: "https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg?auto=compress&cs=tinysrgb&w=400",
-      price: "₹299", 
-      rating: 4.7,
-      category: "Combos",
-      time: "20-30 min"
+      icon: <ChefHat className="w-6 h-6" />,
+      title: "Quality Food",
+      description: "Fresh & delicious",
+      color: "bg-orange-500"
+    },
+    {
+      icon: <Users className="w-6 h-6" />,
+      title: "10K+ Orders",
+      description: "Happy customers",
+      color: "bg-purple-500"
     }
   ]
 
   return (
-    <>
-      {/* Global Fixed Video Background */}
-      <div className="fixed inset-0 w-full h-full overflow-hidden z-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          poster="https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-        >
-          <source src="https://videos.pexels.com/video-files/3031969/3031969-hd_1920_1080_24fps.mp4" type="video/mp4" />
-          <source src="https://videos.pexels.com/video-files/1111421/1111421-hd_1920_1080_30fps.mp4" type="video/mp4" />
-          <source src="https://videos.pexels.com/video-files/3031969/3031969-hd_1920_1080_24fps.webm" type="video/webm" />
-        </video>
-        {/* Subtle overlay for better readability */}
-        <div className="absolute inset-0 bg-white/30 dark:bg-black/40"></div>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+      {/* Enhanced Header Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-green-500 via-green-600 to-green-700 dark:from-green-700 dark:via-green-800 dark:to-green-900 text-white">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full animate-pulse"></div>
+        <div className="absolute top-1/2 -left-8 w-32 h-32 bg-white/5 rounded-full animate-bounce"></div>
+        <div className="absolute bottom-4 right-1/4 w-16 h-16 bg-white/10 rounded-full animate-pulse delay-1000"></div>
       </div>
-
-      <div className="min-h-screen relative z-10">
-      {/* Hero Section */}
-      <section className="relative py-16 px-3 sm:py-20 md:py-24 lg:py-32 overflow-hidden">
-
-        <div className="container mx-auto text-center relative z-10">
-          <div className="max-w-4xl mx-auto fade-in">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-black dark:bg-white text-white dark:text-black px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 hover-lift">
-              <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span>🎂 Sonna&apos;s Patisserie & Café - Hubli&apos;s Finest</span>
+      
+      <div className="relative container mx-auto px-4 py-12 md:py-16">
+          {/* Location Bar with Animation */}
+          <div className="flex items-center gap-2 mb-8 animate-fade-in">
+            <div className="p-1 bg-white/20 rounded-full">
+              <MapPin className="w-4 h-4" />
             </div>
-            
-            {/* Main Heading - Mobile First */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 sm:mb-8 text-balance leading-tight">
-              <span className="text-black dark:text-white">Premium Eggless</span>
-              <br />
-              <span className="text-black dark:text-white">Cakes &</span>
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Patisserie</span>
-            </h1>
-            
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-black dark:text-white mb-8 sm:mb-10 md:mb-12 max-w-2xl lg:max-w-3xl mx-auto text-balance leading-relaxed px-4 sm:px-0 tracking-tight">
-              <span className="font-bold">Exquisite eggless cakes, artisanal desserts & café delights</span> crafted with finest ingredients in our <span className="font-bold">homey atmosphere</span> - now delivering to your doorstep.
-            </p>
-            
-            {/* CTA Buttons - Mobile First Stack */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-12 sm:mb-14 md:mb-16 px-4 sm:px-0">
-              <Link href="/menu" className="w-full sm:w-auto">
-                <Button size="lg" className="btn-gradient-blue px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full w-full sm:min-w-[200px] interactive">
-                  Order Now
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-                </Button>
-              </Link>
-              <Link href="/menu" className="w-full sm:w-auto">
-                <Button variant="outline" size="lg" className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full w-full sm:min-w-[200px] border-2 border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black interactive">
-                  Browse Menu
-                </Button>
-              </Link>
+            <span className="text-sm font-medium">Delivering to: <strong className="text-green-200">Hubli, Karnataka</strong></span>
+          </div>
+
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Enhanced Hero Title */}
+            <div className="mb-6">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 animate-slide-up">
+                Welcome to{' '}
+                <span className="relative">
+                  <span className="bg-gradient-to-r from-green-200 to-green-400 bg-clip-text text-transparent">
+                    Sonna&apos;s Café
+                  </span>
+                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-green-300 to-green-500 rounded-full"></div>
+                </span>
+              </h1>
+              <p className="text-lg md:text-xl text-orange-100 mb-8 animate-fade-in-delay max-w-2xl mx-auto">
+                Discover exquisite flavors delivered fresh to your doorstep. Experience the finest culinary journey in Hubli.
+              </p>
             </div>
 
-            {/* Stats - Mobile First Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl sm:max-w-4xl mx-auto px-4 sm:px-0">
-              <div className="text-center p-4 sm:p-0">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">4.9★</div>
-              <div className="text-sm sm:text-base font-semibold text-black dark:text-white">Google Rating (575+ Reviews)</div>
+            {/* Enhanced Search Bar */}
+            <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto mb-8 animate-slide-up-delay">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition-opacity"></div>
+                <div className="relative bg-white dark:bg-gray-800 rounded-2xl p-2 flex items-center shadow-xl">
+                  <div className="flex-1 relative">
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
+                    <Input
+                      type="text"
+                      placeholder="Search for restaurant, cuisine or a dish..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-12 pr-4 py-4 text-gray-800 dark:text-gray-200 bg-transparent border-0 focus:ring-0 text-lg placeholder:text-gray-500"
+                    />
+                  </div>
+                  <Button 
+                    type="submit"
+                    className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 px-8 py-4 rounded-xl border-0 font-semibold text-white shadow-lg transform transition-all duration-200 hover:scale-105"
+                  >
+                    Search
+                  </Button>
+                </div>
               </div>
-              <div className="text-center p-4 sm:p-0">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">60+</div>
-              <div className="text-sm sm:text-base font-semibold text-black dark:text-white">Artisanal Items</div>
-              </div>
-              <div className="text-center p-4 sm:p-0">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">15-30</div>
-              <div className="text-sm sm:text-base font-semibold text-black dark:text-white">Min Delivery</div>
-              </div>
+            </form>
+
+            {/* Quick Action Buttons */}
+            <div className="flex flex-wrap gap-4 justify-center animate-fade-in-delay-2">
+              <Link href="/menu">
+                <Button className="bg-white/20 hover:bg-white/30 text-white border border-white/30 px-6 py-3 rounded-full font-medium transform transition-all duration-200 hover:scale-105 hover:shadow-lg">
+                  <ChefHat className="w-4 h-4 mr-2" />
+                  View Menu
+                </Button>
+              </Link>
+                <Button
+                variant="outline"
+                className="bg-transparent text-white border-white/50 hover:bg-white hover:text-green-600 px-6 py-3 rounded-full font-medium transform transition-all duration-200 hover:scale-105"
+                onClick={() => {
+                  // Check Clerk user
+                  if (window.Clerk?.user) {
+                  router.push('/profile')
+                  } else {
+                  router.push('/auth/sign-up')
+                  }
+                }}
+                >
+                Join Now
+                </Button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Enhanced Offer Banner */}
-      <section className="py-8 px-3 relative">
-        <div className="container mx-auto relative z-10">
-          <EnhancedOfferBanner 
-            onOfferClick={(offer) => {
-              console.log('Clicked offer:', offer)
-              // Navigate to relevant section or products
-            }}
-            className="mb-8"
-          />
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-16 px-3 sm:py-20 md:py-24 relative overflow-hidden">
-        <div className="container mx-auto relative z-10">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4 sm:mb-6 text-balance px-4 sm:px-0">
-              Why Choose Our Platform
+      {/* Enhanced Food Categories */}
+      <section className="py-16 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 dark:text-white">
+              What&apos;s on your mind?
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0">
-              <span className="text-gray-800 dark:text-gray-200 font-sans">
-                We have revolutionized food delivery with cutting-edge technology and premium service standards.
-              </span>
+            <p className="text-gray-600 dark:text-gray-400 text-lg">
+              Explore our delicious categories
             </p>
           </div>
           
-          {/* Mobile: Horizontal Scroll */}
-          <div className="block lg:hidden overflow-hidden pb-4 px-4">
-            <motion.div 
-              className="flex gap-4 w-max"
-              animate={{
-                translateX: "-50%",
-              }}
-              transition={{
-                duration: 20,
-                repeat: Infinity,
-                ease: "linear",
-                repeatType: "loop",
-              }}
-            >
-              {/* Duplicate features array for seamless loop */}
-              {[...features, ...features].map((feature, index) => (
-                <Card key={index} className="bg-white/80 dark:bg-black/80 backdrop-blur-sm border border-gray-200/30 dark:border-gray-800/30 rounded-2xl shadow-lg text-center group interactive w-64 h-48 flex-shrink-0">
-                  <CardHeader className="pb-2">
-                    <div className="flex justify-center mb-3">
-                      <div className={`
-                        p-2 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300
-                        ${feature.color === 'blue' ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white' : ''}
-                        ${feature.color === 'purple' ? 'bg-gradient-to-br from-purple-600 to-purple-700 text-white' : ''}
-                        ${feature.color === 'orange' ? 'bg-gradient-to-br from-orange-600 to-orange-700 text-white' : ''}
-                        ${feature.color === 'green' ? 'bg-gradient-to-br from-green-600 to-green-700 text-white' : ''}
-                      `}>
-                        <div className="w-5 h-5">{feature.icon}</div>
-                      </div>
-                    </div>
-                    <CardTitle className="text-lg font-bold text-black dark:text-white">{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-4">
-                    <CardDescription className="text-gray-600 dark:text-gray-400 text-sm">{feature.description}</CardDescription>
-                  </CardContent>
-                </Card>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* Desktop: Grid */}
-          <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4 sm:px-0">
-            {features.map((feature, index) => (
-              <Card key={index} className="bg-white/80 dark:bg-black/80 backdrop-blur-sm border border-gray-200/30 dark:border-gray-800/30 rounded-2xl shadow-lg text-center group interactive p-4 sm:p-6">
-                <CardHeader className="pb-3 sm:pb-4">
-                  <div className="flex justify-center mb-4 sm:mb-6">
-                    <div className={`
-                      p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300
-                      ${feature.color === 'blue' ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white' : ''}
-                      ${feature.color === 'purple' ? 'bg-gradient-to-br from-purple-600 to-purple-700 text-white' : ''}
-                      ${feature.color === 'orange' ? 'bg-gradient-to-br from-orange-600 to-orange-700 text-white' : ''}
-                      ${feature.color === 'green' ? 'bg-gradient-to-br from-green-600 to-green-700 text-white' : ''}
-                    `}>
-                      <div className="w-5 h-5 sm:w-6 sm:h-6">{feature.icon}</div>
-                    </div>
+          <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide">
+            {foodCategories.map((category, index) => (
+              <Link key={category.id} href={`/menu?category=${category.id}`}>
+                <div className="flex-shrink-0 cursor-pointer group text-center transform transition-all duration-300 hover:scale-105">
+                  <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden mb-4 shadow-lg group-hover:shadow-xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-green-700/20 opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
+                    <Image
+                      src={category.image}
+                      alt={category.name}
+                      width={128}
+                      height={128}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
                   </div>
-                  <CardTitle className="text-lg sm:text-xl font-bold text-black dark:text-white">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600 dark:text-gray-400 text-base">{feature.description}</CardDescription>
-                </CardContent>
-              </Card>
+                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                    {category.name}
+                  </p>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Popular Items Section */}
-      <section className="py-16 px-3 sm:py-20 md:py-24 relative overflow-hidden">
-        <div className="container mx-auto relative z-10">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4 sm:mb-6 text-balance px-4 sm:px-0">
-              Trending This Week
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-white dark:text-black font-semibold bg-black/80 dark:bg-white/80 rounded-xl px-6 py-3 inline-block shadow-lg text-balance">
-              Discover what everyone&apos;s ordering right now
-            </p>
+      {/* Enhanced Featured Restaurants */}
+      <section className="py-16 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-12">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
+                Featured Restaurants
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mt-2">
+                Top-rated restaurants in your area
+              </p>
+            </div>
+            <Link href="/menu">
+              <Button variant="outline" className="hidden md:flex text-green-600 dark:text-green-400 border-green-600 dark:border-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 group">
+                See all 
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
           </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto px-4 sm:px-0">
-            {popularItems.map((item, index) => (
-              <Card key={index} className="bg-white/80 dark:bg-black/80 backdrop-blur-sm border border-gray-200/30 dark:border-gray-800/30 rounded-2xl shadow-lg group overflow-hidden interactive">
-                <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.src = 'https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&w=400'
-                    }}
-                  />
-                  <Badge className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white/95 text-black border-0 shadow-lg z-20 text-xs sm:text-sm">
-                    <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
-                    {item.rating}
-                  </Badge>
-                  <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20">
-                    <Badge className="bg-black/80 text-white border-0 text-xs sm:text-sm">{item.category}</Badge>
-                  </div>
-                  <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
-                    <p className="text-xs sm:text-sm font-medium">⏱️ {item.time}</p>
-                  </div>
-                </div>
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex justify-between items-start mb-3 sm:mb-4">
-                    <h3 className="font-bold text-lg sm:text-xl text-black dark:text-white flex-1 mr-2">{item.name}</h3>
-                    <span className="text-lg sm:text-2xl font-bold text-black dark:text-white">{item.price}</span>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredItems.map((item, index) => (
+              <Link key={item.id} href="/menu">
+                <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 group cursor-pointer">
+                  <div className="relative">
+                    <div className="relative h-48 overflow-hidden">
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        width={400}
+                        height={240}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                    <Badge className="absolute top-3 left-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-lg">
+                      {item.discount}
+                    </Badge>
+                    <div className="absolute bottom-3 right-3 bg-white/90 dark:bg-gray-800/90 rounded-lg px-3 py-1 flex items-center gap-1 backdrop-blur-sm">
+                      <Clock className="w-3 h-3 text-gray-600 dark:text-gray-400" />
+                      <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">{item.time}</span>
+                    </div>
                   </div>
                   
-                  {/* Enhanced Add to Cart with Offer Banner */}
-                  <MenuItemOfferBanner
-                    menuItem={{
-                      id: `home-item-${item.name.toLowerCase().replace(/\s+/g, '-')}`,
-                      name: item.name,
-                      price: item.price,
-                      image: item.image,
-                      categoryId: item.category.toLowerCase().replace(/\s+/g, '-')
-                    }}
-                    onAddToCart={(menuItem) => {
-                      console.log('Add to cart from home page:', menuItem);
-                      // You can add custom logic here or use the cart context
-                    }}
-                    className="mt-2"
-                  />
-                </CardContent>
-              </Card>
+                  <CardContent className="p-6">
+                    <div className="mb-3">
+                      <h3 className="font-bold text-xl mb-2 text-gray-800 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                        {item.name}
+                      </h3>
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-1 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-lg">
+                          <Star className="w-4 h-4 text-green-600 dark:text-green-400 fill-current" />
+                          <span className="text-sm font-semibold text-green-700 dark:text-green-300">{item.rating}</span>
+                        </div>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{item.cuisine}</span>
+                      </div>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{item.priceRange}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
-          
-          <div className="text-center mt-8 sm:mt-12 px-4 sm:px-0">
+
+          <div className="text-center mt-8 md:hidden">
             <Link href="/menu">
-              <Button variant="outline" size="lg" className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full border-2 border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black interactive">
-                View All Items
-                <ArrowRight className="w-5 h-5 ml-2" />
+              <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full">
+                View All Restaurants
               </Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <Testimonials />
+      {/* Enhanced Features Section */}
+      <section className="py-16 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 dark:text-white">
+              Why choose us?
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
+              We&apos;re committed to providing the best food delivery experience with quality, speed, and care.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <div key={index} className="text-center group">
+                <div className={`w-20 h-20 ${feature.color} rounded-2xl flex items-center justify-center mx-auto mb-6 text-white shadow-lg transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:rotate-3`}>
+                  {feature.icon}
+                </div>
+                <h3 className="font-bold text-lg mb-3 text-gray-800 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      {/* CTA Section */}
-      <section className="py-16 px-3 sm:py-20 md:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 pattern-dots opacity-20"></div>
+      {/* Enhanced CTA Section */}
+      <section className="py-20 bg-gradient-to-br from-green-500 via-green-600 to-green-700 dark:from-green-700 dark:via-green-800 dark:to-green-900 text-white relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_50%)]"></div>
+          <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_80%,rgba(255,255,255,0.1),transparent_50%)]"></div>
+        </div>
         
-        <div className="container mx-auto text-center relative z-10">
+        <div className="container mx-auto px-4 text-center relative z-10">
           <div className="max-w-4xl mx-auto">
-            <Heart className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-6 sm:mb-8 text-white dark:text-black" />
+            <div className="mb-8 animate-pulse">
+              <TrendingUp className="w-16 h-16 mx-auto mb-6 text-green-200" />
+            </div>
             
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-6 sm:mb-8 text-white dark:text-black text-balance px-4 sm:px-0">
-              Ready to Order?
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+              Ready to order?
             </h2>
             
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 dark:text-gray-700 mb-8 sm:mb-12 text-gray-300 dark:text-gray-700 max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0">
-              Join thousands of food lovers and experience premium delivery today.
+            <p className="text-xl md:text-2xl mb-10 text-green-100 max-w-2xl mx-auto leading-relaxed">
+              Join thousands of food lovers and experience premium delivery today. Fresh food, fast delivery, unforgettable taste.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center px-4 sm:px-0">
-              <Link href="/menu" className="w-full sm:w-auto">
-                <Button size="lg" className="btn-gradient-blue px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full w-full sm:min-w-[200px] interactive">
-                  Start Ordering
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Link href="/menu">
+                <Button size="lg" className="bg-white text-green-600 hover:bg-green-50 px-10 py-4 text-lg rounded-full font-semibold shadow-xl transform transition-all duration-300 hover:scale-105 hover:shadow-2xl min-w-[200px]">
+                  Order Now
+                  <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
-              <Link href="/auth/sign-up" className="w-full sm:w-auto">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full w-full sm:min-w-[200px] border-2 border-white dark:border-black text-black dark:text-white hover:bg-white hover:text-black dark:hover:bg-black dark:hover:text-white interactive"
-                >
-                  Create Account
+              <Link href="/auth/sign-up">
+                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-green-600 px-10 py-4 text-lg rounded-full font-semibold transform transition-all duration-300 hover:scale-105 min-w-[200px]">
+                  Sign Up Free
                 </Button>
               </Link>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-2xl mx-auto">
+              <div className="text-center">
+                <div className="text-3xl font-bold mb-2">4.9★</div>
+                <div className="text-sm text-green-200">Customer Rating</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold mb-2">10K+</div>
+                <div className="text-sm text-green-200">Happy Orders</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold mb-2">30min</div>
+                <div className="text-sm text-green-200">Average Delivery</div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer CTA */}
-      <section className="py-8 sm:py-12 px-3 sm:px-4 border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
-        <div className="container mx-auto text-center relative z-10">
-            <p className="text-xs sm:text-sm text-black dark:text-white font-semibold mb-3 sm:mb-4">Hotel Partner?</p>
-          <Link href="/admin/login">
-            <Button variant="link" className="text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 interactive text-sm sm:text-base">
-              Partner Dashboard
-              <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2" />
-            </Button>
-          </Link>
-        </div>
-      </section>
-      </div>
-
-      {/* Floating Loyalty Display - Top Right */}
-      <div className="fixed top-4 right-4 z-50">
-        <LoyaltyDisplay showFull={false} />
-      </div>
-
-      {/* Urgent Offer Popup */}
-      <UrgentOfferPopup
-        onOfferAccept={(offer) => {
-          console.log('Offer accepted:', offer);
-          // Navigate to menu or apply offer
-        }}
-        onClose={() => {
-          console.log('Popup closed');
-        }}
-      />
-      
-      {/* Footer */}
       <Footer />
-    </>
+    </div>
   )
 }

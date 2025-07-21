@@ -223,28 +223,28 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
           <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
             <Link href="/cart">
-              <Button variant="outline" size="sm" className="w-fit">
+              <Button variant="outline" size="sm" className="w-fit text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Cart
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Checkout</h1>
-              <p className="text-sm sm:text-base text-gray-600">Complete your order</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Checkout</h1>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Complete your order</p>
             </div>
           </div>
         </div>
 
         {!cart || cart.items.length === 0 ? (
           <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Your cart is empty</h1>
-            <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Your cart is empty</h1>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-6 sm:mb-8">
               You need items in your cart to proceed with checkout.
             </p>
             <Link href="/menu">

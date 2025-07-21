@@ -1,13 +1,13 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { MenuGrid } from '@/components/menu/menu-grid'
-import { CategoryTabs } from '@/components/menu/category-tabs'
-import { MenuSearch } from '@/components/menu/menu-search'
 import { MenuItem, Category } from '@/types'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { Search } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { SwiggyMenuGrid, WhatsOnMind, TopPicks } from '@/components/menu'
+import { useCart } from '@/contexts/cart-context-new'
 
 interface MenuItemWithCategory extends Omit<MenuItem, 'category'> {
   category: Category
@@ -21,6 +21,8 @@ export default function MenuPage() {
   const [filteredItems, setFilteredItems] = useState<MenuItemWithCategory[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showCartAlert, setShowCartAlert] = useState(false)
+  const { getCartItemCount } = useCart()
 
   // Fetch categories
   const fetchCategories = async () => {
@@ -30,12 +32,11 @@ export default function MenuPage() {
         throw new Error('Failed to fetch categories')
       }
       const result = await response.json()
-      // Handle the wrapped response structure
       const categoriesData = result.data || result
       setCategories(Array.isArray(categoriesData) ? categoriesData : [])
     } catch (error) {
       console.error('Error fetching categories:', error)
-      setCategories([]) // Set empty array as fallback
+      setCategories([])
       toast.error('Failed to load categories. Please try again.')
     }
   }
@@ -88,7 +89,6 @@ export default function MenuPage() {
     const filterItems = () => {
       let items = [...menuItems]
 
-      // Filter by category
       if (selectedCategory !== 'all') {
         const selectedCategoryData = categories.find(cat => cat.slug === selectedCategory)
         if (selectedCategoryData) {
@@ -96,7 +96,6 @@ export default function MenuPage() {
         }
       }
 
-      // Filter by search term
       if (searchTerm) {
         const searchLower = searchTerm.toLowerCase()
         items = items.filter(item =>
@@ -123,110 +122,126 @@ export default function MenuPage() {
     setSearchTerm(term)
   }
 
+  // Show cart alert when item is added
+  useEffect(() => {
+    if (getCartItemCount() > 0) {
+      setShowCartAlert(true)
+      const timer = setTimeout(() => setShowCartAlert(false), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [getCartItemCount])
+
   if (error && !isLoading) {
     return (
-      <div className="min-h-screen modern-bg floating-shapes flex items-center justify-center">
-        <Card className="glass-card border-0 shadow-2xl max-w-md mx-auto">
-          <CardContent className="p-12 text-center">
-            <div className="text-6xl mb-6">😔</div>
-            <h3 className="text-2xl font-bold text-black dark:text-white mb-4">Something went wrong</h3>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="container mx-auto px-4 py-8">
+          <Card className="max-w-md mx-auto p-8 text-center bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 animate-fade-in-up">
+            <div className="text-6xl mb-4 animate-bounce-slow">😔</div>
+            <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Something went wrong</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
-            <Button
-              onClick={() => window.location.reload()}
-              className="btn-gradient-blue interactive"
-            >
+            <Button onClick={() => window.location.reload()} className="bg-orange-600 hover:bg-orange-700 text-white mb-4">
               Try Again
             </Button>
-          </CardContent>
-        </Card>
+            <div className="mt-8">
+              <h4 className="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-300">Try these popular categories:</h4>
+              <div className="flex flex-wrap gap-3 justify-center">
+                {['Pizza','Burgers','Biryani','Chinese','Desserts','Drinks'].map(cat => (
+                  <Button key={cat} variant="outline" className="border-orange-400 text-orange-600 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-900" onClick={() => { setError(null); setSelectedCategory(cat.toLowerCase()); }}>
+                    {cat}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen modern-bg floating-shapes">
-      <div className="container mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-8">
-        {/* Header */}
-        <div className="text-center mb-8 sm:mb-12 relative fade-in">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
-              <span className="text-black dark:text-white">Our</span>
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Menu</span>
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl sm:max-w-2xl mx-auto text-balance px-4 sm:px-0">
-              Discover our delicious selection of fresh, made-to-order dishes crafted with the finest ingredients.
-            </p>
-          </div>
-        </div>
-
-        {/* Search Bar */}
-        <div className="flex justify-center mb-6 sm:mb-8">
-          <div className="relative max-w-md sm:max-w-2xl w-full px-4 sm:px-0">
-            <div className="glass-card p-2 border-0 shadow-xl">
-              <MenuSearch 
-                searchTerm={searchTerm}
-                onSearchChange={handleSearchChange}
-                placeholder="Search for dishes, categories, or ingredients..."
-              />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+      {/* Header with Search */}
+      <div className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center gap-4">
+            <div className="flex-1 relative">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search for restaurant, cuisine or a dish"
+                  value={searchTerm}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-800 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                />
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Category Tabs and Menu Grid */}
-        <CategoryTabs
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onCategoryChange={handleCategoryChange}
-        >
-          <div className="mt-6 sm:mt-8">
-            {searchTerm && (
-              <div className="mb-6 px-4 sm:px-0">
-                <Card className="glass-card border-0 shadow-lg">
-                  <CardContent className="p-3 sm:p-4">
-                    <p className="text-black dark:text-white font-medium text-center text-sm sm:text-base">
-                      {isLoading ? (
-                        <span className="flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-blue-600 mr-2 sm:mr-3"></div>
-                          Searching your delicious options...
-                        </span>
-                      ) : (
-                        `Found ${filteredItems.length} delicious ${filteredItems.length !== 1 ? 'options' : 'option'} for "${searchTerm}"`
-                      )}
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
-            <MenuGrid items={filteredItems} isLoading={isLoading} />
-          </div>
-        </CategoryTabs>
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-6">
+        {/* What's on your mind? */}
+        <WhatsOnMind onCategorySelect={handleCategoryChange} />
+
+        {/* Top Picks Section */}
+        <TopPicks items={filteredItems.slice(0, 6)} isLoading={isLoading} />
+
+        {/* Menu Grid - Swiggy Style */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Restaurants to explore</h2>
+          <SwiggyMenuGrid 
+            items={filteredItems} 
+            isLoading={isLoading}
+            onItemAdded={() => setShowCartAlert(true)}
+          />
+        </div>
 
         {/* Empty State */}
         {!isLoading && filteredItems.length === 0 && !error && (
-          <div className="text-center py-12 sm:py-16 px-4 sm:px-0">
-            <Card className="glass-card border-0 shadow-2xl max-w-sm sm:max-w-md mx-auto">
-              <CardContent className="p-8 sm:p-12">
-                <div className="text-4xl sm:text-6xl mb-4 sm:mb-6">🔍</div>
-                <h3 className="text-xl sm:text-2xl font-bold text-black dark:text-white mb-3 sm:mb-4">No dishes found</h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 text-balance text-sm sm:text-base">
-                  {searchTerm 
-                    ? `We couldn't find any dishes matching "${searchTerm}". Try a different search term.`
-                    : `No dishes available in this category right now. Check back soon!`
-                  }
-                </p>
-                {searchTerm && (
-                  <Button
-                    onClick={() => setSearchTerm('')}
-                    className="btn-gradient-blue interactive text-sm sm:text-base"
-                  >
-                    Clear search and view all items
+          <div className="text-center py-16 animate-fade-in-up">
+            <div className="text-6xl mb-4 animate-bounce-slow">🔍</div>
+            <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">No dishes found</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              {searchTerm 
+                ? `We couldn't find any dishes matching "${searchTerm}". Try a different search term.`
+                : `No dishes available in this category right now. Check back soon!`
+              }
+            </p>
+            {searchTerm && (
+              <Button onClick={() => setSearchTerm('')} className="bg-orange-600 hover:bg-orange-700 text-white mb-4">
+                Clear search and view all items
+              </Button>
+            )}
+            <div className="mt-8">
+              <h4 className="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-300">Try these popular categories:</h4>
+              <div className="flex flex-wrap gap-3 justify-center">
+                {['Pizza','Burgers','Biryani','Chinese','Desserts','Drinks'].map(cat => (
+                  <Button key={cat} variant="outline" className="border-orange-400 text-orange-600 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-900" onClick={() => { setSearchTerm(''); setSelectedCategory(cat.toLowerCase()); }}>
+                    {cat}
                   </Button>
-                )}
-              </CardContent>
-            </Card>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>
+
+      {/* Cart Alert - Floating Button */}
+      {showCartAlert && getCartItemCount() > 0 && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+          <Button
+            onClick={() => window.location.href = '/cart'}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 animate-bounce"
+          >
+            <span className="bg-white text-green-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+              {getCartItemCount()}
+            </span>
+            View Cart
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
