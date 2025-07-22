@@ -77,6 +77,16 @@ export const addresses = pgTable('addresses', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
+// UPI Payments table
+export const upiPayments = pgTable('upi_payment', {
+  id: integer('id').primaryKey().notNull(),
+  orderId: text('order_id').notNull(),
+  upiId: text('upi_id').notNull(),
+  amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
+  status: text('status').notNull(),
+  transactionId: text('transaction_id'),
+  createdAt: timestamp('created_at').defaultNow(),
+});
 
 // Orders table
 export const orders = pgTable('orders', {
@@ -227,6 +237,21 @@ export const restaurantSettings = pgTable('restaurant_settings', {
   loyaltyPointsRate: integer('loyalty_points_rate').default(1).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull().$onUpdate(() => new Date()),
+});
+
+// Bookings table
+export const bookings = pgTable('bookings', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').references(() => users.id).notNull(),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  phone: text('phone').notNull(),
+  address: text('address').notNull(),
+  occasion: text('occasion'),
+  scheduledFor: timestamp('scheduled_for').notNull(),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 // Zod schemas for validation
@@ -402,3 +427,11 @@ export type NewCart = typeof carts.$inferInsert;
 
 export type CartItem = typeof cartItems.$inferSelect;
 export type NewCartItem = typeof cartItems.$inferInsert;
+
+export type Booking = typeof bookings.$inferSelect;
+export type NewBooking = typeof bookings.$inferInsert;
+
+export type NewUpiPayment = Omit<typeof upiPayments.$inferInsert, 'id' | 'createdAt'> & {
+  id?: number;
+  createdAt?: Date;
+};

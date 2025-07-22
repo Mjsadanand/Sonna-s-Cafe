@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 declare global {
@@ -31,9 +32,9 @@ export default function Home() {
   // Dynamic tempting text for search with typing effect
   const phrases = useMemo(() => [
     "Are you hungry?",
-    "Is your birthday today?!!",
-    "Looking for something sweet?",
-    "Search for the food"
+    "Is your birthday today?!!✮⋆˙",
+    "Looking for something sweet?𖹭",
+    "Search for the food..🔍︎"
   ], []);
   const [typedText, setTypedText] = useState("");
   const [phraseIdx, setPhraseIdx] = useState(0);
@@ -60,6 +61,7 @@ export default function Home() {
       }, 400);
     }
     return () => clearTimeout(timeout);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [charIdx, isDeleting, phraseIdx]);
 
   useEffect(() => {
@@ -232,7 +234,7 @@ export default function Home() {
             {/* Tempting dynamic text above search bar */}
             <div className="mb-4 text-xl font-bold text-orange-700 dark:text-orange-300 animate-fade-in min-h-[2.5rem]">
               {typedText}
-              <span className="inline-block w-2 h-6 bg-orange-700 dark:bg-orange-300 align-middle animate-blink ml-1" style={{borderRadius:2}}></span>
+              <span className="inline-block w-2 h-6 bg-orange-700 dark:bg-orange-300 align-middle animate-blink ml-1"></span>
             </div>
             {/* Mobile-Optimized Search Bar */}
             <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto mb-6 md:mb-8 animate-slide-up-delay px-2">
@@ -273,26 +275,28 @@ export default function Home() {
             </form>
 
             {/* Mobile-Optimized Quick Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center animate-fade-in-delay-2 px-2">
-              <Link href="/menu">
-                <Button className="w-full sm:w-auto bg-white/20 hover:bg-white/30 text-amber-900 dark:text-amber-100 border border-white/30 px-6 py-3 rounded-full font-medium transform transition-all duration-200 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent">
-                  <ChefHat className="w-4 h-4 mr-2" />
-                  View Menu
-                </Button>
+            <div className="flex flex-row flex-wrap gap-3 md:gap-4 justify-center items-center animate-fade-in-delay-2 px-2">
+              <Link href="/menu" className="flex-1 min-w-[140px] max-w-xs">
+              <Button className="w-full bg-white/20 hover:bg-white/30 text-amber-900 dark:text-amber-100 border border-white/30 px-6 py-3 rounded-full font-medium transform transition-all duration-200 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent flex items-center justify-center">
+                <ChefHat className="w-4 h-4 mr-2" />
+                View Menu
+              </Button>
               </Link>
+              <div className="flex-1 min-w-[140px] max-w-xs">
               <Button
                 variant="outline"
-                className="w-full sm:w-auto bg-transparent text-amber-900 dark:text-amber-100 border-amber-700 dark:border-amber-300 hover:bg-white hover:text-orange-600 px-6 py-3 rounded-full font-medium transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+                className="w-full bg-transparent text-amber-900 dark:text-amber-100 border-amber-700 dark:border-amber-300 hover:bg-white hover:text-orange-600 px-6 py-3 rounded-full font-medium transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent flex items-center justify-center"
                 onClick={() => {
-                  if (window.Clerk?.user) {
-                    router.push('/profile')
-                  } else {
-                    router.push('/auth/sign-up')
-                  }
+                if (window.Clerk?.user) {
+                  router.push('/profile')
+                } else {
+                  router.push('/auth/sign-up')
+                }
                 }}
               >
                 Join Now
               </Button>
+              </div>
             </div>
           </div>
         </div>

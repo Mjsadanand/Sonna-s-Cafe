@@ -1,22 +1,26 @@
 "use client"
 
 import Link from 'next/link'
+import { useState } from 'react';
+import BookingModal from '@/components/booking/BookingModal';
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useCart } from '@/contexts/cart-context-new'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { ShoppingCart, User } from 'lucide-react'
-import { 
-  SignInButton, 
-  SignUpButton, 
-  SignedIn, 
-  SignedOut 
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut
 } from "@clerk/nextjs"
 
 export function Header() {
   const { getCartItemCount } = useCart()
   const cartItemCount = getCartItemCount()
 
+  const [showBooking, setShowBooking] = useState(false);
+  // ...existing code...
   return (
     <>
       {/* Top Header - Desktop and Mobile */}
@@ -55,7 +59,7 @@ export function Header() {
 
               <div className="flex items-center space-x-3">
                 <ThemeToggle />
-                
+
                 <Link href="/cart">
                   <Button variant="outline" size="sm" className="relative border-2 border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black interactive">
                     <ShoppingCart className="w-4 h-4 mr-2" />
@@ -103,13 +107,13 @@ export function Header() {
           <Link href="/" className="flex flex-col items-center py-2 px-3 min-w-[60px] text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group">
             <div className="w-6 h-6 mb-1">
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
               </svg>
             </div>
             <span className="text-xs font-medium">Home</span>
           </Link>
 
-          {/* Menu */}
+          {/* Menu
           <Link href="/menu" className="flex flex-col items-center py-2 px-3 min-w-[60px] text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group">
             <div className="w-6 h-6 mb-1">
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
@@ -117,6 +121,16 @@ export function Header() {
               </svg>
             </div>
             <span className="text-xs font-medium">Menu</span>
+          </Link> */}
+
+          {/* booking */}
+          <Link href="/booking" className="flex flex-col items-center py-2 px-3 min-w-[60px] text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group">
+            <div className="w-6 h-6 mb-1">
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13zm0-15H5V5h14v1z" />
+              </svg>
+            </div>
+            <span className="text-xs font-medium">Pre-Book</span>
           </Link>
 
           {/* Cart */}
@@ -131,6 +145,17 @@ export function Header() {
             </div>
             <span className="text-xs font-medium">Cart</span>
           </Link>
+
+          {/* Pre-Book
+          <Link href="/booking" className="flex flex-col items-center py-2 px-3 min-w-[60px] text-pink-600 hover:text-pink-800 transition-colors group">
+            <div className="w-6 h-6 mb-1 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13zm0-15H5V5h14v1z" />
+              </svg>
+            </div>
+            <span className="text-xs font-medium">Pre-Book</span>
+          </Link> */}
+
 
           {/* Profile/Auth */}
           <SignedOut>
@@ -153,14 +178,17 @@ export function Header() {
           </SignedIn>
 
           {/* Theme */}
-          <div className="flex flex-col items-center py-2 px-3 min-w-[60px]">
+          {/* <div className="flex flex-col items-center py-2 px-3 min-w-[60px]">
             <div className="w-6 h-6 mb-1 flex items-center justify-center">
               <ThemeToggle />
             </div>
             <span className="text-xs font-medium text-black dark:text-white">Theme</span>
-          </div>
+          </div> */}
         </div>
       </nav>
+      {showBooking && (
+        {/* BookingModal removed, now using /booking page */ }
+      )}
     </>
   )
 }

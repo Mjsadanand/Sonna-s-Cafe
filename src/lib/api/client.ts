@@ -491,7 +491,25 @@ class ApiClient {
       });
     },
   };
-}
 
+  // UPI Payment endpoints
+  upiPayment = {
+    createPayment: async (data: {
+      orderId: string;
+      upiId: string;
+      amount: string;
+      status: string;
+      transactionId?: string;
+    }) => {
+      return this.request('/upi-payment', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+  };
+
+}
 export const apiClient = new ApiClient();
-export default apiClient;

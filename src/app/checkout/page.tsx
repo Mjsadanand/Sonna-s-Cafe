@@ -64,6 +64,7 @@ export default function CheckoutPage() {
     cardNumber: '',
     expiryDate: '',
     cvv: '',
+    upiId: '',
     specialInstructions: '',
     selectedAddressId: ''
   })
@@ -134,6 +135,68 @@ export default function CheckoutPage() {
       return
     }
 
+    // UPI Payment Flow
+    if (formData.paymentMethod === 'upi') {
+      // Validate UPI ID
+      if (!formData.upiId) {
+        toast.error('Please enter a valid UPI ID')
+        setIsProcessing(false)
+        return
+      }
+
+      // Prepare order data
+      let deliveryAddressId = formData.selectedAddressId
+      if (!deliveryAddressId && showAddressForm) {
+        if (!formData.address || !formData.city || !formData.postalCode) {
+          toast.error('Please fill in all address fields')
+          setIsProcessing(false)
+          return
+        }
+        const addressData = {
+          type: 'delivery',
+          label: 'Home',
+          addressLine1: formData.address,
+          city: formData.city,
+          state: 'India',
+          postalCode: formData.postalCode,
+          country: 'India',
+          isDefault: addresses.length === 0
+        }
+        const addressResponse = await apiClient.addresses.createAddress(addressData)
+        if (!addressResponse.success || !addressResponse.data) {
+          throw new Error('Failed to create delivery address')
+        }
+        const addressDataWithId = addressResponse.data as { id: string }
+        deliveryAddressId = addressDataWithId.id
+        const updatedAddresses = await apiClient.addresses.getUserAddresses()
+        if (updatedAddresses.success && updatedAddresses.data) {
+          setAddresses(updatedAddresses.data as Address[])
+        }
+      } else if (!deliveryAddressId) {
+        toast.error('Please select a delivery address')
+        setIsProcessing(false)
+        return
+      }
+
+      // Generate orderId and transactionId (for demo, use Date.now)
+      const orderId = `ORDER${Date.now()}`
+      const transactionId = `TXN${Date.now()}`
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(formData.upiId)}&pn=${encodeURIComponent('Your Business')}&am=${totals.total}&cu=INR&tn=${encodeURIComponent('Payment for Order #' + orderId)}&tr=${transactionId}`
+
+      // Store payment as pending before redirect
+      await apiClient.upiPayment.createPayment({
+        orderId,
+        upiId: formData.upiId,
+        amount: totals.total.toString(),
+        status: 'pending',
+        transactionId
+      })
+
+      toast.info('Redirecting to UPI app for payment...')
+      window.location.href = upiUrl
+      setIsProcessing(false)
+      return
+    }
     try {
       // First, create/get delivery address
       let deliveryAddressId = formData.selectedAddressId
@@ -189,8 +252,10 @@ export default function CheckoutPage() {
 
       // Store order data and show OTP verification
       setPendingOrderData(orderData)
-      setShowOTPVerification(true)
-      toast.info('Please verify your phone number to complete your order')
+      if (formData.paymentMethod !== 'upi') {
+        setShowOTPVerification(true)
+        toast.info('Please verify your phone number to complete your order')
+      }
     } catch (error) {
       console.error('Order preparation error:', error)
       const errorMessage = error instanceof Error ? error.message : 'Failed to prepare order. Please try again.'
@@ -471,16 +536,41 @@ export default function CheckoutPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Payment Method
                     </label>
-                    <select
-                      name="paymentMethod"
-                      value={formData.paymentMethod}
-                      onChange={handleInputChange}
-                      title="Select payment method"
-                      className="w-full h-11 px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
-                    >
-                      <option value="card">Credit/Debit Card</option>
-                      <option value="cash">Cash on Delivery</option>
-                    </select>
+                    <div className="flex flex-col gap-2">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value="card"
+                          checked={formData.paymentMethod === 'card'}
+                          onChange={handleInputChange}
+                          className="accent-green-600"
+                        />
+                        <span>Credit/Debit Card</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value="upi"
+                          checked={formData.paymentMethod === 'upi'}
+                          onChange={handleInputChange}
+                          className="accent-green-600"
+                        />
+                        <span>UPI</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value="cash"
+                          checked={formData.paymentMethod === 'cash'}
+                          onChange={handleInputChange}
+                          className="accent-green-600"
+                        />
+                        <span>Cash on Delivery</span>
+                      </label>
+                    </div>
                   </div>
 
                   {formData.paymentMethod === 'card' && (
@@ -527,6 +617,23 @@ export default function CheckoutPage() {
                         </div>
                       </div>
                     </>
+                  )}
+
+                  {formData.paymentMethod === 'upi' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        UPI ID *
+                      </label>
+                      <Input
+                        name="upiId"
+                        value={formData.upiId}
+                        onChange={handleInputChange}
+                        placeholder="your-upi-id@bank"
+                        required={formData.paymentMethod === 'upi'}
+                        className="h-11 text-base"
+                      />
+                      <p className="text-xs text-gray-500 mt-2">Please enter your UPI ID to receive a payment request.</p>
+                    </div>
                   )}
                 </CardContent>
               </Card>

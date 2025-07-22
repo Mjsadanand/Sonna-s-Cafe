@@ -36,6 +36,20 @@
       "when": 1753026166424,
       "tag": "0004_add-cart-tables",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1753199983123,
+      "tag": "0005_daily_gambit",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1753207457908,
+      "tag": "0006_keen_brood",
+      "breakpoints": true
     }
   ]
 }
