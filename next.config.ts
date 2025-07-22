@@ -10,7 +10,11 @@ const nextConfig: NextConfig = {
       'res.cloudinary.com',
       'upload.wikimedia.org',
       'melam.com',
-      'polanddaily24.com'
+      'polanddaily24.com',
+      'www.kekizcakes.com',
+      't4.ftcdn.net',
+      'media.istockphoto.com',
+      'content.jdmagicbox.com'
       // add other domains as needed
     ]
   }

@@ -110,28 +110,14 @@ export function Footer() {
                 <p className="hover:text-purple-400 transition-colors duration-300">Tuesday: Closed</p>
               </div>
               
-              {/* Location Map */}
-              <div className="pt-3">
-                <p className="font-semibold text-black dark:text-white mb-2">Location:</p>
-                <div className="rounded-lg overflow-hidden shadow-lg border border-gray-700/50 hover:border-purple-400/50 transition-colors duration-300">
-                  <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3481.6494853554373!2d75.10756127458652!3d15.357632458095749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bb8d710688f2fbf%3A0xaf8bbe49e1a55b99!2sSonna&#39;s%20Patisserie%20and%20Cafe!5e1!3m2!1sen!2sin!4v1752840657196!5m2!1sen!2sin" 
-                    width="100%" 
-                    height="150" 
-                    allowFullScreen={true}
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Sonna's Patisserie and Cafe Location"
-                    className="w-full border-0"
-                  />
-                </div>
-              </div>
+              {/* Location Map removed as requested */}
             </div>
           </div>
 
-          {/* Desktop: Grid Layout */}
-          <div className="hidden md:grid grid-cols-5 gap-2">
+          {/* Desktop: Grid Layout - Adjusted for no map */}
+          <div className="hidden md:grid grid-cols-4 gap-8">
             {/* Quick Links */}
-            <div className="group">
+            <div className="group col-span-1">
               <h3 className="font-semibold text-base mb-2 text-black dark:text-white">Quick Links</h3>
               <ul className="space-y-1">
                 <li>
@@ -162,7 +148,7 @@ export function Footer() {
             </div>
 
             {/* Categories */}
-            <div className="group">
+            <div className="group col-span-1">
               <h3 className="font-semibold text-base mb-2 text-black dark:text-white">Categories</h3>
               <ul className="space-y-1">
                 <li>
@@ -192,40 +178,18 @@ export function Footer() {
               </ul>
             </div>
 
-            {/* Contact Info - Takes 3 columns for more space */}
-            <div className="group col-span-3">
+            {/* Contact Info - Now spans 2 columns, more space */}
+            <div className="group col-span-2">
               <h3 className="font-semibold text-base mb-2 text-black dark:text-white">Contact</h3>
-              
-              {/* Desktop: Horizontal Layout in a single row */}
-              <div className="flex items-start space-x-4">
-                {/* Contact Details */}
-                <div className="flex-shrink-0 space-y-1 text-gray-600 dark:text-gray-300 text-xs">
-                  <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">📍 Akshay Colony, Vidya Nagar, Hubli</p>
-                  <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">📞 +91 91132 31424</p>
-                  <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">✉️ hello@sonnaspatisserie.com</p>
-                  {/* Hours */}
-                  <div className="flex-shrink-0 space-y-1 text-gray-400 text-xs">
+              <div className="flex flex-col gap-2 text-gray-600 dark:text-gray-300 text-xs">
+                <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">📍 Akshay Colony, Vidya Nagar, Hubli</p>
+                <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">📞 +91 91132 31424</p>
+                <p className="hover:text-purple-400 transition-colors duration-300 hover:translate-x-1 transform cursor-pointer">✉️ hello@sonnaspatisserie.com</p>
+                <div className="flex-shrink-0 space-y-1 text-gray-400 text-xs mt-2">
                   <p className="font-semibold text-black dark:text-white text-xs">Hours:</p>
-                    <p className="hover:text-purple-400 transition-colors duration-300">Mon,Wed-Sat: 2PM-10PM</p>
-                    <p className="hover:text-purple-400 transition-colors duration-300">Sun: 1PM-10:30PM</p>
-                    <p className="hover:text-purple-400 transition-colors duration-300">Tue: Closed</p>
-                  </div>
-                </div>
-          
-                {/* Map - Gets remaining space */}
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-black dark:text-white mb-1 text-xs">Location:</p>
-                  <div className="rounded-lg overflow-hidden shadow-lg border border-gray-700/50 hover:border-purple-400/50 transition-colors duration-300">
-                    <iframe 
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3481.6494853554373!2d75.10756127458652!3d15.357632458095749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bb8d710688f2fbf%3A0xaf8bbe49e1a55b99!2sSonna&#39;s%20Patisserie%20and%20Cafe!5e1!3m2!1sen!2sin!4v1752840657196!5m2!1sen!2sin" 
-                      width="100%" 
-                      height="120" 
-                      allowFullScreen={true}
-                      referrerPolicy="no-referrer-when-downgrade"
-                      title="Sonna's Patisserie and Cafe Location"
-                      className="w-full border-0"
-                    />
-                  </div>
+                  <p className="hover:text-purple-400 transition-colors duration-300">Mon, Wed-Sat: 2PM-10PM</p>
+                  <p className="hover:text-purple-400 transition-colors duration-300">Sun: 1PM-10:30PM</p>
+                  <p className="hover:text-purple-400 transition-colors duration-300">Tue: Closed</p>
                 </div>
               </div>
             </div>

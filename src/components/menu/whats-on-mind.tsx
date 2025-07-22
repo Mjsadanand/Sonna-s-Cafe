@@ -11,10 +11,10 @@ export function WhatsOnMind({ onCategorySelect }: WhatsOnMindProps) {
   // Updated category data with working food images
 const mindItems = [
     { id: 'pizza', name: 'Pizza', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Pizza-3007395.jpg/1200px-Pizza-3007395.jpg?w=400&h=400&fit=crop' },
-    { id: 'chicken', name: 'Chicken', image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=400&fit=crop' },
-    { id: 'wings', name: 'Wings', image: 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400&h=400&fit=crop' },
+    { id: 'cakes', name: 'Cakes', image: 'https://www.kekizcakes.com/wp-content/uploads/2024/08/black-forest-cake-half-kg_1.webp?w=400&h=400&fit=crop' },
+    { id: 'Snacks', name: 'Snacks', image: 'https://t4.ftcdn.net/jpg/01/73/41/63/360_F_173416361_2YCaYyXrVk6nhNoIkg21515HUWseyqyr.jpg?w=400&h=400&fit=crop' },
     { id: 'burgers', name: 'Burgers', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=400&fit=crop' },
-    { id: 'biryani', name: 'Biryani', image: 'https://melam.com/wp-content/uploads/2022/12/ambur-biriyani.jpg?w=400&h=400&fit=crop' },
+    { id: 'Combos', name: 'Combos', image: 'https://content.jdmagicbox.com/v2/comp/mumbai/r8/022pxx22.xx22.210618092103.s2r8/catalogue/house-of-combos-borivali-west-mumbai-north-indian-delivery-restaurants-iyfzv1l1b5.jpg?w=400&h=400&fit=crop' },
     { id: 'chinese', name: 'Chinese', image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&h=400&fit=crop' },
     { id: 'desserts', name: 'Desserts', image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=400&fit=crop' },
     { id: 'beverages', name: 'Beverages', image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=400&fit=crop' },

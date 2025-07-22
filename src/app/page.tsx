@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -16,7 +16,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Footer } from '@/components/layout/footer'
-import { Search, MapPin, Clock, Star, ArrowRight, ChefHat, Truck, Shield, Users, Heart, TrendingUp,AlertCircle } from 'lucide-react'
+import { Search, MapPin, Clock, Star, ArrowRight, ChefHat, Truck, Shield, Users, Heart, TrendingUp, AlertCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 // import { useTheme } from 'next-themes'
 
@@ -28,6 +28,39 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
   const [searchError, setSearchError] = useState('')
   const [isInstagramLoading, setIsInstagramLoading] = useState(true)
+  // Dynamic tempting text for search with typing effect
+  const phrases = useMemo(() => [
+    "Are you hungry?",
+    "Is your birthday today?!!",
+    "Looking for something sweet?",
+    "Search for the food"
+  ], []);
+  const [typedText, setTypedText] = useState("");
+  const [phraseIdx, setPhraseIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (!isDeleting && charIdx < phrases[phraseIdx].length) {
+      timeout = setTimeout(() => {
+        setTypedText(phrases[phraseIdx].slice(0, charIdx + 1));
+        setCharIdx(charIdx + 1);
+      }, 80);
+    } else if (!isDeleting && charIdx === phrases[phraseIdx].length) {
+      timeout = setTimeout(() => setIsDeleting(true), 1200);
+    } else if (isDeleting && charIdx > 0) {
+      timeout = setTimeout(() => {
+        setTypedText(phrases[phraseIdx].slice(0, charIdx - 1));
+        setCharIdx(charIdx - 1);
+      }, 40);
+    } else if (isDeleting && charIdx === 0) {
+      timeout = setTimeout(() => {
+        setIsDeleting(false);
+        setPhraseIdx((phraseIdx + 1) % phrases.length);
+      }, 400);
+    }
+    return () => clearTimeout(timeout);
+  }, [charIdx, isDeleting, phraseIdx]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,7 +103,7 @@ export default function Home() {
   const foodCategories = [
     { id: 'pizza', name: 'Pizza', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Pizza-3007395.jpg/1200px-Pizza-3007395.jpg?w=200&h=200&fit=crop' },
     { id: 'burgers', name: 'Burgers', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&h=200&fit=crop' },
-    { id: 'biryani', name: 'Biryani', image: 'https://melam.com/wp-content/uploads/2022/12/ambur-biriyani.jpg?w=200&h=200&fit=crop' },
+    { id: 'cakes', name: 'Cakes', image: 'https://www.kekizcakes.com/wp-content/uploads/2024/08/black-forest-cake-half-kg_1.webp?w=200&h=200&fit=crop' },
     { id: 'chinese', name: 'Chinese', image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=200&h=200&fit=crop' },
     { id: 'desserts', name: 'Desserts', image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=200&h=200&fit=crop' },
     { id: 'beverages', name: 'Drinks', image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=200&h=200&fit=crop' },
@@ -90,7 +123,7 @@ export default function Home() {
     },
     {
       id: 2,
-      name: "South Indian Delights",
+      name: "Birthday Delights",
       image: "https://polanddaily24.com/wp-content/uploads/2024/06/alexandra-khudyntseva-u95-mqfuaqg-unsplash-e1719348481711.jpg?w=400&h=300&fit=crop",
       rating: 4.6,
       time: "20-25 mins",
@@ -193,31 +226,14 @@ export default function Home() {
         </div>
 
         <div className="relative container mx-auto px-4 py-8 md:py-12 lg:py-16">
-          {/* Location Bar with Enhanced Bold Text */}
-          <div className="flex items-center gap-2 mb-6 md:mb-8 animate-fade-in">
-            <div className="p-1 bg-white/20 rounded-full">
-              <MapPin className="w-4 h-4" />
-            </div>
-            <span className="text-sm font-medium">Delivering to: <strong className="text-orange-800 dark:text-orange-200 font-bold text-base">Hubli, Karnataka</strong></span>
-          </div>
+          
 
           <div className="max-w-4xl mx-auto text-center">
-            {/* Mobile-Optimized Hero Title */}
-            <div className="mb-6">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 animate-slide-up leading-tight">
-                Welcome to{' '}
-                <span className="relative block sm:inline mt-2 sm:mt-0">
-                  <span className="bg-gradient-to-r from-red-600 to-orange-600 dark:from-red-400 dark:to-orange-400 bg-clip-text text-transparent">
-                    Sonna&apos;s Café
-                  </span>
-                  <div className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-red-400 to-orange-500 rounded-full"></div>
-                </span>
-              </h1>
-              <p className="text-base sm:text-lg md:text-xl text-amber-800 dark:text-amber-200 mb-6 md:mb-8 animate-fade-in-delay max-w-2xl mx-auto leading-relaxed px-2">
-                Discover exquisite flavors delivered fresh to your doorstep. Experience the finest culinary journey in Hubli.
-              </p>
+            {/* Tempting dynamic text above search bar */}
+            <div className="mb-4 text-xl font-bold text-orange-700 dark:text-orange-300 animate-fade-in min-h-[2.5rem]">
+              {typedText}
+              <span className="inline-block w-2 h-6 bg-orange-700 dark:bg-orange-300 align-middle animate-blink ml-1" style={{borderRadius:2}}></span>
             </div>
-
             {/* Mobile-Optimized Search Bar */}
             <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto mb-6 md:mb-8 animate-slide-up-delay px-2">
               <div className="relative group">
@@ -327,80 +343,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Compact Instagram Section */}
-      <section className="py-12 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-700">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-800 dark:text-white flex items-center justify-center gap-2">
-              Follow Us on Instagram
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Stay updated with our latest delicious creations
-            </p>
-          </div>
-
-          {isInstagramLoading ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
-              <span className="ml-3 text-gray-600 dark:text-gray-400">Loading Instagram posts...</span>
-            </div>
-          ) : (
-            <div className="relative">
-              <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide snap-x snap-mandatory">
-                {instagramPosts.map((post) => (
-                  <div
-                    key={post.id}
-                    className="flex-shrink-0 w-80 snap-start bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
-                  >
-                    {post.embedCode ? (
-                      <div dangerouslySetInnerHTML={{ __html: post.embedCode }} />
-                    ) : (
-                      <a href={post.url} target="_blank" rel="noopener noreferrer" className="block">
-                        <Image
-                          src={post.image}
-                          alt={post.title}
-                          width={320}
-                          height={320}
-                          className="w-full h-64 object-cover rounded-t-xl"
-                        />
-                        <div className="p-4">
-                          <h3 className="font-bold text-lg mb-2 text-gray-800 dark:text-white">{post.title}</h3>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">{post.likes} likes</p>
-                          <span className="inline-block mt-2 text-pink-500 font-semibold">View on Instagram</span>
-                        </div>
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex justify-center mt-4 gap-2">
-                {instagramPosts.map((_, index) => (
-                  <div
-                    key={index}
-                    className="w-2 h-2 rounded-full bg-pink-300 dark:bg-pink-600 opacity-50"
-                  ></div>
-                ))}
-              </div>
-
-              <div className="text-center mt-6">
-                <a
-                  href="https://www.instagram.com/sonnas___"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-full hover:shadow-lg transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-offset-2"
-                >
-                  <Heart className="w-5 h-5" />
-                  Follow @sonnas_cafe
-                </a>
-              </div>
-              {/* Ensure Instagram embed script is loaded after rendering */}
-              <script async src="//www.instagram.com/embed.js"></script>
-            </div>
-          )}
-        </div>
-      </section>
-
       {/* Enhanced Featured Restaurants */}
       <section className="py-16 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
         <div className="container mx-auto px-4">
@@ -477,35 +419,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Enhanced Features Section with Mobile Optimization */}
-      <section className="py-12 md:py-16 bg-white dark:bg-gray-900 transition-colors duration-300">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-gray-800 dark:text-white">
-              Why choose us?
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-sm md:text-lg max-w-2xl mx-auto">
-              We&apos;re committed to providing the best food delivery experience with quality, speed, and care.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {features.map((feature, index) => (
-              <div key={index} className="text-center group">
-                <div className={`w-16 h-16 md:w-20 md:h-20 ${feature.color} rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6 text-white shadow-lg transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:rotate-3`}>
-                  {feature.icon}
-                </div>
-                <h3 className="font-bold text-sm md:text-lg mb-2 md:mb-3 text-gray-800 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-xs md:text-sm leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Enhanced CTA Section with Mobile Optimization */}
       <section className="py-16 md:py-20 bg-gradient-to-br from-amber-100 via-orange-100 to-red-100 dark:from-amber-900 dark:via-orange-900 dark:to-red-900 text-amber-900 dark:text-amber-100 relative overflow-hidden">
@@ -564,7 +477,7 @@ export default function Home() {
               </Button>
             </div>
 
-            {/* Trust Indicators */}
+            {/* Trust Indicators
             <div className="mt-8 md:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 max-w-2xl mx-auto">
               <div className="text-center">
                 <div className="text-2xl md:text-3xl font-bold mb-2">4.9★</div>
@@ -578,15 +491,12 @@ export default function Home() {
                 <div className="text-2xl md:text-3xl font-bold mb-2">30min</div>
                 <div className="text-xs md:text-sm text-amber-700 dark:text-amber-300">Average Delivery</div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
 
       <Footer />
-
-      {/* Instagram Embed Script */}
-      <script async src="//www.instagram.com/embed.js"></script>
     </div>
   )
 }
