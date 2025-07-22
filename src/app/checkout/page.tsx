@@ -181,7 +181,7 @@ export default function CheckoutPage() {
       // Generate orderId and transactionId (for demo, use Date.now)
       const orderId = `ORDER${Date.now()}`
       const transactionId = `TXN${Date.now()}`
-      const upiUrl = `upi://pay?pa=${encodeURIComponent(formData.upiId)}&pn=${encodeURIComponent('Your Business')}&am=${totals.total}&cu=INR&tn=${encodeURIComponent('Payment for Order #' + orderId)}&tr=${transactionId}`
+      const upiUrl = `upi://pay?pa=9019994562@ybl&pn=${encodeURIComponent('Your Business')}&am=${totals.total}&cu=INR&tn=${encodeURIComponent('Payment for Order #' + orderId)}&tr=${transactionId}`
 
       // Store payment as pending before redirect
       await apiClient.upiPayment.createPayment({
