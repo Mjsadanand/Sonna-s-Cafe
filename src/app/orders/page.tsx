@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,6 +24,8 @@ import { toast } from 'sonner'
 interface OrderItem {
   id: string
   menuItemId: string
+  name?: string // Added optional name field
+  image?: string // Added optional image field
   quantity: number
   unitPrice: string
   totalPrice: string
@@ -41,14 +44,50 @@ interface Order {
 }
 
 export default function OrdersPage() {
+  // Fetch menu items for mapping menuItemId to name/image
+  const [menuItemsMap, setMenuItemsMap] = useState<Record<string, { name: string; image?: string }>>({})
+
+  useEffect(() => {
+    // Fetch all menu items once for mapping
+    const fetchMenuItems = async () => {
+      try {
+        const response = await fetch('/api/menu?limit=1000&isAvailable=true')
+        if (!response.ok) return
+        const data = await response.json()
+        // Support both array and object structure for items
+        let itemsArr = []
+        if (Array.isArray(data.items)) {
+          itemsArr = data.items
+        } else if (Array.isArray(data)) {
+          itemsArr = data
+        }
+        if (itemsArr.length > 0) {
+          const map: Record<string, { name: string; image?: string }> = {}
+          for (const item of itemsArr) {
+            // Support both id and _id
+            const id = item.id || item._id
+            map[id] = { name: item.name, image: item.image }
+          }
+          setMenuItemsMap(map)
+        }
+      } catch {
+        // ignore
+      }
+    }
+    fetchMenuItems()
+  }, [])
   const { user } = useUser()
   const [orders, setOrders] = useState<Order[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   // Fetch user orders
   useEffect(() => {
     const fetchOrders = async () => {
-      if (!user) return
-      
+      if (!user) {
+        setIsLoading(false)
+        return
+      }
+      setIsLoading(true)
       try {
         const response = await apiClient.orders.getUserOrders()
         if (response.success && response.data) {
@@ -79,6 +118,8 @@ export default function OrdersPage() {
         // Ensure orders is always an array even on error
         setOrders([])
         toast.error('Failed to load orders')
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -135,14 +176,22 @@ export default function OrdersPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Your Orders</h1>
-              <p className="text-sm sm:text-base text-gray-600">Track and manage your food orders</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Your Orders</h1>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Track and manage your food orders</p>
             </div>
           </div>
         </div>
 
+        {/* Loader while fetching orders */}
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mb-4"></div>
+            <span className="text-gray-600 dark:text-gray-400 text-lg">Loading your orders...</span>
+          </div>
+        )}
+
         {/* Empty State */}
-        {orders.length === 0 && (
+        {!isLoading && orders.length === 0 && (
           <div className="text-center py-12 sm:py-16 px-4">
             <Package className="w-16 sm:w-24 h-16 sm:h-24 mx-auto text-gray-300 mb-4 sm:mb-6" />
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">No orders yet</h2>
@@ -158,7 +207,7 @@ export default function OrdersPage() {
         )}
 
         {/* Orders Tabs */}
-        {orders.length > 0 && (
+        {!isLoading && orders.length > 0 && (
           <Tabs defaultValue="active" className="w-full">
             <TabsList className="grid w-full max-w-md grid-cols-2">
               <TabsTrigger value="active">
@@ -204,12 +253,39 @@ export default function OrdersPage() {
                             <div className="text-sm text-gray-600">
                               {order.items && order.items.length > 0 ? (
                                 <ul>
-                                  {order.items.map((item: OrderItem, index: number) => (
-                                    <li key={index}>• Qty: {item.quantity} - ${item.totalPrice}</li>
-                                  ))}
+                                  {order.items.map((item: OrderItem, index: number) => {
+                                    // Always map using menuItemId
+                                    const mapped = menuItemsMap[item.menuItemId] || {}
+                                    return (
+                                      <li key={index} className="flex items-center gap-4 py-2 border-b border-gray-100 dark:border-gray-800 last:border-b-0">
+                                        {mapped.image ? (
+                                          <Image
+                                            src={mapped.image}
+                                            alt={mapped.name || 'Item'}
+                                            width={48}
+                                            height={48}
+                                            className="w-12 h-12 rounded object-cover border border-gray-200 dark:border-gray-700"
+                                            style={{ objectFit: 'cover' }}
+                                            unoptimized={false}
+                                            priority={false}
+                                          />
+                                        ) : (
+                                          <div className="w-12 h-12 rounded bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500">🍽️</div>
+                                        )}
+                                        <div className="flex-1 min-w-0">
+                                          <span className="block font-semibold text-base md:text-lg text-gray-800 dark:text-gray-100 truncate">{mapped.name || item.name || item.menuItemId}</span>
+                                          <span className="block text-xs md:text-sm text-gray-500 dark:text-gray-400">Qty: {item.quantity}</span>
+                                        </div>
+                                        <div className="text-right">
+                                          {/* <span className="block text-green-700 dark:text-green-400 font-semibold text-base md:text-lg">₹{item.unitPrice}</span> */}
+                                          {/* <span className="block text-xs text-gray-400 dark:text-gray-500">Total: ₹{item.totalPrice}</span> */}
+                                        </div>
+                                      </li>
+                                    )
+                                  })}
                                 </ul>
                               ) : (
-                                <p>No items available</p>
+                                <p className="text-gray-500 dark:text-gray-400">No items available</p>
                               )}
                             </div>
                           </div>
@@ -271,7 +347,10 @@ export default function OrdersPage() {
                             {order.items && order.items.length > 0 ? (
                               <ul>
                                 {order.items.map((item: OrderItem, index: number) => (
-                                  <li key={index}>• Qty: {item.quantity} - ${item.totalPrice}</li>
+                                  <li key={index}>
+                                    <span className="font-semibold">{menuItemsMap[item.menuItemId]?.name || item.name || item.menuItemId || 'Unknown Item'}</span>
+                                    &nbsp;| Qty: {item.quantity} - ₹{item.totalPrice}
+                                  </li>
                                 ))}
                               </ul>
                             ) : (
@@ -309,27 +388,29 @@ export default function OrdersPage() {
         )}
 
         {/* Help Section */}
-        <div className="mt-12 text-center">
-          <Card className="max-w-md mx-auto">
-            <CardHeader>
-              <CardTitle>Need Help?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600 mb-4">
-                If you have any questions about your orders, our support team is here to help.
-              </p>
-              <div className="space-y-2">
-                <Button variant="outline" size="sm" className="w-full">
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call Support: (555) 123-4567
-                </Button>
-                <Button variant="outline" size="sm" className="w-full">
-                  Live Chat Support
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {!isLoading && (
+          <div className="mt-12 text-center">
+            <Card className="max-w-md mx-auto">
+              <CardHeader>
+                <CardTitle>Need Help?</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 mb-4">
+                  If you have any questions about your orders, our support team is here to help.
+                </p>
+                <div className="space-y-2">
+                  <Button variant="outline" size="sm" className="w-full">
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call Support: (555) 123-4567
+                  </Button>
+                  <Button variant="outline" size="sm" className="w-full">
+                    Live Chat Support
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   )
