@@ -40,8 +40,49 @@ interface Address {
 }
 
 export default function CheckoutPage() {
+  // ...existing code...
+  // Place this useEffect after router and clearCart are declared
   const { cart, clearCart, calculateTotals } = useCart()
   const router = useRouter()
+  // Automatically poll for UPI payment status after redirect
+  useEffect(() => {
+    // Check if UPI payment is pending in localStorage
+    const upiOrderId = localStorage.getItem('pendingUpiOrderId');
+    const upiTransactionId = localStorage.getItem('pendingUpiTransactionId');
+    if (upiOrderId && upiTransactionId) {
+      let attempts = 0;
+      const maxAttempts = 12;
+      const poll = async () => {
+        while (attempts < maxAttempts) {
+          try {
+            const response = await fetch(`/api/upi-payment-status?orderId=${upiOrderId}&transactionId=${upiTransactionId}`);
+            const result = await response.json();
+            if (result.success && result.status === 'completed') {
+              toast.success('Payment successful! Redirecting...');
+              clearCart();
+              localStorage.removeItem('pendingUpiOrderId');
+              localStorage.removeItem('pendingUpiTransactionId');
+              router.push(`/success?orderId=${upiOrderId}`);
+              return;
+            } else if (result.success && result.status === 'failed') {
+              toast.error('Payment failed. Please try again.');
+              localStorage.removeItem('pendingUpiOrderId');
+              localStorage.removeItem('pendingUpiTransactionId');
+              return;
+            }
+          } catch {
+            // Ignore errors, continue polling
+          }
+          await new Promise(res => setTimeout(res, 5000));
+          attempts++;
+        }
+        toast.error('Payment not confirmed. Please check your UPI app or contact support.');
+        localStorage.removeItem('pendingUpiOrderId');
+        localStorage.removeItem('pendingUpiTransactionId');
+      };
+      poll();
+    }
+  }, [router, clearCart]);
   const { user } = useUser()
   const [isProcessing, setIsProcessing] = useState(false)
   const [addresses, setAddresses] = useState<Address[]>([])
@@ -190,12 +231,16 @@ export default function CheckoutPage() {
         amount: totals.total.toString(),
         status: 'pending',
         transactionId
-      })
+      });
 
-      toast.info('Redirecting to UPI app for payment...')
-      window.location.href = upiUrl
-      setIsProcessing(false)
-      return
+      // Save orderId and transactionId to localStorage for polling after redirect
+      localStorage.setItem('pendingUpiOrderId', orderId);
+      localStorage.setItem('pendingUpiTransactionId', transactionId);
+
+      toast.info('Redirecting to UPI app for payment...');
+      window.location.href = upiUrl;
+      setIsProcessing(false);
+      return;
     }
     try {
       // First, create/get delivery address
