@@ -1,17 +1,61 @@
+'use client';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 export default function BookingSuccess() {
+  useEffect(() => {
+    import('canvas-confetti').then((confetti) => {
+      confetti.default({
+        particleCount: 200,
+        spread: 100,
+        origin: { y: 0.6 },
+      });
+    });
+
+    if (typeof window !== 'undefined' && window.navigator.vibrate) {
+      window.navigator.vibrate([200, 100, 200]);
+    }
+
+    const audio = new Audio('/success-tone.mp3');
+    audio.play();
+  }, []);
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50 px-2 py-4">
-      <div className="w-full max-w-md bg-white rounded-xl border border-pink-200 p-8 mx-auto text-center">
-        <h1 className="text-2xl font-bold mb-4 text-pink-700">Booking Successful!</h1>
-        <p className="mb-6 text-gray-700">Your booking has been confirmed. We look forward to serving you!</p>
-        <Link href="/booking-history">
-          <button className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition">View Booking History</button>
-        </Link>
-        <Link href="/">
-          <button className="mt-4 border border-pink-600 text-pink-700 px-4 py-2 rounded-lg hover:bg-pink-50 transition">Go to Home</button>
-        </Link>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+          {/* Success Icon */}
+          <div className="w-16 h-16 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+
+          {/* Title */}
+          <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+            Booking Confirmed
+          </h1>
+          
+          {/* Subtitle */}
+          <p className="text-gray-600 mb-8 leading-relaxed">
+            Thank you for your booking. We&apos;ll be in touch soon with confirmation details.
+          </p>
+
+          {/* Action Buttons */}
+          <div className="space-y-3">
+            <Link href="/booking-history" className="block">
+              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200">
+                View Booking History
+              </button>
+            </Link>
+            
+            <Link href="/" className="block">
+              <button className="w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-lg border border-gray-300 transition-colors duration-200">
+                Return to Home
+              </button>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

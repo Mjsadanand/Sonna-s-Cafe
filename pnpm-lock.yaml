@@ -98,6 +98,9 @@ importers:
       button:
         specifier: ^1.1.1
         version: 1.1.1
+      canvas-confetti:
+        specifier: ^1.9.3
+        version: 1.9.3
       card:
         specifier: ^2.5.4
         version: 2.5.4
@@ -2124,6 +2127,9 @@ packages:
 
   caniuse-lite@1.0.30001727:
     resolution: {integrity: sha512-pB68nIHmbN6L/4C6MH1DokyR3bYqFwjaSs/sWDHGj4CTcFtQUQMuJftVwWkXq7mNWOybD3KhUv3oWHoGxgP14Q==}
+
+  canvas-confetti@1.9.3:
+    resolution: {integrity: sha512-rFfTURMvmVEX1gyXFgn5QMn81bYk70qa0HLzcIOSVEyl57n6o9ItHeBtUSWdvKAPY0xlvBHno4/v3QPrT83q9g==}
 
   card@2.5.4:
     resolution: {integrity: sha512-S4WNrraBHA5OA5zvuVk1+fuNhFn3J4ujAr1uKqrOBzeNMxiqqFr9OXDD4LOB5VtxivS1S/v4avY+Drbm17dGYw==}
@@ -6801,6 +6807,8 @@ snapshots:
   camelcase-css@2.0.1: {}
 
   caniuse-lite@1.0.30001727: {}
+
+  canvas-confetti@1.9.3: {}
 
   card@2.5.4:
     dependencies:

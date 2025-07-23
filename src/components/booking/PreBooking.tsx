@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, Gift, MessageSquare } from 'lucide-react';
+import { Calendar, Clock, Gift, MessageSquare, Sparkles } from 'lucide-react';
 
 type BookingData = {
   scheduledFor: Date;
@@ -36,7 +36,9 @@ export default function PreBooking({ onBookingChange, className = '' }: PreBooki
     } else {
       onBookingChange(null);
     }
-  }, [selectedDate, selectedTime, occasion, notes, onBookingChange]);
+    // DO NOT include onBookingChange in dependency array to avoid infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, selectedTime, occasion, notes]);
 
   // Generate available dates (next 30 days, excluding past dates)
   const generateAvailableDates = () => {
@@ -85,111 +87,76 @@ export default function PreBooking({ onBookingChange, className = '' }: PreBooki
     { value: 'Other', label: 'Other Celebration', icon: '🎉', color: 'from-violet-500 to-purple-500' }
   ];
 
-  const getStepStatus = (step: number) => {
-    if (step < currentStep) return 'completed';
-    if (step === currentStep) return 'current';
-    return 'upcoming';
-  };
 
   return (
-    <div className={`space-y-8 ${className}`}>
-      {/* Progress Steps */}
-      <div className="flex items-center justify-between mb-8">
-        {[1, 2, 3, 4].map((step, index) => {
-          const status = getStepStatus(step);
-          const stepLabels = ['Occasion', 'Date', 'Time', 'Notes'];
-
-          return (
-            <div key={step} className="flex items-center flex-1">
-              <div className="flex flex-col items-center">
-                <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold text-sm transition-all duration-300 ${status === 'completed'
-                    ? 'bg-green-500 border-green-500 text-white'
-                    : status === 'current'
-                      ? 'bg-violet-500 border-violet-500 text-white'
-                      : 'bg-gray-100 border-gray-300 text-gray-400'
-                  }`}>
-                  {status === 'completed' ? '✓' : step}
-                </div>
-                <span className={`text-xs mt-1 font-medium ${status === 'completed' || status === 'current' ? 'text-gray-800' : 'text-gray-400'
-                  }`}>
-                  {stepLabels[index]}
-                </span>
-              </div>
-              {index < 3 && (
-                <div className={`h-0.5 flex-1 mx-2 ${status === 'completed' ? 'bg-green-500' : 'bg-gray-200'
-                  }`} />
-              )}
-            </div>
-          );
-        })}
+    <div className={`w-full max-w-xl mx-auto p-0 ${className}`}> 
+      {/* Progress Steps (optional, can be a small indicator) */}
+      <div className="flex items-center justify-center gap-2 mb-6">
+        {[1, 2, 3, 4, 5].map((step) => (
+          <div
+            key={step}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${currentStep === step ? 'bg-violet-500 scale-125' : 'bg-gray-300'}`}
+          />
+        ))}
       </div>
 
       {/* Step 1: Occasion Selection */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-2 mb-4">
-          <Gift className="w-5 h-5 text-violet-600" />
-          <h3 className="text-xl font-semibold text-gray-800">What&apos;s the occasion?</h3>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {occasions.map((occ) => (
-            <button
-              key={occ.value}
-              onClick={() => {
-                setOccasion(occ.value);
-                setCurrentStep(2);
-              }}
-              className={`relative p-4 rounded-xl border-2 transition-all duration-300 text-left group ${occasion === occ.value
-                  ? 'border-violet-500 bg-gradient-to-r ' + occ.color + ' text-white shadow-lg scale-105'
-                  : 'border-gray-200 bg-white hover:border-violet-300 hover:shadow-md'
-                }`}
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{occ.icon}</span>
-                <div>
-                  <div className={`font-semibold ${occasion === occ.value ? 'text-white' : 'text-gray-800'}`}>
-                    {occ.label}
+      {currentStep === 1 && (
+        <div className="animate-fade-in space-y-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Gift className="w-5 h-5 text-violet-600" />
+            <h3 className="text-xl font-semibold text-gray-800">What&apos;s the occasion?</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {occasions.map((occ) => (
+              <button
+                key={occ.value}
+                onClick={() => {
+                  setOccasion(occ.value);
+                  setCurrentStep(2);
+                }}
+                className={`relative p-4 rounded-xl border-2 transition-all duration-300 text-left group ${occasion === occ.value
+                    ? 'border-violet-500 bg-gradient-to-r ' + occ.color + ' text-white shadow-lg scale-105'
+                    : 'border-gray-200 bg-white hover:border-violet-300 hover:shadow-md'
+                  }`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{occ.icon}</span>
+                  <div>
+                    <div className={`font-semibold ${occasion === occ.value ? 'text-white' : 'text-gray-800'}`}>{occ.label}</div>
                   </div>
                 </div>
-              </div>
-              {occasion === occ.value && (
-                <div className="absolute top-2 right-2">
-                  <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm">✓</span>
+                {occasion === occ.value && (
+                  <div className="absolute top-2 right-2">
+                    <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm">✓</span>
+                    </div>
                   </div>
-                </div>
-              )}
-            </button>
-          ))}
+                )}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Step 2: Date Selection */}
-      {occasion && (
-        <div className="space-y-4">
+      {currentStep === 2 && (
+        <div className="animate-fade-in space-y-4">
           <div className="flex items-center gap-2 mb-4">
             <Calendar className="w-5 h-5 text-violet-600" />
             <h3 className="text-xl font-semibold text-gray-800">Select your preferred date</h3>
           </div>
-
           <div className="bg-gradient-to-r from-violet-50 to-pink-50 rounded-2xl p-6 border border-violet-200">
             <div className="grid grid-cols-7 gap-2">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                <div key={day} className="text-center text-sm font-medium text-gray-600 py-2">
-                  {day}
-                </div>
+                <div key={day} className="text-center text-sm font-medium text-gray-600 py-2">{day}</div>
               ))}
               {availableDates.slice(0, 21).map((date, index) => {
                 const isSelected = selectedDate?.toDateString() === date.toDateString();
                 const isToday = date.toDateString() === new Date().toDateString();
                 const dayOfWeek = date.getDay();
-
-                // Add empty cells for proper calendar alignment
                 if (index === 0) {
-                  const emptyCells = Array.from({ length: dayOfWeek }, (_, i) => (
-                    <div key={`empty-${i}`} />
-                  ));
-
+                  const emptyCells = Array.from({ length: dayOfWeek }, (_, i) => (<div key={`empty-${i}`} />));
                   return [
                     ...emptyCells,
                     <button
@@ -206,13 +173,10 @@ export default function PreBooking({ onBookingChange, className = '' }: PreBooki
                         }`}
                     >
                       <div className="font-semibold">{date.getDate()}</div>
-                      <div className="text-xs opacity-75">
-                        {date.toLocaleDateString('en-US', { month: 'short' })}
-                      </div>
+                      <div className="text-xs opacity-75">{date.toLocaleDateString('en-US', { month: 'short' })}</div>
                     </button>
                   ];
                 }
-
                 return (
                   <button
                     key={date.toISOString()}
@@ -228,25 +192,25 @@ export default function PreBooking({ onBookingChange, className = '' }: PreBooki
                       }`}
                   >
                     <div className="font-semibold">{date.getDate()}</div>
-                    <div className="text-xs opacity-75">
-                      {date.toLocaleDateString('en-US', { month: 'short' })}
-                    </div>
+                    <div className="text-xs opacity-75">{date.toLocaleDateString('en-US', { month: 'short' })}</div>
                   </button>
                 );
               })}
             </div>
           </div>
+          <div className="flex justify-between mt-4">
+            <button onClick={() => { setOccasion(''); setCurrentStep(1); }} className="text-sm text-gray-500 hover:text-gray-700 underline">Back</button>
+          </div>
         </div>
       )}
 
       {/* Step 3: Time Selection */}
-      {selectedDate && (
-        <div className="space-y-4">
+      {currentStep === 3 && (
+        <div className="animate-fade-in space-y-4">
           <div className="flex items-center gap-2 mb-4">
             <Clock className="w-5 h-5 text-violet-600" />
             <h3 className="text-xl font-semibold text-gray-800">Choose your preferred time</h3>
           </div>
-
           <div className="bg-gradient-to-r from-pink-50 to-orange-50 rounded-2xl p-6 border border-pink-200">
             <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
               {timeSlots.map((time) => {
@@ -254,7 +218,6 @@ export default function PreBooking({ onBookingChange, className = '' }: PreBooki
                 const displayTime = hours === 12 ? `12:${time.split(':')[1]} PM` :
                   hours > 12 ? `${hours - 12}:${time.split(':')[1]} PM` :
                     `${time} AM`;
-
                 return (
                   <button
                     key={time}
@@ -273,17 +236,19 @@ export default function PreBooking({ onBookingChange, className = '' }: PreBooki
               })}
             </div>
           </div>
+          <div className="flex justify-between mt-4">
+            <button onClick={() => { setSelectedDate(null); setCurrentStep(2); }} className="text-sm text-gray-500 hover:text-gray-700 underline">Back</button>
+          </div>
         </div>
       )}
 
       {/* Step 4: Notes */}
-      {selectedTime && (
-        <div className="space-y-4">
+      {currentStep === 4 && (
+        <div className="animate-fade-in space-y-4">
           <div className="flex items-center gap-2 mb-4">
             <MessageSquare className="w-5 h-5 text-violet-600" />
             <h3 className="text-xl font-semibold text-gray-800">Any special requests? (Optional)</h3>
           </div>
-
           <div className="bg-gradient-to-r from-green-50 to-teal-50 rounded-2xl p-6 border border-green-200">
             <textarea
               className="w-full h-24 p-4 border-2 border-gray-200 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none resize-none"
@@ -292,30 +257,81 @@ export default function PreBooking({ onBookingChange, className = '' }: PreBooki
               onChange={(e) => setNotes(e.target.value)}
             />
           </div>
+          <div className="flex justify-between mt-4">
+            <button onClick={() => { setSelectedTime(''); setCurrentStep(3); }} className="text-sm text-gray-500 hover:text-gray-700 underline">Back</button>
+            <button onClick={() => setCurrentStep(5)} className="text-sm text-violet-600 hover:text-violet-800 underline">Continue</button>
+          </div>
         </div>
       )}
 
-      {/* Special Occasion Messages */}
-      {(occasion === 'Birthday' || occasion === 'Anniversary' || occasion === 'Wedding') && selectedDate && selectedTime && (
-        <div className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 rounded-2xl p-6 text-white shadow-xl">
-          <div className="flex items-center gap-3">
-            <div className="text-3xl">
-              {occasion === 'Birthday' && '🎂'}
-              {occasion === 'Anniversary' && '💕'}
-              {occasion === 'Wedding' && '💒'}
+      {/* Step 5: Summary & Submit */}
+      {currentStep === 5 && (
+        <div className="animate-fade-in space-y-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Sparkles className="w-5 h-5 text-violet-600" />
+            <h3 className="text-xl font-semibold text-gray-800">Review your booking</h3>
+          </div>
+          <div className="bg-gradient-to-br from-violet-500 to-pink-500 rounded-2xl shadow-xl text-white p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Calendar className="w-4 h-4" />
+              <span className="font-semibold">Summary</span>
             </div>
-            <div>
-              <div className="font-bold text-lg">Special {occasion} Package!</div>
-              <div className="text-sm opacity-90">
-                We&apos;ll add extra care, beautiful presentation, and complimentary decorative touches for your special {occasion.toLowerCase()}.
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+              <div>
+                <div className="opacity-75">Occasion</div>
+                <div className="font-medium">{occasion}</div>
+              </div>
+              <div>
+                <div className="opacity-75">Date & Time</div>
+                <div className="font-medium">
+                  {selectedDate && selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} at {selectedTime}
+                </div>
+              </div>
+              <div>
+                <div className="opacity-75">Special Notes</div>
+                <div className="font-medium">{notes || 'None'}</div>
               </div>
             </div>
+            {(occasion === 'Birthday' || occasion === 'Anniversary' || occasion === 'Wedding') && (
+              <div className="mt-4 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 rounded-xl p-4 text-white shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="text-2xl">
+                    {occasion === 'Birthday' && '🎂'}
+                    {occasion === 'Anniversary' && '💕'}
+                    {occasion === 'Wedding' && '💒'}
+                  </div>
+                  <div>
+                    <div className="font-bold text-base">Special {occasion} Package!</div>
+                    <div className="text-xs opacity-90">
+                      We&apos;ll add extra care, beautiful presentation, and complimentary decorative touches for your special {occasion.toLowerCase()}.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="flex justify-between mt-4">
+            <button onClick={() => setCurrentStep(4)} className="text-sm text-gray-500 hover:text-gray-700 underline">Back</button>
+            <button
+              type="button"
+              onClick={() => {
+                // Only allow submit if all fields are filled
+                if (selectedDate && selectedTime && occasion) {
+                  setCurrentStep(5); // stay on summary
+                }
+              }}
+              className="text-sm text-violet-600 hover:text-violet-800 underline"
+              style={{ pointerEvents: 'none', opacity: 0.5 }}
+            >
+              {/* This is a placeholder, actual submit is handled by parent */}
+              Submit on next step
+            </button>
           </div>
         </div>
       )}
 
       {/* Clear Booking Button */}
-      {(selectedDate || occasion) && (
+      {(currentStep > 1) && (
         <div className="text-center pt-4">
           <button
             onClick={resetBooking}
@@ -325,6 +341,17 @@ export default function PreBooking({ onBookingChange, className = '' }: PreBooki
           </button>
         </div>
       )}
+
+      {/* Add fade-in animation */}
+      <style jsx>{`
+        .animate-fade-in {
+          animation: fadeIn 0.4s;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(16px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }

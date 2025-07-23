@@ -53,7 +53,6 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Custom green café theme colors
         green: {
           50: '#f0fdf4',
           100: '#dcfce7',
@@ -81,10 +80,27 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        // ✅ New Keyframes
+        fadeIn: {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        pop: {
+          "0%": { transform: "scale(0.95)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        celebrateWiggle: {
+          "0%, 100%": { transform: "rotate(-3deg)" },
+          "50%": { transform: "rotate(3deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        // ✅ New Animations
+        "fade-in": "fadeIn 1s ease-out",
+        "pop": "pop 0.4s ease-out",
+        "celebrate-wiggle": "celebrateWiggle 0.6s ease-in-out infinite",
       },
     },
   },

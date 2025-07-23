@@ -253,7 +253,7 @@ export default function BookingPage() {
               
               <Button 
                 variant="outline" 
-                onClick={() => router.back()} 
+                onClick={() => router.push('/')} 
                 disabled={isSubmitting}
                 className="w-full h-12 border border-gray-200 hover:border-gray-300 rounded-lg font-semibold text-base"
               >
