@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { MenuItem, Category } from '@/types'
 import { toast } from 'sonner'
 import { Search } from 'lucide-react'
@@ -14,8 +15,11 @@ interface MenuItemWithCategory extends Omit<MenuItem, 'category'> {
 }
 
 export default function MenuPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const initialSearch = searchParams?.get('search') || '';
   const [selectedCategory, setSelectedCategory] = useState('all')
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState(initialSearch)
   const [menuItems, setMenuItems] = useState<MenuItemWithCategory[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [filteredItems, setFilteredItems] = useState<MenuItemWithCategory[]>([])
@@ -76,12 +80,13 @@ export default function MenuPage() {
     }
   }
 
-  // Initial fetch
+  // Initial fetch, use search param if present
   useEffect(() => {
     Promise.all([
       fetchCategories(),
-      fetchMenuItems()
+      fetchMenuItems(undefined, initialSearch)
     ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Filter items when category or search changes
@@ -119,7 +124,26 @@ export default function MenuPage() {
   }
 
   const handleSearchChange = (term: string) => {
-    setSearchTerm(term)
+    setSearchTerm(term);
+    if (term === '') {
+      // When search is cleared, fetch all menu items again
+      fetchMenuItems(selectedCategory !== 'all' ? selectedCategory : undefined, '');
+    } else {
+      // When typing, fetch filtered menu items
+      fetchMenuItems(selectedCategory !== 'all' ? selectedCategory : undefined, term);
+    }
+  }
+
+  // Helper to clear the search bar and menu
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    fetchMenuItems(selectedCategory !== 'all' ? selectedCategory : undefined, '');
+    // Remove 'search' param from URL if present
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('search');
+      window.history.replaceState({}, '', url.pathname + url.search);
+    }
   }
 
   // Show cart alert when item is added
@@ -210,7 +234,7 @@ export default function MenuPage() {
               }
             </p>
             {searchTerm && (
-              <Button onClick={() => setSearchTerm('')} className="bg-orange-600 hover:bg-orange-700 text-white mb-4">
+              <Button onClick={handleClearSearch} className="bg-orange-600 hover:bg-orange-700 text-white mb-4">
                 Clear search and view all items
               </Button>
             )}

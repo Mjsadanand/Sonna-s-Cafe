@@ -25,21 +25,28 @@ export function Header() {
       <header className="sticky top-0 z-50 bg-white dark:bg-black border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm">
         <div className="container mx-auto px-3 sm:px-4 lg:px-6">
           <div className="flex items-center justify-between h-14 sm:h-16">
-            {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2 group interactive">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-black dark:bg-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
-                <span className="text-white dark:text-black font-bold text-sm sm:text-lg">S</span>
-              </div>
-                <span
-                  className="text-lg sm:text-xl font-bold text-black dark:text-white font-agile"
-                  style={{ fontFamily: "'Pacifico', cursive" }}
-                >
-                  Sonna&apos;s Patisserie and Cafe
-                </span>
-                <style jsx global>{`
-                  @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
-                `}</style>
-            </Link>
+
+            {/* Logo and Mobile Theme Toggle */}
+            <div className="flex items-center gap-2">
+              <Link href="/" className="flex items-center space-x-2 group interactive">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-black dark:bg-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
+                  <span className="text-white dark:text-black font-bold text-sm sm:text-lg">S</span>
+                </div>
+                  <span
+                    className="text-lg sm:text-xl font-bold text-black dark:text-white font-agile"
+                    style={{ fontFamily: "'Pacifico', cursive" }}
+                  >
+                    Sonna&apos;s Patisserie and Cafe
+                  </span>
+                  <style jsx global>{`
+                    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+                  `}</style>
+              </Link>
+              {/* Mobile Theme Toggle */}
+                <div className="flex lg:hidden ml-auto absolute right-3 top-1/2 -translate-y-1/2">
+                  <ThemeToggle />
+                </div>
+            </div>
 
             {/* Desktop Navigation - Hidden on mobile, shown on larger screens */}
             <div className="hidden lg:flex items-center space-x-8">
