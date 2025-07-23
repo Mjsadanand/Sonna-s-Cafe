@@ -9,18 +9,13 @@ import { ShoppingBag, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default function CartPage() {
-  const { cart, clearCart } = useCart()
+  const { cart,  } = useCart()
   const router = useRouter()
 
   const handleCheckout = () => {
     router.push('/checkout')
   }
 
-  const handleClearCart = () => {
-    if (confirm('Are you sure you want to clear your cart?')) {
-      clearCart()
-    }
-  }
 
   if (!cart || cart.items.length === 0) {
     return (
@@ -50,17 +45,17 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="min-w-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-20">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/menu">
-              <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            </Link>
-            <h1 className="text-xl font-bold text-gray-800 dark:text-white">Cart</h1>
+          <div className="flex items-center gap-2">
+        <Link href="/menu">
+          <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+        </Link>
+        <h1 className="text-md font-bold text-gray-800 dark:text-white">Cart</h1>
           </div>
         </div>
       </div>
@@ -69,7 +64,7 @@ export default function CartPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Cart Items */}
           <div className="lg:col-span-2">
-            {/* Restaurant Info */}
+            {/* Restaurant Info
             <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4 shadow-sm border border-gray-200 dark:border-gray-700">
               <h2 className="font-bold text-lg mb-2 text-gray-800 dark:text-white">Sonna&apos;s Cafe</h2>
               <p className="text-gray-600 dark:text-gray-400 text-sm">South Indian • ₹200 for two</p>
@@ -79,7 +74,7 @@ export default function CartPage() {
                 </span>
                 <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">30-35 mins</span>
               </div>
-            </div>
+            </div> */}
 
             {/* Cart Items */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
@@ -90,7 +85,7 @@ export default function CartPage() {
               ))}
             </div>
 
-            {/* Add more items */}
+            {/* Add more items
             <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mt-4 shadow-sm border border-gray-200 dark:border-gray-700">
               <Link href="/menu" className="block text-center">
                 <Button variant="outline" className="w-full border-dashed border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
@@ -98,7 +93,7 @@ export default function CartPage() {
                   Add more items
                 </Button>
               </Link>
-            </div>
+            </div> */}
           </div>
 
           {/* Order Summary - Sticky on desktop */}

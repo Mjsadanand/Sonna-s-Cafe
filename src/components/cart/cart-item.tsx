@@ -6,6 +6,7 @@ import { MenuItem } from '@/types'
 import { Plus, Minus, Trash2 } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 import { toast } from 'sonner'
+import Image from 'next/image'
 
 interface CartItemWithDetails {
   id: string
@@ -46,27 +47,36 @@ export function CartItemComponent({ item }: CartItemComponentProps) {
       <div className="flex-1">
         {/* Veg/Non-veg indicator */}
         <div className="flex items-center gap-2 mb-2">
-          <div className={`w-4 h-4 border-2 flex items-center justify-center ${
-            item.menuItem.isVegetarian ? 'border-green-500' : 'border-red-500'
-          }`}>
-            <div className={`w-2 h-2 rounded-full ${
-              item.menuItem.isVegetarian ? 'bg-green-500' : 'bg-red-500'
-            }`} />
+          <div className={`w-4 h-4 border-2 flex items-center justify-center ${item.menuItem.isVegetarian ? 'border-green-500' : 'border-red-500'
+            }`}>
+            <div className={`w-2 h-2 rounded-full ${item.menuItem.isVegetarian ? 'bg-green-500' : 'bg-red-500'
+              }`} />
           </div>
         </div>
-
-        <h3 className="font-medium text-gray-800 mb-1">
-          {item.menuItem.name}
-        </h3>
-        
-        <p className="text-gray-600 text-sm mb-2">
-          {formatCurrency(price)}
-        </p>
-
+        <div className="flex items-center gap-3 mb-2">
+          {item.menuItem.image && (
+            <Image
+              src={item.menuItem.image}
+              alt={item.menuItem.name}
+              width={48}
+              height={48}
+              className="w-12 h-12 object-cover rounded"
+            />
+          )}
+          <div>
+            <h3 className="font-medium text-gray-800">
+              {item.menuItem.name}
+            </h3>
+            <p className="text-gray-600 text-sm">
+              {formatCurrency(price)}
+            </p>
+          </div>
+        </div>
+        {/* 
         <p className="text-gray-500 text-sm">
           {item.menuItem.description}
-        </p>
-        
+        </p> */}
+
         {item.specialInstructions && (
           <p className="text-sm text-orange-600 mt-2 italic">
             Note: {item.specialInstructions}

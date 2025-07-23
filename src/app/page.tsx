@@ -104,9 +104,9 @@ export default function Home() {
   // Popular food categories
   const foodCategories = [
     { id: 'pizza', name: 'Pizza', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Pizza-3007395.jpg/1200px-Pizza-3007395.jpg?w=200&h=200&fit=crop' },
-    { id: 'burgers', name: 'Burgers', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&h=200&fit=crop' },
+    // { id: 'burgers', name: 'Burgers', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&h=200&fit=crop' },
     { id: 'cakes', name: 'Cakes', image: 'https://www.kekizcakes.com/wp-content/uploads/2024/08/black-forest-cake-half-kg_1.webp?w=200&h=200&fit=crop' },
-    { id: 'chinese', name: 'Chinese', image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=200&h=200&fit=crop' },
+    // { id: 'chinese', name: 'Chinese', image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=200&h=200&fit=crop' },
     { id: 'desserts', name: 'Desserts', image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=200&h=200&fit=crop' },
     { id: 'beverages', name: 'Drinks', image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=200&h=200&fit=crop' },
   ]
@@ -173,7 +173,7 @@ export default function Home() {
   // ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-gray-900 dark:via-amber-950 dark:to-orange-950 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-gray-900 dark:via-amber-950 dark:to-orange-950 transition-colors duration-300 pb-0">
       {/* Enhanced Header Section with Better Mobile Colors */}
       <section className="relative overflow-hidden bg-gradient-to-br from-amber-100 via-orange-100 to-red-100 dark:from-amber-900 dark:via-orange-900 dark:to-red-900 text-amber-900 dark:text-amber-100">
         {/* Animated Background Elements */}
@@ -259,52 +259,53 @@ export default function Home() {
         </div>
       </section>
       {/* Enhanced Food Categories with Mobile Optimization */}
-      <section className="py-12 md:py-16 bg-white dark:bg-gray-900 transition-colors duration-300">
+      <section className="py-8 md:py-16 bg-white dark:bg-gray-900 transition-colors duration-300">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-gray-800 dark:text-white">
-              What&apos;s on your mind?
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg">
-              Explore our delicious categories
-            </p>
+          <div className="text-center mb-6 md:mb-12">
+        <h2 className="text-xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4 text-gray-800 dark:text-white">
+          What would you like to order today?
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 text-sm md:text-lg">
+          Explore our delicious categories
+        </p>
           </div>
-          <div className="flex gap-4 md:gap-6 overflow-x-auto pb-6 scrollbar-hide justify-start md:justify-center">
-            {foodCategories.map((category, index) => (
-              <button
-                key={category.id}
-                onClick={() => handleCategoryClick(category.id)}
-                className="flex-shrink-0 cursor-pointer group text-center transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 rounded-lg p-2"
-                aria-label={`Browse ${category.name} items`}
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    handleCategoryClick(category.id)
-                  }
-                }}
-              >
-                <div className="relative w-20 h-20 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full overflow-hidden mb-3 md:mb-4 shadow-lg group-hover:shadow-xl">
-                  <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-red-700/20 opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
-                  <Image
-                    src={category.image}
-                    alt={`${category.name} category`}
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    loading="lazy"
-                  />
-                </div>
-                <p className="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                  {category.name}
-                </p>
-              </button>
-            ))}
+          {/* Responsive grid: 2 columns on mobile, row on md+ */}
+          <div className="grid grid-cols-2 md:flex md:gap-6 gap-3 pb-4 md:pb-6 justify-start md:justify-center">
+        {foodCategories.map((category) => (
+          <button
+            key={category.id}
+            onClick={() => handleCategoryClick(category.id)}
+            className="flex flex-col items-center cursor-pointer group text-center transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 rounded-lg p-1 md:p-2"
+            aria-label={`Browse ${category.name} items`}
+            tabIndex={0}
+            onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleCategoryClick(category.id)
+          }
+            }}
+          >
+            <div className="relative w-16 h-16 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full overflow-hidden mb-2 md:mb-4 shadow-lg group-hover:shadow-xl">
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-red-700/20 opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
+          <Image
+            src={category.image}
+            alt={`${category.name} category`}
+            width={128}
+            height={128}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+            loading="lazy"
+          />
+            </div>
+            <p className="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+          {category.name}
+            </p>
+          </button>
+        ))}
           </div>
         </div>
       </section>
 
-      {/* Enhanced Featured Restaurants */}
+      {/* Enhanced Featured Restaurants
       <section className="py-16 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-12">
@@ -378,7 +379,7 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
 
       {/* Enhanced CTA Section with Mobile Optimization */}
@@ -410,32 +411,32 @@ export default function Home() {
                   <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-2" />
                 </Button>
               </Link>
-              <Button
+                <Button
                 size="lg"
                 variant="outline"
-                className="w-full sm:w-auto border-2 border-amber-700 dark:border-amber-300 text-amber-800 dark:text-amber-200 hover:bg-white hover:text-orange-600 px-8 md:px-10 py-3 md:py-4 text-base md:text-lg rounded-full font-semibold transform transition-all duration-300 hover:scale-105 min-w-[200px] flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+                className="hidden sm:flex w-full sm:w-auto border-2 border-amber-700 dark:border-amber-300 text-amber-800 dark:text-amber-200 hover:bg-white hover:text-orange-600 px-8 md:px-10 py-3 md:py-4 text-base md:text-lg rounded-full font-semibold transform transition-all duration-300 hover:scale-105 min-w-[200px] items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
                 disabled={isLoading}
                 onClick={async () => {
                   setIsLoading(true)
                   try {
-                    if (window.Clerk?.user) {
-                      router.push('/profile')
-                    } else {
-                      router.push('/auth/sign-up')
-                    }
+                  if (window.Clerk?.user) {
+                    router.push('/profile')
+                  } else {
+                    router.push('/auth/sign-up')
+                  }
                   } finally {
-                    setIsLoading(false)
+                  setIsLoading(false)
                   }
                 }}
-              >
+                >
                 {isLoading ? (
                   <svg className="animate-spin h-4 w-4 md:h-5 md:w-5 text-orange-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                   </svg>
                 ) : null}
                 Sign Up Free
-              </Button>
+                </Button>
             </div>
 
             {/* Trust Indicators

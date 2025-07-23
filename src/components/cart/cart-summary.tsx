@@ -3,7 +3,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/contexts/cart-context-new'
-import { Separator } from '@/components/ui/separator'
+// import { Separator } from '@/components/ui/separator'
 import { Clock, Truck } from 'lucide-react'
 
 interface CartSummaryProps {
@@ -21,8 +21,8 @@ export function CartSummary({ showCheckoutButton = true, onCheckout }: CartSumma
   const totals = calculateTotals()
 
   return (
-    <div className="space-y-4">
-      {/* Bill Details */}
+    <div className="space-y-4 pb-0">
+      {/* Bill Details
       <Card className="shadow-sm">
         <CardContent className="p-4">
           <h3 className="font-bold text-lg mb-4">Bill Details</h3>
@@ -46,7 +46,7 @@ export function CartSummary({ showCheckoutButton = true, onCheckout }: CartSumma
             </div>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Delivery Info */}
       <Card className="shadow-sm">

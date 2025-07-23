@@ -25,7 +25,6 @@ import {
 } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 import { useUser, useAuth } from '@clerk/nextjs'
-import { SignedOut } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import { apiClient } from '@/lib/api/client'
 

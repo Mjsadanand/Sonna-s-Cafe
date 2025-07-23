@@ -295,7 +295,7 @@
     
     /* Add bottom padding for mobile bottom navigation */
     body {
-      padding-bottom: 80px;
+      padding-bottom: 12px;
     }
     
     main, .main-content {
