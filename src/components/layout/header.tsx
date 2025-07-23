@@ -30,12 +30,15 @@ export function Header() {
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-black dark:bg-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
                 <span className="text-white dark:text-black font-bold text-sm sm:text-lg">S</span>
               </div>
-              <span
-                className="text-lg sm:text-xl font-bold text-black dark:text-white"
-                style={{ fontFamily: "'Bitcount Prop Single', cursive" }}
-              >
-                Sonna&apos;s Patisserie and Cafe
-              </span>
+                <span
+                  className="text-lg sm:text-xl font-bold text-black dark:text-white font-agile"
+                  style={{ fontFamily: "'Pacifico', cursive" }}
+                >
+                  Sonna&apos;s Patisserie and Cafe
+                </span>
+                <style jsx global>{`
+                  @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+                `}</style>
             </Link>
 
             {/* Desktop Navigation - Hidden on mobile, shown on larger screens */}
