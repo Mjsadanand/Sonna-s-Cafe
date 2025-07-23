@@ -15,7 +15,6 @@ const nextConfig: NextConfig = {
       't4.ftcdn.net',
       'media.istockphoto.com',
       'content.jdmagicbox.com'
-      // add other domains as needed
     ]
   }
 };

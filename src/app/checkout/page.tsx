@@ -553,16 +553,56 @@ export default function CheckoutPage() {
                           />
                         </div>
                       </div>
-                      {addresses.length > 0 && (
+                      <div className="flex gap-2 mt-2">
                         <Button
                           type="button"
                           variant="outline"
                           onClick={() => setShowAddressForm(false)}
-                          className="mt-2"
                         >
                           Cancel
                         </Button>
-                      )}
+                        <Button
+                          type="button"
+                          variant="default"
+                          onClick={async () => {
+                            // Validate address fields
+                            if (!formData.address || !formData.city || !formData.postalCode) {
+                              toast.error('Please fill in all address fields');
+                              return;
+                            }
+                            try {
+                              const addressData = {
+                                type: 'delivery',
+                                label: 'Home',
+                                addressLine1: formData.address,
+                                city: formData.city,
+                                state: 'India',
+                                postalCode: formData.postalCode,
+                                country: 'India',
+                                isDefault: addresses.length === 0
+                              };
+                              const addressResponse = await apiClient.addresses.createAddress(addressData);
+                              if (!addressResponse.success || !addressResponse.data) {
+                                throw new Error('Failed to create delivery address');
+                              }
+                              const addressDataWithId = addressResponse.data as { id: string };
+                              // Refresh addresses list
+                              const updatedAddresses = await apiClient.addresses.getUserAddresses();
+                              if (updatedAddresses.success && updatedAddresses.data) {
+                                setAddresses(updatedAddresses.data as Address[]);
+                              }
+                              setFormData(prev => ({ ...prev, selectedAddressId: addressDataWithId.id }));
+                              setShowAddressForm(false);
+                              toast.success('Address saved!');
+                            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                            } catch (error) {
+                              toast.error('Failed to save address.');
+                            }
+                          }}
+                        >
+                          Save
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </CardContent>

@@ -257,13 +257,14 @@ export default function Home() {
                       aria-describedby={searchError ? "search-error" : undefined}
                     />
                   </div>
-                  <Button
+                    <Button
                     type="submit"
-                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-6 md:px-8 py-3 md:py-4 rounded-xl border-0 font-semibold text-white shadow-lg transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 text-sm md:text-base"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 p-0 rounded-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg md:static md:translate-y-0 md:h-auto md:w-auto md:px-6 md:py-3 md:rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 text-sm md:text-base"
                     aria-label="Search"
-                  >
-                    Search
-                  </Button>
+                    >
+                    <Search className="w-5 h-5 md:hidden" />
+                    <span className="hidden md:inline">Search</span>
+                    </Button>
                 </div>
               </div>
               {searchError && (

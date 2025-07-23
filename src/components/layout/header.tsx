@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { useState } from 'react';
-import BookingModal from '@/components/booking/BookingModal';
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useCart } from '@/contexts/cart-context-new'
@@ -20,7 +19,6 @@ export function Header() {
   const cartItemCount = getCartItemCount()
 
   const [showBooking, setShowBooking] = useState(false);
-  // ...existing code...
   return (
     <>
       {/* Top Header - Desktop and Mobile */}
@@ -34,7 +32,7 @@ export function Header() {
               </div>
               <span
                 className="text-lg sm:text-xl font-bold text-black dark:text-white"
-                style={{ fontFamily: "'Alex Brush', cursive" }}
+                style={{ fontFamily: "'Bitcount Prop Single', cursive" }}
               >
                 Sonna&apos;s Patisserie and Cafe
               </span>
@@ -53,6 +51,10 @@ export function Header() {
                 </Link>
                 <Link href="/orders" className="text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium relative group">
                   Orders
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
+                </Link>
+                <Link href="/booking" className="text-black dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium relative group">
+                  Pre-Book
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
                 </Link>
               </nav>
