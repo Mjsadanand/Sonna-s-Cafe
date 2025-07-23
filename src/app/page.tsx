@@ -245,7 +245,7 @@ export default function Home() {
                     <Search className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4 md:w-5 md:h-5" />
                     <Input
                       type="text"
-                      placeholder="Search for restaurant, cuisine or a dish..."
+                      placeholder="Search for Cakes, food or a dish..."
                       value={searchQuery}
                       onChange={(e) => {
                         setSearchQuery(e.target.value)
