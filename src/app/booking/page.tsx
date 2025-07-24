@@ -228,15 +228,15 @@ export default function BookingPage() {
             {/* Action Buttons */}
             <div className="space-y-2 sm:space-y-3">
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                <div className="bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded-xl text-sm">
                   {error}
                 </div>
               )}
-              
+
               <Button
                 onClick={handleBooking}
                 disabled={!bookingData || !selectedAddressId || isSubmitting}
-                className="w-full h-12 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white font-semibold rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-base"
+                className="w-full h-12 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white dark:text-white font-semibold rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-base"
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-2">
@@ -250,12 +250,12 @@ export default function BookingPage() {
                   </div>
                 )}
               </Button>
-              
-              <Button 
-                variant="outline" 
-                onClick={() => router.push('/')} 
+
+              <Button
+                variant="outline"
+                onClick={() => router.push('/')}
                 disabled={isSubmitting}
-                className="w-full h-12 border border-gray-200 hover:border-gray-300 rounded-lg font-semibold text-base"
+                className="w-full h-12 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg font-semibold text-base"
               >
                 Cancel
               </Button>

@@ -22,60 +22,37 @@ import { apiClient } from '@/lib/api/client'
 import { toast } from 'sonner'
 
 interface OrderItem {
-  id: string
-  menuItemId: string
-  name?: string // Added optional name field
-  image?: string // Added optional image field
-  quantity: number
-  unitPrice: string
-  totalPrice: string
-  specialInstructions?: string
+  id: string;
+  quantity: number;
+  unitPrice: string;
+  totalPrice: string;
+  specialInstructions?: string | null;
+  menuItem: {
+    id: string;
+    name: string;
+    description: string;
+    price: string;
+    image: string;
+    category: {
+      id: string;
+      name: string;
+    };
+  };
 }
 
 interface Order {
-  id: string
-  orderNumber: string
-  status: string
-  total: string
-  createdAt: string | Date
-  estimatedDeliveryTime: string | Date | null
-  actualDeliveryTime: string | Date | null
-  items?: OrderItem[]
+  id: string;
+  orderNumber: string;
+  status: string;
+  total: string;
+  createdAt: string | Date;
+  estimatedDeliveryTime: string | Date | null;
+  actualDeliveryTime: string | Date | null;
+  items?: OrderItem[];
 }
 
 export default function OrdersPage() {
-  // Fetch menu items for mapping menuItemId to name/image
-  const [menuItemsMap, setMenuItemsMap] = useState<Record<string, { name: string; image?: string }>>({})
-
-  useEffect(() => {
-    // Fetch all menu items once for mapping
-    const fetchMenuItems = async () => {
-      try {
-        const response = await fetch('/api/menu?limit=1000&isAvailable=true')
-        if (!response.ok) return
-        const data = await response.json()
-        // Support both array and object structure for items
-        let itemsArr = []
-        if (Array.isArray(data.items)) {
-          itemsArr = data.items
-        } else if (Array.isArray(data)) {
-          itemsArr = data
-        }
-        if (itemsArr.length > 0) {
-          const map: Record<string, { name: string; image?: string }> = {}
-          for (const item of itemsArr) {
-            // Support both id and _id
-            const id = item.id || item._id
-            map[id] = { name: item.name, image: item.image }
-          }
-          setMenuItemsMap(map)
-        }
-      } catch {
-        // ignore
-      }
-    }
-    fetchMenuItems()
-  }, [])
+  // No need for menuItemsMap or mapping logic; backend now provides menuItem details
   const { user } = useUser()
   const [orders, setOrders] = useState<Order[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -254,14 +231,14 @@ export default function OrdersPage() {
                               {order.items && order.items.length > 0 ? (
                                 <ul>
                                   {order.items.map((item: OrderItem, index: number) => {
-                                    // Always map using menuItemId
-                                    const mapped = menuItemsMap[item.menuItemId] || {}
+                                    const displayName = item.menuItem?.name || 'Item';
+                                    const imageSrc = item.menuItem?.image || null;
                                     return (
                                       <li key={index} className="flex items-center gap-4 py-2 border-b border-gray-100 dark:border-gray-800 last:border-b-0">
-                                        {mapped.image ? (
+                                        {imageSrc ? (
                                           <Image
-                                            src={mapped.image}
-                                            alt={mapped.name || 'Item'}
+                                            src={imageSrc}
+                                            alt={displayName}
                                             width={48}
                                             height={48}
                                             className="w-12 h-12 rounded object-cover border border-gray-200 dark:border-gray-700"
@@ -273,7 +250,7 @@ export default function OrdersPage() {
                                           <div className="w-12 h-12 rounded bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500">🍽️</div>
                                         )}
                                         <div className="flex-1 min-w-0">
-                                          <span className="block font-semibold text-base md:text-lg text-gray-800 dark:text-gray-100 truncate">{mapped.name || item.name || item.menuItemId}</span>
+                                          <span className="block font-semibold text-base md:text-lg text-gray-800 dark:text-gray-100 truncate">{displayName}</span>
                                           <span className="block text-xs md:text-sm text-gray-500 dark:text-gray-400">Qty: {item.quantity}</span>
                                         </div>
                                         <div className="text-right">
@@ -281,7 +258,7 @@ export default function OrdersPage() {
                                           {/* <span className="block text-xs text-gray-400 dark:text-gray-500">Total: ₹{item.totalPrice}</span> */}
                                         </div>
                                       </li>
-                                    )
+                                    );
                                   })}
                                 </ul>
                               ) : (
@@ -348,7 +325,7 @@ export default function OrdersPage() {
                               <ul>
                                 {order.items.map((item: OrderItem, index: number) => (
                                   <li key={index}>
-                                    <span className="font-semibold">{menuItemsMap[item.menuItemId]?.name || item.name || item.menuItemId || 'Unknown Item'}</span>
+                                    <span className="font-semibold">{item.menuItem?.name || 'Unknown Item'}</span>
                                     &nbsp;| Qty: {item.quantity} - ₹{item.totalPrice}
                                   </li>
                                 ))}

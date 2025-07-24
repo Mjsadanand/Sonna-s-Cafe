@@ -208,7 +208,7 @@ export class OrderService {
         // Don't throw error here as order creation was successful
       }
 
-      // Fetch and return complete order details
+      // Fetch and return complete order details (with menu item info)
       return await this.getOrderById(newOrder.id);
     } catch (error) {
       console.error('Error creating order:', error);
@@ -220,53 +220,47 @@ export class OrderService {
    * Get order by ID with all details
    */
   static async getOrderById(orderId: string, userId?: string): Promise<OrderWithDetails> {
-    const orderData = await db
+    // Fetch the order and address
+    const [orderRow] = await db
       .select({
         order: orders,
         address: addresses,
-        orderItem: orderItems,
-        menuItem: menuItems,
-        category: categories,
       })
       .from(orders)
       .leftJoin(addresses, eq(orders.deliveryAddressId, addresses.id))
-      .leftJoin(orderItems, eq(orders.id, orderItems.orderId))
-      .leftJoin(menuItems, eq(orderItems.menuItemId, menuItems.id))
-      .leftJoin(categories, eq(menuItems.categoryId, categories.id))
       .where(
-        userId 
+        userId
           ? and(eq(orders.id, orderId), eq(orders.userId, userId))
           : eq(orders.id, orderId)
       );
 
-    if (!orderData.length) {
+    if (!orderRow) {
       throw new Error('Order not found');
     }
 
-    const order = orderData[0].order;
-    const address = orderData[0].address;
-    
-    // Group order items
-    const items = orderData
-      .filter(row => row.orderItem)
-      .map(row => ({
-        id: row.orderItem!.id,
-        quantity: row.orderItem!.quantity,
-        unitPrice: row.orderItem!.unitPrice,
-        totalPrice: row.orderItem!.totalPrice,
-        specialInstructions: row.orderItem!.specialInstructions,
-        menuItem: {
-          id: row.menuItem!.id,
-          name: row.menuItem!.name,
-          description: row.menuItem!.description || '',
-          price: row.menuItem!.price,
-          image: row.menuItem!.image || '/images/placeholder-food.jpg',
-          category: {
-            id: row.category!.id,
-            name: row.category!.name,
-          },
-        },
-      }));
+    // Fetch all order items for this order, joined with menuItems and categories
+    const itemRows = await db
+      .select({
+        id: orderItems.id,
+        quantity: orderItems.quantity,
+        unitPrice: orderItems.unitPrice,
+        totalPrice: orderItems.totalPrice,
+        specialInstructions: orderItems.specialInstructions,
+        menuItemId: menuItems.id,
+        menuItemName: menuItems.name,
+        menuItemDescription: menuItems.description,
+        menuItemPrice: menuItems.price,
+        menuItemImage: menuItems.image,
+        categoryId: categories.id,
+        categoryName: categories.name,
+      })
+      .from(orderItems)
+      .innerJoin(menuItems, eq(orderItems.menuItemId, menuItems.id))
+      .leftJoin(categories, eq(menuItems.categoryId, categories.id))
+      .where(eq(orderItems.orderId, orderId));
+
+    const order = orderRow.order;
+    const address = orderRow.address;
 
     return {
       id: order.id,
@@ -293,7 +287,24 @@ export class OrderService {
         postalCode: address.postalCode,
         landmark: address.landmark,
       } : null,
-      items,
+      items: itemRows.map(row => ({
+        id: String(row.id),
+        quantity: Number(row.quantity),
+        unitPrice: String(row.unitPrice),
+        totalPrice: String(row.totalPrice),
+        specialInstructions: row.specialInstructions as string | null,
+        menuItem: {
+          id: String(row.menuItemId),
+          name: String(row.menuItemName),
+          description: row.menuItemDescription ? String(row.menuItemDescription) : '',
+          price: String(row.menuItemPrice),
+          image: row.menuItemImage ? String(row.menuItemImage) : '/images/placeholder-food.jpg',
+          category: {
+            id: row.categoryId ? String(row.categoryId) : '',
+            name: row.categoryName ? String(row.categoryName) : '',
+          },
+        },
+      })),
     };
   }
 

@@ -529,8 +529,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       return;
     }
     try {
-      // Prepare order data for OTP verification
-      let orderData: OrderData | GuestOrderData;
+      // Separate logic for guest and logged-in user
       if (!user?.id) {
         // Guest: include address fields and personal info directly
         if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
@@ -543,7 +542,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           setIsProcessing(false)
           return
         }
-        orderData = {
+        const orderData: GuestOrderData = {
           items: cart?.items.map((item) => ({
             menuItemId: item.menuItem.id,
             quantity: item.quantity,
@@ -568,8 +567,24 @@ const handleSubmit = async (e: React.FormEvent) => {
           discount: '0',
           total: totals.total.toString()
         };
+        // Call guest order API
+        const response = await fetch('/api/guest-orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        });
+        const result = await response.json();
+        if (result.success && result.data && result.data.orderNumber) {
+          clearCart();
+          localStorage.removeItem('guest_checkout_cart');
+          localStorage.removeItem('guest_checkout_form');
+          toast.success('Order placed successfully! Redirecting to order confirmation...');
+          router.push(`/success?orderId=${result.data.orderNumber}`);
+        } else {
+          toast.error(result.error || 'Failed to place order. Please try again.');
+        }
       } else {
-        // Logged-in: create/get address as before
+        // Logged-in user: use logged-in order API and data
         let deliveryAddressId = formData.selectedAddressId;
         if (!deliveryAddressId && showAddressForm) {
           if (!formData.address || !formData.city || !formData.postalCode) {
@@ -615,7 +630,8 @@ const handleSubmit = async (e: React.FormEvent) => {
           setIsProcessing(false)
           return
         }
-        orderData = {
+        // Prepare order data for logged-in user
+        const orderData: OrderData = {
           items: cart?.items.map((item) => ({
             menuItemId: item.menuItem.id,
             quantity: item.quantity,
@@ -624,24 +640,20 @@ const handleSubmit = async (e: React.FormEvent) => {
           deliveryAddressId,
           customerNotes: formData.specialInstructions || undefined
         };
-      }
-
-      // Directly place guest order (OTP disabled for guest)
-      // Call your API endpoint to place the guest order
-      const response = await fetch('/api/guest-orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
-      });
-      const result = await response.json();
-      if (result.success && result.data && result.data.orderNumber) {
-        clearCart();
-        localStorage.removeItem('guest_checkout_cart');
-        localStorage.removeItem('guest_checkout_form');
-        toast.success('Order placed successfully! Redirecting to order confirmation...');
-        router.push(`/success?orderId=${result.data.orderNumber}`);
-      } else {
-        toast.error(result.error || 'Failed to place order. Please try again.');
+        // Call logged-in order API (replace with your actual endpoint)
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        });
+        const result = await response.json();
+        if (result.success && result.data && result.data.orderNumber) {
+          // Show OTP modal for logged-in users
+          setPendingOrderData(orderData);
+          setShowOTPVerification(true);
+        } else {
+          toast.error(result.error || 'Failed to place order. Please try again.');
+        }
       }
     } catch (error) {
       console.error('Order preparation error:', error)
@@ -1259,7 +1271,8 @@ const handleSubmit = async (e: React.FormEvent) => {
           )}
 
           {/* OTP Verification Modal */}
-          {showOTPVerification && pendingOrderData && (
+          {/* Show OTP modal only for logged-in users */}
+          {user?.id && showOTPVerification && pendingOrderData && (
             <OrderOTPVerification
               isOpen={showOTPVerification}
               onClose={handleOTPVerificationClose}
