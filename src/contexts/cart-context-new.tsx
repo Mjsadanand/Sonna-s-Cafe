@@ -69,6 +69,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartWithDetails | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [databaseUserId, setDatabaseUserId] = useState<string | null>(null)
+  // Eagerly generate sessionId for guests on mount
+  React.useEffect(() => {
+    if (!user && typeof window !== 'undefined') {
+      generateSessionId();
+    }
+  }, [user])
 
   // Get database user ID when user is available
   useEffect(() => {
@@ -89,7 +95,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [user, isLoaded])
 
   // Get session ID for anonymous users
-  const sessionId = !user && typeof window !== 'undefined' ? generateSessionId() : null
+  const sessionId = !user && typeof window !== 'undefined' ? localStorage.getItem('cart-session-id') || generateSessionId() : null
   
   // Create auth context for API calls
   const authContext = useMemo(() => {
@@ -131,6 +137,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }, authContext)
 
       if (response.success) {
+        // Always refresh cart after add for guests (sessionId)
         await refreshCart()
       } else {
         throw new Error(response.error || 'Failed to add item to cart')

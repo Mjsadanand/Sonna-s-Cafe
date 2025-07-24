@@ -113,21 +113,23 @@ class ApiClient {
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
-    authContext?: { userId?: string; sessionId?: string }
+    authContext?: { userId?: string | null; sessionId?: string; token?: string }
   ): Promise<ApiResponse<T>> {
     try {
       const url = `${this.baseUrl}/api${endpoint}`;
-      
       const defaultHeaders: Record<string, string> = {
         'Content-Type': 'application/json',
       };
 
-      // Add authentication headers if provided
+      // Always set Authorization and x-user-id if provided in authContext
+      if (authContext?.token) {
+        defaultHeaders['Authorization'] = `Bearer ${authContext.token}`;
+      }
       if (authContext?.userId) {
         defaultHeaders['x-user-id'] = authContext.userId;
       } else if (authContext?.sessionId) {
         defaultHeaders['x-session-id'] = authContext.sessionId;
-      } else if (typeof window !== 'undefined') {
+      } else if (typeof window !== 'undefined' && !defaultHeaders['x-user-id']) {
         // Fallback: Generate session ID for anonymous users
         let sessionId = localStorage.getItem('cart-session-id');
         if (!sessionId) {
@@ -211,13 +213,13 @@ class ApiClient {
         body: JSON.stringify(userData),
       }),
 
-    getProfile: (authContext?: { userId?: string; sessionId?: string }) => 
+    getProfile: (authContext?: { userId?: string | null; sessionId?: string }) => 
       this.request('/user/profile', {}, authContext),
 
-    getProfileStats: (authContext?: { userId?: string; sessionId?: string }) => 
+    getProfileStats: (authContext?: { userId?: string | null; sessionId?: string; token?: string }) => 
       this.request('/user/profile/stats', {}, authContext),
 
-    updateProfile: (data: UpdateProfileRequest, authContext?: { userId?: string; sessionId?: string }) =>
+    updateProfile: (data: UpdateProfileRequest, authContext?: { userId?: string | null; sessionId?: string }) =>
       this.request('/user/profile', {
         method: 'PUT',
         body: JSON.stringify(data),
@@ -312,30 +314,30 @@ class ApiClient {
 
   // Address endpoints
   addresses = {
-    getUserAddresses: () =>
-      this.request('/user/addresses'),
+    getUserAddresses: (authContext?: { userId?: string | null; sessionId?: string; token?: string }) =>
+      this.request('/user/addresses', {}, authContext),
 
-    createAddress: (addressData: Omit<CreateAddressRequest, 'userId'>) =>
+    createAddress: (addressData: Omit<CreateAddressRequest, 'userId'>, authContext?: { userId?: string | null; sessionId?: string; token?: string }) =>
       this.request('/user/addresses', {
         method: 'POST',
         body: JSON.stringify(addressData),
-      }),
+      }, authContext),
 
-    updateAddress: (addressId: string, addressData: Partial<Omit<CreateAddressRequest, 'userId'>>) =>
+    updateAddress: (addressId: string, addressData: Partial<Omit<CreateAddressRequest, 'userId'>>, authContext?: { userId?: string | null; sessionId?: string; token?: string }) =>
       this.request(`/user/addresses/${addressId}`, {
         method: 'PUT',
         body: JSON.stringify(addressData),
-      }),
+      }, authContext),
 
-    deleteAddress: (addressId: string) =>
+    deleteAddress: (addressId: string, authContext?: { userId?: string | null; sessionId?: string; token?: string }) =>
       this.request(`/user/addresses/${addressId}`, {
         method: 'DELETE',
-      }),
+      }, authContext),
 
-    setDefaultAddress: (addressId: string) =>
+    setDefaultAddress: (addressId: string, authContext?: { userId?: string | null; sessionId?: string; token?: string }) =>
       this.request(`/user/addresses/${addressId}/default`, {
         method: 'PUT',
-      }),
+      }, authContext),
   };
 
   // Offers endpoints

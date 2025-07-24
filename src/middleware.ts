@@ -5,12 +5,28 @@ const isPublicRoute = createRouteMatcher([
   '/menu',
   '/about',
   '/contact',
+  '/cart',
+  '/checkout',
+  // Booking routes (public)
+  '/booking',
+  '/booking-history',
+  '/booking-success',
+  // Order and order success pages (public)
+  '/orders',
+  '/orders(.*)',
+  '/success(.*)',
+  '/api/booking',
+  '/api/booking(.*)',
+  // Existing public routes
+  '/api/cart',
+  '/api/cart(.*)',
   '/api/offers(.*)',
   '/api/menu(.*)',
   '/api/menu-items(.*)',
   '/api/categories(.*)',
   '/api/webhooks(.*)',
   '/api/otp(.*)',
+  '/api/guest-orders(.*)',
   '/sign-in(.*)',
   '/sign-up(.*)'
 ])

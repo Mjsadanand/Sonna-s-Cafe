@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, Phone, Shield, CheckCircle, Clock } from 'lucide-react'
 import { toast } from 'sonner'
 
+
 interface OrderData {
   items: Array<{
     menuItemId: string
@@ -19,12 +20,28 @@ interface OrderData {
   customerNotes?: string
 }
 
+interface GuestOrderData {
+  items: Array<{
+    menuItemId: string
+    quantity: number
+    specialInstructions?: string
+  }>
+  guestAddress: {
+    addressLine1: string
+    city: string
+    state: string
+    postalCode: string
+    country: string
+  }
+  customerNotes?: string
+}
+
 interface OrderOTPVerificationProps {
   isOpen: boolean
   onClose: () => void
   onVerificationSuccess: (orderId: string) => void
   phoneNumber: string
-  orderData: OrderData
+  orderData: OrderData | GuestOrderData
   timeLimit?: number // in seconds, default 300 (5 minutes)
 }
 
@@ -132,9 +149,15 @@ export function OrderOTPVerification({
       if (otpData.success) {
         setIsProcessingOrder(true)
         toast.success('OTP verified! Processing your order...')
-        
-        // Now complete the order
-        const orderResponse = await fetch('/api/orders', {
+
+        // Determine if this is a guest order (has guestAddress)
+        function isGuestOrderData(data: OrderData | GuestOrderData): data is GuestOrderData {
+          return (data as GuestOrderData).guestAddress !== undefined;
+        }
+        const isGuestOrder = isGuestOrderData(orderData);
+        const endpoint = isGuestOrder ? '/api/guest-orders' : '/api/orders';
+
+        const orderResponse = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(orderData)

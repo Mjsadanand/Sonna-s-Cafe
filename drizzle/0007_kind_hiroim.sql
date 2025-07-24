@@ -1,0 +1,22 @@
+CREATE TABLE "guest_orders" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"order_number" text NOT NULL,
+	"status" "order_status" DEFAULT 'pending' NOT NULL,
+	"subtotal" numeric(10, 2) NOT NULL,
+	"tax" numeric(10, 2) NOT NULL,
+	"delivery_fee" numeric(10, 2) NOT NULL,
+	"discount" numeric(10, 2) DEFAULT '0',
+	"total" numeric(10, 2) NOT NULL,
+	"payment_status" "payment_status" DEFAULT 'pending' NOT NULL,
+	"payment_intent_id" text,
+	"guest_address" jsonb NOT NULL,
+	"customer_notes" text,
+	"estimated_delivery_time" timestamp,
+	"actual_delivery_time" timestamp,
+	"metadata" jsonb,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"scheduled_for" timestamp,
+	"phone" text NOT NULL,
+	CONSTRAINT "guest_orders_order_number_unique" UNIQUE("order_number")
+);

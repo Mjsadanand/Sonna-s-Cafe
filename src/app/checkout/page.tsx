@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react'
@@ -10,9 +11,10 @@ import { useCart } from '@/contexts/cart-context-new'
 import { CreditCard, MapPin, User, ArrowLeft, Lock, Plus, Check } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import { useUser } from '@clerk/nextjs'
+import { useUser, useAuth } from '@clerk/nextjs'
 import { apiClient } from '@/lib/api/client'
 import { OrderOTPVerification } from '@/components/auth/order-otp-verification'
+
 
 interface OrderData {
   items: Array<{
@@ -22,6 +24,32 @@ interface OrderData {
   }>
   deliveryAddressId: string
   customerNotes?: string
+}
+
+interface GuestOrderData {
+  items: Array<{
+    menuItemId: string
+    quantity: number
+    specialInstructions?: string
+  }>
+  guestAddress: {
+    addressLine1: string
+    city: string
+    state: string
+    postalCode: string
+    country: string
+    firstName: string
+    lastName: string
+    email: string
+    phone: string
+  }
+  customerNotes?: string
+  phone: string
+  subtotal: string
+  tax: string
+  deliveryFee: string
+  discount?: string
+  total: string
 }
 
 interface Address {
@@ -53,44 +81,110 @@ interface ProfileData {
   user: UserProfile;
 }
 
+
 export default function CheckoutPage() {
-  const { cart, clearCart, calculateTotals } = useCart()
+  const { cart, clearCart, calculateTotals, addToCart } = useCart()
   const router = useRouter()
   const { user } = useUser()
+  const { getToken, userId: clerkUserId } = useAuth();
 
   // State for mobile vs. desktop view
   const [isMobile, setIsMobile] = useState(false)
   // Stepper state for mobile (only relevant if isMobile is true)
-  const [step, setStep] = useState(0) // 0: Personal, 1: Address, 2: Payment, 3: Summary
+  const [step, setStep] = useState(() => {
+    // Try to restore step from localStorage (for guest-to-auth flow)
+    if (typeof window !== 'undefined') {
+      const savedStep = localStorage.getItem('guest_checkout_step');
+      if (savedStep !== null) return parseInt(savedStep, 10);
+    }
+    return 0;
+  }); // 0: Personal, 1: Address, 2: Payment, 3: Summary
 
   const [isProcessing, setIsProcessing] = useState(false)
   const [addresses, setAddresses] = useState<Address[]>([])
   const [isLoadingAddresses, setIsLoadingAddresses] = useState(true)
   const [showAddressForm, setShowAddressForm] = useState(false)
   const [showOTPVerification, setShowOTPVerification] = useState(false)
-  const [pendingOrderData, setPendingOrderData] = useState<OrderData | null>(null)
+  const [pendingOrderData, setPendingOrderData] = useState<OrderData | GuestOrderData | null>(null)
 
   const [, setProfileData] = useState<ProfileData | null>(null)
   const [databaseUserId, setDatabaseUserId] = useState<string | null>(null)
 
   const totals = calculateTotals()
 
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    paymentMethod: 'card',
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    upiId: '',
-    specialInstructions: '',
-    selectedAddressId: ''
-  })
+  const [formData, setFormData] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedForm = localStorage.getItem('guest_checkout_form');
+      if (savedForm) {
+        try {
+          return JSON.parse(savedForm);
+        } catch {}
+      }
+    }
+    return {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      address: '',
+      city: '',
+      postalCode: '',
+      paymentMethod: 'card',
+      cardNumber: '',
+      expiryDate: '',
+      cvv: '',
+      upiId: '',
+      specialInstructions: '',
+      selectedAddressId: ''
+    };
+  });
+
+  // User sync state
+  const [isUserSyncing, setIsUserSyncing] = useState(false);
+  const [userSyncError, setUserSyncError] = useState<string | null>(null);
+
+  // Store guest address in localStorage and merge after login
+  useEffect(() => {
+    if (!user) {
+      // Save guest address on change
+      localStorage.setItem('guest_checkout_address', JSON.stringify({
+        address: formData.address,
+        city: formData.city,
+        postalCode: formData.postalCode
+      }));
+    }
+  }, [formData.address, formData.city, formData.postalCode, user]);
+
+useEffect(() => {
+  if (user?.id && databaseUserId) {
+    const guestAddress = localStorage.getItem('guest_checkout_address');
+    if (guestAddress) {
+      try {
+        const parsed = JSON.parse(guestAddress);
+        (async () => {
+          let token = await getToken();
+          if (!token) token = '';
+          const addressData = {
+            type: 'delivery',
+            label: 'Home',
+            addressLine1: parsed.address,
+            city: parsed.city,
+            state: 'India',
+            postalCode: parsed.postalCode,
+            country: 'India',
+            isDefault: addresses.length === 0
+          };
+          if (typeof databaseUserId === 'string') {
+            await apiClient.addresses.createAddress(addressData, { userId: databaseUserId, token });
+          } else {
+            await apiClient.addresses.createAddress(addressData, { token });
+          }
+          localStorage.removeItem('guest_checkout_address');
+        })();
+      } catch {}
+    }
+  }
+}, [user?.id, databaseUserId, addresses.length, getToken]);
 
   // Effect to detect mobile screen size
   useEffect(() => {
@@ -142,32 +236,48 @@ export default function CheckoutPage() {
     }
   }, [router, clearCart]);
 
-  // Get database user ID when user is available
-  useEffect(() => {
-    if (user) {
-      fetch('/api/user/sync')
-        .then(res => res.json())
-        .then(data => {
-          if (data.user?.id) {
-            setDatabaseUserId(data.user.id)
-          }
-        })
-        .catch(error => {
-          console.error('Failed to get database user ID:', error)
-        })
-    }
-  }, [user])
 
-  // Fetch profile data and autofill form
   useEffect(() => {
+    if (!user?.id) {
+      setDatabaseUserId(null);
+      return;
+    }
+    setIsUserSyncing(true);
+    setUserSyncError(null);
+    fetch('/api/user/sync')
+      .then(async res => {
+        if (!res.ok) throw new Error('Failed to sync user');
+        const data = await res.json();
+        if (data.user?.id) {
+          setDatabaseUserId(data.user.id);
+        } else {
+          throw new Error('User not found in database after sync');
+        }
+      })
+      .catch(error => {
+        setUserSyncError('Could not sync your account. Please try logging out and in again.');
+        setDatabaseUserId(null);
+        console.error('Failed to sync user:', error);
+      })
+      .finally(() => setIsUserSyncing(false));
+  }, [user?.id]);
+
+  // Fetch profile data and autofill form (only after user sync)
+  useEffect(() => {
+    if (!databaseUserId || isUserSyncing || userSyncError) return;
     const fetchProfileData = async () => {
-      if (!databaseUserId) return
       try {
-        const response = await apiClient.auth.getProfileStats({ userId: databaseUserId })
+        let token = await getToken();
+        if (!token) token = '';
+        const response = await apiClient.auth.getProfileStats(
+          typeof databaseUserId === 'string'
+            ? { userId: databaseUserId, token }
+            : { token }
+        );
         if (response.success && response.data) {
           const profile = response.data as ProfileData
           setProfileData(profile)
-          setFormData(prev => ({
+          setFormData((prev: typeof formData) => ({
             ...prev,
             firstName: profile.user.firstName || '',
             lastName: profile.user.lastName || '',
@@ -179,33 +289,39 @@ export default function CheckoutPage() {
         }
       } catch (error) {
         console.error('Error fetching profile data:', error)
-        // Optionally show toast error
       }
-    }
-    if (databaseUserId) {
-      fetchProfileData()
-    }
-  }, [databaseUserId])
+    };
+    fetchProfileData();
+  }, [databaseUserId, getToken, isUserSyncing, userSyncError]);
 
-  // Fetch user addresses on component mount
+  // Fetch user addresses only if logged in and user sync is complete; for guests, just show the form
   useEffect(() => {
+    if (!user || !databaseUserId || isUserSyncing || userSyncError) {
+      setAddresses([]);
+      setShowAddressForm(true);
+      setIsLoadingAddresses(false);
+      return;
+    }
     const fetchAddresses = async () => {
-      if (!user) return
-
       try {
         setIsLoadingAddresses(true)
-        const response = await apiClient.addresses.getUserAddresses()
+        let token = await getToken();
+        if (!token) token = '';
+        const response = await apiClient.addresses.getUserAddresses(
+          typeof databaseUserId === 'string'
+            ? { userId: databaseUserId, token }
+            : { token }
+        );
         if (response.success && response.data) {
           setAddresses(response.data as Address[])
           // Auto-select default address if exists
           const defaultAddress = (response.data as Address[]).find(addr => addr.isDefault)
           if (defaultAddress) {
-            setFormData(prev => ({
+            setFormData((prev: typeof formData) => ({
               ...prev,
               selectedAddressId: defaultAddress.id
             }))
           } else if ((response.data as Address[]).length === 0) {
-            // Show address form if no addresses exist
             setShowAddressForm(true)
           }
         }
@@ -217,27 +333,97 @@ export default function CheckoutPage() {
         setIsLoadingAddresses(false)
       }
     }
+    fetchAddresses();
+  }, [user, getToken, clerkUserId, databaseUserId, isUserSyncing, userSyncError]);
 
-    fetchAddresses()
-  }, [user])
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
+    setFormData((prev: typeof formData) => {
+      const updated = { ...prev, [name]: value };
+      // Save to localStorage for guest-to-auth flow
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('guest_checkout_form', JSON.stringify(updated));
+      }
+      return updated;
+    });
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsProcessing(true)
-
-    if (!user?.id) {
-      toast.error('Please sign in to place an order')
-      setIsProcessing(false)
-      return
+// Restore guest cart, form, and step after login
+useEffect(() => {
+  if (user?.id) {
+    const guestCart = localStorage.getItem('guest_checkout_cart');
+    const guestForm = localStorage.getItem('guest_checkout_form');
+    const guestStep = localStorage.getItem('guest_checkout_step');
+    let restoredStep = 0;
+    if (guestStep !== null) {
+      restoredStep = parseInt(guestStep, 10);
+      setStep(restoredStep);
     }
+    if (guestCart) {
+      // Merge guest cart with user cart after login
+      try {
+        const parsedGuestCart = JSON.parse(guestCart);
+        if (parsedGuestCart && parsedGuestCart.items && parsedGuestCart.items.length > 0 && typeof addToCart === 'function') {
+          parsedGuestCart.items.forEach((item: { menuItem: { id: string; name: string; [key: string]: unknown }; quantity: number; specialInstructions?: string }) => {
+            // Validate item fields and require a full MenuItem object
+            const fullMenuItem = cart?.items?.find((ci) => ci.menuItem.id === item.menuItem.id)?.menuItem;
+            if (
+              item &&
+              item.menuItem &&
+              typeof item.menuItem.id === 'string' &&
+              item.menuItem.id.length > 0 &&
+              typeof item.quantity === 'number' &&
+              item.quantity > 0 &&
+              fullMenuItem // Only add if we have a full MenuItem object
+            ) {
+              addToCart(fullMenuItem, item.quantity, item.specialInstructions);
+            }
+          });
+        }
+      } catch {
+        // Ignore merge errors
+      }
+      // Do NOT clear guest cart here; clear after order is placed
+    }
+    if (guestForm) {
+      try {
+        const parsed = JSON.parse(guestForm);
+        // Only set form fields if all required address fields are present and non-empty
+        if (
+          (!parsed.address || typeof parsed.address === 'string' && parsed.address.trim().length > 0) &&
+          (!parsed.city || typeof parsed.city === 'string' && parsed.city.trim().length > 0) &&
+          (!parsed.postalCode || typeof parsed.postalCode === 'string' && parsed.postalCode.trim().length > 0)
+        ) {
+          setFormData((prev: typeof formData) => ({ ...prev, ...parsed }));
+        }
+      } catch {}
+      // Do NOT clear guest form here; clear after order is placed
+    }
+    // If the restored step is payment or summary, scroll to form and focus payment/OTP
+    if (restoredStep >= 2) {
+      setTimeout(() => {
+        const el = document.querySelector('form');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 200);
+    }
+  }
+}, [cart, addToCart, user?.id]);
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setIsProcessing(true)
+
+
+  // If not logged in, allow guest checkout (do NOT force sign-in)
+  // Save guest state for persistence, but do not redirect
+  if (!user?.id) {
+    localStorage.setItem('guest_checkout_cart', JSON.stringify(cart));
+    localStorage.setItem('guest_checkout_form', JSON.stringify(formData));
+    localStorage.setItem('guest_checkout_step', step.toString());
+    // Continue to OTP/order flow for guests
+  }
 
     // Validate cart has items
     if (!cart?.items || cart.items.length === 0) {
@@ -270,6 +456,8 @@ export default function CheckoutPage() {
           setIsProcessing(false)
           return
         }
+        let token = await getToken();
+        if (!token) token = '';
         const addressData = {
           type: 'delivery',
           label: 'Home',
@@ -280,13 +468,26 @@ export default function CheckoutPage() {
           country: 'India',
           isDefault: addresses.length === 0
         }
-        const addressResponse = await apiClient.addresses.createAddress(addressData)
+        let tokenForAddress = await getToken();
+        if (!tokenForAddress) tokenForAddress = '';
+        const addressResponse = await apiClient.addresses.createAddress(
+          addressData,
+          typeof databaseUserId === 'string'
+            ? { userId: databaseUserId, token: tokenForAddress }
+            : { token: tokenForAddress }
+        );
         if (!addressResponse.success || !addressResponse.data) {
           throw new Error('Failed to create delivery address')
         }
         const addressDataWithId = addressResponse.data as { id: string }
         deliveryAddressId = addressDataWithId.id
-        const updatedAddresses = await apiClient.addresses.getUserAddresses()
+        let tokenForGetAddresses = await getToken();
+        if (!tokenForGetAddresses) tokenForGetAddresses = '';
+        const updatedAddresses = await apiClient.addresses.getUserAddresses(
+          typeof databaseUserId === 'string'
+            ? { userId: databaseUserId, token: tokenForGetAddresses }
+            : { token: tokenForGetAddresses }
+        );
         if (updatedAddresses.success && updatedAddresses.data) {
           setAddresses(updatedAddresses.data as Address[])
         }
@@ -320,63 +521,110 @@ export default function CheckoutPage() {
       return;
     }
     try {
-      // First, create/get delivery address
-      let deliveryAddressId = formData.selectedAddressId
-
-      if (!deliveryAddressId && showAddressForm) {
-        // Create new address only if no address is selected and form is shown
+      // Prepare order data for OTP verification
+      let orderData: OrderData | GuestOrderData;
+      if (!user?.id) {
+        // Guest: include address fields and personal info directly
+        if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
+          toast.error('Please fill in all personal information fields')
+          setIsProcessing(false)
+          return
+        }
         if (!formData.address || !formData.city || !formData.postalCode) {
           toast.error('Please fill in all address fields')
           setIsProcessing(false)
           return
         }
-
-        const addressData = {
-          type: 'delivery',
-          label: 'Home',
-          addressLine1: formData.address,
-          city: formData.city,
-          state: 'India', // Default state
-          postalCode: formData.postalCode,
-          country: 'India',
-          isDefault: addresses.length === 0 // Set as default if it's the first address
+        orderData = {
+          items: cart?.items.map((item) => ({
+            menuItemId: item.menuItem.id,
+            quantity: item.quantity,
+            specialInstructions: item.specialInstructions || undefined
+          })) || [],
+          guestAddress: {
+            addressLine1: formData.address,
+            city: formData.city,
+            state: 'India',
+            postalCode: formData.postalCode,
+            country: 'India',
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phone: formData.phone
+          },
+          customerNotes: formData.specialInstructions || undefined,
+          phone: formData.phone,
+          subtotal: totals.subtotal.toString(),
+          tax: totals.tax.toString(),
+          deliveryFee: totals.deliveryFee.toString(),
+          discount: '0',
+          total: totals.total.toString()
+        };
+      } else {
+        // Logged-in: create/get address as before
+        let deliveryAddressId = formData.selectedAddressId;
+        if (!deliveryAddressId && showAddressForm) {
+          if (!formData.address || !formData.city || !formData.postalCode) {
+            toast.error('Please fill in all address fields')
+            setIsProcessing(false)
+            return
+          }
+          const addressData = {
+            type: 'delivery',
+            label: 'Home',
+            addressLine1: formData.address,
+            city: formData.city,
+            state: 'India',
+            postalCode: formData.postalCode,
+            country: 'India',
+            isDefault: addresses.length === 0
+          }
+          let tokenForAddress2 = await getToken();
+          if (!tokenForAddress2) tokenForAddress2 = '';
+          const addressResponse = await apiClient.addresses.createAddress(
+            addressData,
+            typeof databaseUserId === 'string'
+              ? { userId: databaseUserId, token: tokenForAddress2 }
+              : { token: tokenForAddress2 }
+          );
+          if (!addressResponse.success || !addressResponse.data) {
+            throw new Error('Failed to create delivery address')
+          }
+          const addressDataWithId = addressResponse.data as { id: string }
+          deliveryAddressId = addressDataWithId.id
+          let tokenForGetAddresses2 = await getToken();
+          if (!tokenForGetAddresses2) tokenForGetAddresses2 = '';
+          const updatedAddresses = await apiClient.addresses.getUserAddresses(
+            typeof databaseUserId === 'string'
+              ? { userId: databaseUserId, token: tokenForGetAddresses2 }
+              : { token: tokenForGetAddresses2 }
+          );
+          if (updatedAddresses.success && updatedAddresses.data) {
+            setAddresses(updatedAddresses.data as Address[])
+          }
+        } else if (!deliveryAddressId) {
+          toast.error('Please select a delivery address')
+          setIsProcessing(false)
+          return
         }
-
-        const addressResponse = await apiClient.addresses.createAddress(addressData)
-        if (!addressResponse.success || !addressResponse.data) {
-          throw new Error('Failed to create delivery address')
-        }
-        // Explicitly type addressResponse.data to include 'id'
-        const addressDataWithId = addressResponse.data as { id: string }
-        deliveryAddressId = addressDataWithId.id
-
-        // Refresh addresses list
-        const updatedAddresses = await apiClient.addresses.getUserAddresses()
-        if (updatedAddresses.success && updatedAddresses.data) {
-          setAddresses(updatedAddresses.data as Address[])
-        }
-      } else if (!deliveryAddressId) {
-        toast.error('Please select a delivery address')
-        setIsProcessing(false)
-        return
-      }
-
-      // Prepare order data for OTP verification
-      const orderData: OrderData = {
-        items: cart?.items.map((item) => ({
-          menuItemId: item.menuItem.id,
-          quantity: item.quantity,
-          specialInstructions: item.specialInstructions || undefined
-        })) || [],
-        deliveryAddressId,
-        customerNotes: formData.specialInstructions || undefined
+        orderData = {
+          items: cart?.items.map((item) => ({
+            menuItemId: item.menuItem.id,
+            quantity: item.quantity,
+            specialInstructions: item.specialInstructions || undefined
+          })) || [],
+          deliveryAddressId,
+          customerNotes: formData.specialInstructions || undefined
+        };
       }
 
       // Store order data and show OTP verification
       setPendingOrderData(orderData)
       if (formData.paymentMethod !== 'upi') {
-        setShowOTPVerification(true)
-        toast.info('Please verify your phone number to complete your order')
+        toast.info('DEBUG: Reached OTP modal logic');
+        console.log('DEBUG: Setting showOTPVerification to true');
+          setShowOTPVerification(true)
+          toast.info('Please verify your phone number to complete your order')
       }
     } catch (error) {
       console.error('Order preparation error:', error)
@@ -396,11 +644,13 @@ export default function CheckoutPage() {
   }
 
   const handleOTPVerificationSuccess = (orderId: string) => {
-    // Clear cart and redirect to success page with the completed order ID
-    clearCart()
-    setShowOTPVerification(false)
-    toast.success('Order placed successfully! Redirecting to order confirmation...')
-    router.push(`/success?orderId=${orderId}`)
+    // Clear cart and guest data only after successful order placement
+    clearCart();
+    localStorage.removeItem('guest_checkout_cart');
+    localStorage.removeItem('guest_checkout_form');
+    setShowOTPVerification(false);
+    toast.success('Order placed successfully! Redirecting to order confirmation...');
+    router.push(`/success?orderId=${orderId}`);
   }
 
   const handleOTPVerificationClose = () => {
@@ -538,7 +788,7 @@ export default function CheckoutPage() {
                     ? 'border-green-500 bg-green-50'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
-                onClick={() => setFormData(prev => ({ ...prev, selectedAddressId: address.id }))}
+                onClick={() => setFormData((prev: typeof formData) => ({ ...prev, selectedAddressId: address.id }))}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -632,53 +882,66 @@ export default function CheckoutPage() {
                 />
               </div>
             </div>
-            <div className="flex gap-2 mt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowAddressForm(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                variant="default"
-                onClick={async () => {
-                  if (!formData.address || !formData.city || !formData.postalCode) {
-                    toast.error('Please fill in all address fields');
-                    return;
-                  }
-                  try {
-                    const addressData = {
-                      type: 'delivery',
-                      label: 'Home',
-                      addressLine1: formData.address,
-                      city: formData.city,
-                      state: 'India',
-                      postalCode: formData.postalCode,
-                      country: 'India',
-                      isDefault: addresses.length === 0
-                    };
-                    const addressResponse = await apiClient.addresses.createAddress(addressData);
-                    if (!addressResponse.success || !addressResponse.data) {
-                      throw new Error('Failed to create delivery address');
+            {user && (
+              <div className="flex gap-2 mt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowAddressForm(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  variant="default"
+                  onClick={async () => {
+                    if (!formData.address || !formData.city || !formData.postalCode) {
+                      toast.error('Please fill in all address fields');
+                      return;
                     }
-                    const addressDataWithId = addressResponse.data as { id: string };
-                    const updatedAddresses = await apiClient.addresses.getUserAddresses();
-                    if (updatedAddresses.success && updatedAddresses.data) {
-                      setAddresses(updatedAddresses.data as Address[]);
+                    try {
+                      const addressData = {
+                        type: 'delivery',
+                        label: 'Home',
+                        addressLine1: formData.address,
+                        city: formData.city,
+                        state: 'India',
+                        postalCode: formData.postalCode,
+                        country: 'India',
+                        isDefault: addresses.length === 0
+                      };
+                      let token = await getToken();
+                      if (!token) token = '';
+        const addressResponse = await apiClient.addresses.createAddress(
+          addressData,
+          typeof databaseUserId === 'string'
+            ? { userId: databaseUserId, token }
+            : { token }
+        );
+                      if (!addressResponse.success || !addressResponse.data) {
+                        throw new Error('Failed to create delivery address');
+                      }
+                      const addressDataWithId = addressResponse.data as { id: string };
+                      const updatedAddresses = await apiClient.addresses.getUserAddresses(
+                        typeof databaseUserId === 'string'
+                          ? { userId: databaseUserId, token }
+                          : { token }
+                      );
+                      if (updatedAddresses.success && updatedAddresses.data) {
+                        setAddresses(updatedAddresses.data as Address[]);
+                      }
+                      setFormData((prev: typeof formData) => ({ ...prev, selectedAddressId: addressDataWithId.id }));
+                      setShowAddressForm(false);
+                      toast.success('Address saved!');
+                    } catch {
+                      toast.error('Failed to save address.');
                     }
-                    setFormData(prev => ({ ...prev, selectedAddressId: addressDataWithId.id }));
-                    setShowAddressForm(false);
-                    toast.success('Address saved!');
-                  } catch (error) {
-                    toast.error('Failed to save address.');
-                  }
-                }}
-              >
-                Save
-              </Button>
-            </div>
+                  }}
+                >
+                  Save
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </CardContent>
@@ -871,106 +1134,125 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-w-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-      {commonHeaderAndEmptyCart}
-
-      {/* Conditional rendering based on cart items */}
-      {cart && cart.items.length > 0 && (
-        <div className="container mx-auto px-3 sm:px-0 py-0 sm:py-0">
-          {isMobile ? (
-            <form onSubmit={handleSubmit}>
-              {/* Stepper Navigation */}
-              <div className="flex justify-between items-center mb-6">
-                {['Personal Info', 'Delivery', 'Payment', 'Summary'].map((label, idx) => (
-                    <div
-                      key={label}
-                      className="flex-1 flex flex-col items-center cursor-pointer"
-                      onClick={() => {
-                      if (idx <= step) setStep(idx);
-                      }}
-                    >
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold mb-1 ${step === idx ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-700'}`}>{idx + 1}</div>
-                      <span className={`text-xs ${step === idx ? 'text-green-700 font-semibold' : 'text-gray-500'}`}>{label}</span>
-                    </div>
-                ))}
-              </div>
-              {/* Step Content */}
-              {step === 0 && renderPersonalInformation()}
-              {step === 1 && renderDeliveryAddress()}
-              {step === 2 && renderPaymentInformation()}
-              {step === 3 && renderOrderSummary()}
-
-              {/* Stepper Navigation Buttons */}
-              <div className="flex justify-between mt-4">
-                <Button type="button" variant="outline" disabled={step === 0} onClick={() => setStep(s => Math.max(0, s - 1))}>Back</Button>
-                {step < 3 ? (
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      // Basic validation before moving to the next step
-                      if (step === 0 && (!formData.firstName || !formData.lastName || !formData.email || !formData.phone)) {
-                        toast.error('Please fill in all personal information fields.');
-                        return;
-                      }
-                      if (step === 1 && (!formData.selectedAddressId && (!showAddressForm || !formData.address || !formData.city || !formData.postalCode))) {
-                        toast.error('Please select an address or fill in all new address fields.');
-                        return;
-                      }
-                      setStep(s => Math.min(3, s + 1));
-                    }}
-                  >
-                    Next
-                  </Button>
-                ) : null}
-              </div>
-            </form>
-          ) : (
-            // Desktop: Original layout
-            <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-                {/* Checkout Form */}
-                <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-                  {renderPersonalInformation()}
-                  {renderDeliveryAddress()}
-                  {renderPaymentInformation()}
-                  {/* Special Instructions (uncomment if needed)
-                  <Card className="shadow-sm border border-gray-200">
-                    <CardHeader className="pb-4">
-                      <CardTitle className="text-lg sm:text-xl">Special Instructions</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <textarea
-                        name="specialInstructions"
-                        value={formData.specialInstructions}
-                        onChange={handleInputChange}
-                        placeholder="Any special requests or delivery instructions..."
-                        className="w-full px-3 py-3 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-                        rows={3}
-                      />
-                    </CardContent>
-                  </Card>
-                  */}
-                </div>
-
-                {/* Order Summary */}
-                <div className="lg:col-span-1">
-                  {renderOrderSummary()}
-                </div>
-              </div>
-            </form>
-          )}
+      {/* Block UI if user sync is in progress or failed */}
+      {isUserSyncing ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+            <p className="text-lg font-semibold text-gray-700 dark:text-white">Syncing your account...</p>
+          </div>
         </div>
-      )}
+      ) : userSyncError ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <p className="text-lg font-semibold text-red-600 dark:text-red-400 mb-4">{userSyncError}</p>
+            <Button onClick={() => window.location.reload()}>Retry</Button>
+          </div>
+        </div>
+      ) : (
+        <>
+          {commonHeaderAndEmptyCart}
 
-      {/* OTP Verification Modal */}
-      {showOTPVerification && pendingOrderData && (
-        <OrderOTPVerification
-          isOpen={showOTPVerification}
-          onClose={handleOTPVerificationClose}
-          onVerificationSuccess={handleOTPVerificationSuccess}
-          phoneNumber={formData.phone}
-          orderData={pendingOrderData}
-          timeLimit={300} // 5 minutes
-        />
+          {/* Conditional rendering based on cart items */}
+          {cart && cart.items.length > 0 && (
+            <div className="container mx-auto px-3 sm:px-0 py-0 sm:py-0">
+              {isMobile ? (
+                <form onSubmit={handleSubmit}>
+                  {/* Stepper Navigation */}
+                  <div className="flex justify-between items-center mb-6">
+                    {['Personal Info', 'Delivery', 'Payment', 'Summary'].map((label, idx) => (
+                        <div
+                          key={label}
+                          className="flex-1 flex flex-col items-center cursor-pointer"
+                          onClick={() => {
+                          if (idx <= step) setStep(idx);
+                          }}
+                        >
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold mb-1 ${step === idx ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-700'}`}>{idx + 1}</div>
+                          <span className={`text-xs ${step === idx ? 'text-green-700 font-semibold' : 'text-gray-500'}`}>{label}</span>
+                        </div>
+                    ))}
+                  </div>
+                  {/* Step Content */}
+                  {step === 0 && renderPersonalInformation()}
+                  {step === 1 && renderDeliveryAddress()}
+                  {step === 2 && renderPaymentInformation()}
+                  {step === 3 && renderOrderSummary()}
+
+                  {/* Stepper Navigation Buttons */}
+                  <div className="flex justify-between mt-4">
+                    <Button type="button" variant="outline" disabled={step === 0} onClick={() => setStep(s => Math.max(0, s - 1))}>Back</Button>
+                    {step < 3 ? (
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          // Basic validation before moving to the next step
+                          if (step === 0 && (!formData.firstName || !formData.lastName || !formData.email || !formData.phone)) {
+                            toast.error('Please fill in all personal information fields.');
+                            return;
+                          }
+                          if (step === 1 && (!formData.selectedAddressId && (!showAddressForm || !formData.address || !formData.city || !formData.postalCode))) {
+                            toast.error('Please select an address or fill in all new address fields.');
+                            return;
+                          }
+                          setStep(s => Math.min(3, s + 1));
+                        }}
+                      >
+                        Next
+                      </Button>
+                    ) : null}
+                  </div>
+                </form>
+              ) : (
+                // Desktop: Original layout
+                <form onSubmit={handleSubmit}>
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                    {/* Checkout Form */}
+                    <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+                      {renderPersonalInformation()}
+                      {renderDeliveryAddress()}
+                      {renderPaymentInformation()}
+                      {/* Special Instructions (uncomment if needed)
+                      <Card className="shadow-sm border border-gray-200">
+                        <CardHeader className="pb-4">
+                          <CardTitle className="text-lg sm:text-xl">Special Instructions</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <textarea
+                            name="specialInstructions"
+                            value={formData.specialInstructions}
+                            onChange={handleInputChange}
+                            placeholder="Any special requests or delivery instructions..."
+                            className="w-full px-3 py-3 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+                            rows={3}
+                          />
+                        </CardContent>
+                      </Card>
+                      */}
+                    </div>
+
+                    {/* Order Summary */}
+                    <div className="lg:col-span-1">
+                      {renderOrderSummary()}
+                    </div>
+                  </div>
+                </form>
+              )}
+            </div>
+          )}
+
+          {/* OTP Verification Modal */}
+          {showOTPVerification && pendingOrderData && (
+            <OrderOTPVerification
+              isOpen={showOTPVerification}
+              onClose={handleOTPVerificationClose}
+              onVerificationSuccess={handleOTPVerificationSuccess}
+              phoneNumber={formData.phone}
+              orderData={pendingOrderData}
+              timeLimit={300} // 5 minutes
+            />
+          )}
+        </>
       )}
     </div>
   )

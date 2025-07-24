@@ -7,21 +7,29 @@ export const spiceLevel = pgEnum("spice_level", ['MILD', 'MEDIUM', 'HOT', 'EXTRA
 export const userRole = pgEnum("user_role", ['customer', 'admin', 'kitchen_staff'])
 
 
-export const analytics = pgTable("analytics", {
-	id: uuid().defaultRandom().primaryKey().notNull(),
-	eventType: text("event_type").notNull(),
-	eventData: jsonb("event_data").notNull(),
-	userId: uuid("user_id"),
-	sessionId: text("session_id"),
-	ipAddress: text("ip_address"),
-	userAgent: text("user_agent"),
-	timestamp: timestamp({ mode: 'string' }).defaultNow().notNull(),
+// Guest Orders Table (after enums and imports)
+export const guestOrders = pgTable("guest_orders", {
+  id: uuid().defaultRandom().primaryKey().notNull(),
+  orderNumber: text("order_number").notNull(),
+  status: orderStatus().default('pending').notNull(),
+  subtotal: numeric({ precision: 10, scale: 2 }).notNull(),
+  tax: numeric({ precision: 10, scale: 2 }).notNull(),
+  deliveryFee: numeric("delivery_fee", { precision: 10, scale: 2 }).notNull(),
+  discount: numeric({ precision: 10, scale: 2 }).default('0'),
+  total: numeric({ precision: 10, scale: 2 }).notNull(),
+  paymentStatus: paymentStatus("payment_status").default('pending').notNull(),
+  paymentIntentId: text("payment_intent_id"),
+  guestAddress: jsonb("guest_address").notNull(),
+  customerNotes: text("customer_notes"),
+  estimatedDeliveryTime: timestamp("estimated_delivery_time", { mode: 'string' }),
+  actualDeliveryTime: timestamp("actual_delivery_time", { mode: 'string' }),
+  metadata: jsonb(),
+  createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+  scheduledFor: timestamp("scheduled_for", { mode: 'string' }),
+  phone: text("phone").notNull(),
 }, (table) => [
-	foreignKey({
-			columns: [table.userId],
-			foreignColumns: [users.id],
-			name: "analytics_user_id_users_id_fk"
-		}),
+  unique("guest_orders_order_number_unique").on(table.orderNumber),
 ]);
 
 export const categories = pgTable("categories", {

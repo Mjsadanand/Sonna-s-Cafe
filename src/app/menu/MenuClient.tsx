@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SwiggyMenuGrid, WhatsOnMind, TopPicks } from '@/components/menu'
 import { useCart } from '@/contexts/cart-context-new'
+import { useRouter } from 'next/navigation'
 
 interface MenuItemWithCategory extends Omit<MenuItem, 'category'> {
   category: Category
@@ -16,7 +17,7 @@ interface MenuItemWithCategory extends Omit<MenuItem, 'category'> {
 
 export default function MenuClient() {
   const searchParams = useSearchParams();
-  // const router = useRouter();
+  const router = useRouter();
   const initialSearch = searchParams?.get('search') || '';
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchTerm, setSearchTerm] = useState(initialSearch)
@@ -146,12 +147,12 @@ export default function MenuClient() {
     }
   }
 
-  // Show cart alert when item is added
+  // Show cart alert as long as there are items in the cart
   useEffect(() => {
     if (getCartItemCount() > 0) {
       setShowCartAlert(true)
-      const timer = setTimeout(() => setShowCartAlert(false), 3000)
-      return () => clearTimeout(timer)
+    } else {
+      setShowCartAlert(false)
     }
   }, [getCartItemCount])
 
@@ -214,7 +215,7 @@ export default function MenuClient() {
 
         {/* Menu Grid - Swiggy Style */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Restaurants to explore</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Items to explore</h2>
           <SwiggyMenuGrid 
             items={filteredItems} 
             isLoading={isLoading}
@@ -254,9 +255,12 @@ export default function MenuClient() {
 
       {/* Cart Alert - Floating Button */}
       {showCartAlert && getCartItemCount() > 0 && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+        <div
+          className="fixed left-1/2 transform -translate-x-1/2 z-50 bottom-6 lg:bottom-6 mb-20 lg:mb-0"
+          style={{ pointerEvents: 'auto' }}
+        >
           <Button
-            onClick={() => window.location.href = '/cart'}
+            onClick={() => router.push('/cart')}
             className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 animate-bounce"
           >
             <span className="bg-white text-green-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">

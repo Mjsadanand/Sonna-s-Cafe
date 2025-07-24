@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextRequest } from 'next/server';
 import { CartService } from '@/lib/services/cart.service';
 import { createSuccessResponse, createErrorResponse, withErrorHandler } from '@/lib/errors';
@@ -40,8 +41,22 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     });
   }
 
+  let body: unknown = undefined;
   try {
-    const body = await request.json();
+    body = await request.json();
+  } catch (err) {
+    return createErrorResponse({
+      message: 'Invalid or missing JSON body',
+    });
+  }
+
+  if (!body || typeof body !== 'object') {
+    return createErrorResponse({
+      message: 'Missing or invalid request body',
+    });
+  }
+
+  try {
     const validatedData = addToCartSchema.parse(body);
 
     const cartItem = await CartService.addToCart({

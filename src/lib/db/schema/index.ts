@@ -113,6 +113,29 @@ export const orders = pgTable('orders', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+// Guest Orders table
+export const guestOrders = pgTable('guest_orders', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  orderNumber: text('order_number').unique().notNull(),
+  status: orderStatusEnum('status').default('pending').notNull(),
+  subtotal: decimal('subtotal', { precision: 10, scale: 2 }).notNull(),
+  tax: decimal('tax', { precision: 10, scale: 2 }).notNull(),
+  deliveryFee: decimal('delivery_fee', { precision: 10, scale: 2 }).notNull(),
+  discount: decimal('discount', { precision: 10, scale: 2 }).default('0'),
+  total: decimal('total', { precision: 10, scale: 2 }).notNull(),
+  paymentStatus: paymentStatusEnum('payment_status').default('pending').notNull(),
+  paymentIntentId: text('payment_intent_id'),
+  guestAddress: jsonb('guest_address').notNull(),
+  customerNotes: text('customer_notes'),
+  estimatedDeliveryTime: timestamp('estimated_delivery_time'),
+  actualDeliveryTime: timestamp('actual_delivery_time'),
+  metadata: jsonb('metadata'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  scheduledFor: timestamp('scheduled_for'),
+  phone: text('phone').notNull(),
+});
+
 // Order items table
 export const orderItems = pgTable('order_items', {
   id: uuid('id').primaryKey().defaultRandom(),
