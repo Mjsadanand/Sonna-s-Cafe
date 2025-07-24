@@ -1,5 +1,5 @@
 import { pgTable, foreignKey, uuid, text, jsonb, timestamp, unique, boolean, integer, numeric, pgEnum } from "drizzle-orm/pg-core"
-import { sql } from "drizzle-orm"
+// import { sql } from "drizzle-orm"
 
 export const orderStatus = pgEnum("order_status", ['pending', 'confirmed', 'preparing', 'ready', 'out_for_delivery', 'delivered', 'cancelled'])
 export const paymentStatus = pgEnum("payment_status", ['pending', 'completed', 'failed', 'refunded'])
@@ -8,6 +8,15 @@ export const userRole = pgEnum("user_role", ['customer', 'admin', 'kitchen_staff
 
 
 // Guest Orders Table (after enums and imports)
+
+// Analytics Table
+export const analytics = pgTable("analytics", {
+  id: uuid().defaultRandom().primaryKey().notNull(),
+  userId: uuid("user_id").notNull(),
+  event: text("event").notNull(),
+  data: jsonb("data"),
+  createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+});
 export const guestOrders = pgTable("guest_orders", {
   id: uuid().defaultRandom().primaryKey().notNull(),
   orderNumber: text("order_number").notNull(),
