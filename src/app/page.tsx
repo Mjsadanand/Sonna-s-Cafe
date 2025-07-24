@@ -105,10 +105,10 @@ export default function Home() {
   const foodCategories = [
     { id: 'pizza', name: 'Pizza', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Pizza-3007395.jpg/1200px-Pizza-3007395.jpg?w=200&h=200&fit=crop' },
     // { id: 'burgers', name: 'Burgers', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&h=200&fit=crop' },
-    { id: 'cakes', name: 'Cakes', image: 'https://www.kekizcakes.com/wp-content/uploads/2024/08/black-forest-cake-half-kg_1.webp?w=200&h=200&fit=crop' },
+    { id: 'cake', name: 'Cakes', image: 'https://www.kekizcakes.com/wp-content/uploads/2024/08/black-forest-cake-half-kg_1.webp?w=200&h=200&fit=crop' },
     // { id: 'chinese', name: 'Chinese', image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=200&h=200&fit=crop' },
-    { id: 'desserts', name: 'Desserts', image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=200&h=200&fit=crop' },
-    { id: 'beverages', name: 'Drinks', image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=200&h=200&fit=crop' },
+    { id: 'dessert', name: 'Desserts', image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=200&h=200&fit=crop' },
+    { id: 'iced', name: 'Drinks', image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=200&h=200&fit=crop' },
   ]
 
   // Featured restaurants/sections
@@ -274,30 +274,34 @@ export default function Home() {
         {foodCategories.map((category) => (
           <button
             key={category.id}
-            onClick={() => handleCategoryClick(category.id)}
+            onClick={() => {
+              setSearchQuery(category.name)
+              router.push(`/menu?search=${encodeURIComponent(category.id)}`)
+            }}
             className="flex flex-col items-center cursor-pointer group text-center transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 rounded-lg p-1 md:p-2"
             aria-label={`Browse ${category.name} items`}
             tabIndex={0}
             onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            handleCategoryClick(category.id)
-          }
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setSearchQuery(category.name)
+                router.push(`/menu?search=${encodeURIComponent(category.name)}`)
+              }
             }}
           >
             <div className="relative w-16 h-16 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full overflow-hidden mb-2 md:mb-4 shadow-lg group-hover:shadow-xl">
-          <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-red-700/20 opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
-          <Image
-            src={category.image}
-            alt={`${category.name} category`}
-            width={128}
-            height={128}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-            loading="lazy"
-          />
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-red-700/20 opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
+              <Image
+                src={category.image}
+                alt={`${category.name} category`}
+                width={128}
+                height={128}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                loading="lazy"
+              />
             </div>
             <p className="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-          {category.name}
+              {category.name}
             </p>
           </button>
         ))}

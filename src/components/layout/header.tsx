@@ -29,7 +29,7 @@ export function Header() {
         <div className="container mx-auto px-3 sm:px-4 lg:px-6">
           <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Logo and Mobile Theme Toggle: show on home page (mobile), always on desktop */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 relative w-full">
               {/* Desktop: always show. Mobile: show only on home page. */}
               <span className="hidden lg:inline">
                 <Link href="/" className="flex items-center space-x-2 group interactive">
@@ -48,22 +48,27 @@ export function Header() {
                 </Link>
               </span>
               {isHomePage && (
-                <span className="lg:hidden">
-                  <Link href="/" className="flex items-center space-x-2 group interactive">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-black dark:bg-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
-                      <span className="text-white dark:text-black font-bold text-sm sm:text-lg">S</span>
-                    </div>
-                    <span
-                      className="text-lg sm:text-xl font-bold text-black dark:text-white font-agile"
-                      style={{ fontFamily: "'Pacifico', cursive" }}
-                    >
-                      Sonna&apos;s Patisserie and Cafe
-                    </span>
-                    <style jsx global>{`
-                      @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
-                    `}</style>
-                  </Link>
-                </span>
+                <>
+                  <span className="lg:hidden flex items-center gap-2">
+                    <Link href="/" className="flex items-center space-x-2 group interactive">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-black dark:bg-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
+                        <span className="text-white dark:text-black font-bold text-sm sm:text-lg">S</span>
+                      </div>
+                      <span
+                        className="text-lg sm:text-xl font-bold text-black dark:text-white font-agile"
+                        style={{ fontFamily: "'Pacifico', cursive" }}
+                      >
+                        Sonna&apos;s Patisserie and Cafe
+                      </span>
+                      <style jsx global>{`
+                        @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+                      `}</style>
+                    </Link>
+                  </span>
+                  <span className="absolute right-0 top-1/2 -translate-y-1/2 lg:hidden">
+                    <ThemeToggle />
+                  </span>
+                </>
               )}
             </div>
             {/* Desktop Navigation - Hidden on mobile, shown on larger screens */}

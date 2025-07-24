@@ -91,14 +91,22 @@ export default function CheckoutPage() {
   // State for mobile vs. desktop view
   const [isMobile, setIsMobile] = useState(false)
   // Stepper state for mobile (only relevant if isMobile is true)
-  const [step, setStep] = useState(() => {
-    // Try to restore step from localStorage (for guest-to-auth flow)
+  const [step, setStep] = useState(0); // Always start at 0 on fresh navigation
+  // On mount, clear guest_checkout_step if coming from cart (fresh navigation)
+  useEffect(() => {
     if (typeof window !== 'undefined') {
-      const savedStep = localStorage.getItem('guest_checkout_step');
-      if (savedStep !== null) return parseInt(savedStep, 10);
+      // If there is a guest_checkout_step, but no guest_checkout_cart, treat as fresh navigation
+      const fromCart = document.referrer && document.referrer.includes('/cart');
+      if (fromCart || !localStorage.getItem('guest_checkout_step')) {
+        localStorage.removeItem('guest_checkout_step');
+        setStep(0);
+      } else {
+        // Restore step if present (e.g., after login or reload)
+        const savedStep = localStorage.getItem('guest_checkout_step');
+        if (savedStep !== null) setStep(parseInt(savedStep, 10));
+      }
     }
-    return 0;
-  }); // 0: Personal, 1: Address, 2: Payment, 3: Summary
+  }, []);
 
   const [isProcessing, setIsProcessing] = useState(false)
   const [addresses, setAddresses] = useState<Address[]>([])
@@ -618,13 +626,22 @@ const handleSubmit = async (e: React.FormEvent) => {
         };
       }
 
-      // Store order data and show OTP verification
-      setPendingOrderData(orderData)
-      if (formData.paymentMethod !== 'upi') {
-        toast.info('DEBUG: Reached OTP modal logic');
-        console.log('DEBUG: Setting showOTPVerification to true');
-          setShowOTPVerification(true)
-          toast.info('Please verify your phone number to complete your order')
+      // Directly place guest order (OTP disabled for guest)
+      // Call your API endpoint to place the guest order
+      const response = await fetch('/api/guest-orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      });
+      const result = await response.json();
+      if (result.success && result.data && result.data.orderNumber) {
+        clearCart();
+        localStorage.removeItem('guest_checkout_cart');
+        localStorage.removeItem('guest_checkout_form');
+        toast.success('Order placed successfully! Redirecting to order confirmation...');
+        router.push(`/success?orderId=${result.data.orderNumber}`);
+      } else {
+        toast.error(result.error || 'Failed to place order. Please try again.');
       }
     } catch (error) {
       console.error('Order preparation error:', error)
