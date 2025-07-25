@@ -387,7 +387,7 @@ export default function Home() {
 
 
       {/* Enhanced CTA Section with Mobile Optimization */}
-      <section className="py-16 md:py-20 bg-gradient-to-br from-amber-100 via-orange-100 to-red-100 dark:from-amber-900 dark:via-orange-900 dark:to-red-900 text-amber-900 dark:text-amber-100 relative overflow-hidden">
+      <section className="py-16 md:py-20 bg-gradient-to-br from-amber-100 via-orange-100 to-red-100 dark:from-amber-900 dark:via-orange-900 dark:to-red-900 text-amber-900 dark:text-amber-100 relative overflow-hidden hidden sm:block">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_50%)]"></div>
@@ -396,68 +396,68 @@ export default function Home() {
 
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="max-w-4xl mx-auto">
-            <div className="mb-6 md:mb-8 animate-pulse">
-              <TrendingUp className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 md:mb-6 text-orange-600 dark:text-orange-400" />
-            </div>
+        <div className="mb-6 md:mb-8 animate-pulse">
+          <TrendingUp className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 md:mb-6 text-orange-600 dark:text-orange-400" />
+        </div>
 
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight">
-              Ready to order?
-            </h2>
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight">
+          Ready to order?
+        </h2>
 
-            <p className="text-lg md:text-xl lg:text-2xl mb-8 md:mb-10 text-amber-800 dark:text-amber-200 max-w-2xl mx-auto leading-relaxed px-2">
-              Join thousands of food lovers and experience premium delivery today. Fresh food, fast delivery, unforgettable taste.
-            </p>
+        <p className="text-lg md:text-xl lg:text-2xl mb-8 md:mb-10 text-amber-800 dark:text-amber-200 max-w-2xl mx-auto leading-relaxed px-2">
+          Join thousands of food lovers and experience premium delivery today. Fresh food, fast delivery, unforgettable taste.
+        </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center px-2">
-              <Link href="/menu">
-                <Button size="lg" className="w-full sm:w-auto bg-white text-orange-600 hover:bg-orange-50 px-8 md:px-10 py-3 md:py-4 text-base md:text-lg rounded-full font-semibold shadow-xl transform transition-all duration-300 hover:scale-105 hover:shadow-2xl min-w-[200px] focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent">
-                  Order Now
-                  <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-2" />
-                </Button>
-              </Link>
-                <Button
-                size="lg"
-                variant="outline"
-                className="hidden sm:flex w-full sm:w-auto border-2 border-amber-700 dark:border-amber-300 text-amber-800 dark:text-amber-200 hover:bg-white hover:text-orange-600 px-8 md:px-10 py-3 md:py-4 text-base md:text-lg rounded-full font-semibold transform transition-all duration-300 hover:scale-105 min-w-[200px] items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
-                disabled={isLoading}
-                onClick={async () => {
-                  setIsLoading(true)
-                  try {
-                  if (window.Clerk?.user) {
-                    router.push('/profile')
-                  } else {
-                    router.push('/auth/sign-up')
-                  }
-                  } finally {
-                  setIsLoading(false)
-                  }
-                }}
-                >
-                {isLoading ? (
-                  <svg className="animate-spin h-4 w-4 md:h-5 md:w-5 text-orange-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                  </svg>
-                ) : null}
-                Sign Up Free
-                </Button>
-            </div>
+        <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center px-2">
+          <Link href="/menu">
+            <Button size="lg" className="w-full sm:w-auto bg-white text-orange-600 hover:bg-orange-50 px-8 md:px-10 py-3 md:py-4 text-base md:text-lg rounded-full font-semibold shadow-xl transform transition-all duration-300 hover:scale-105 hover:shadow-2xl min-w-[200px] focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent">
+          Order Now
+          <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-2" />
+            </Button>
+          </Link>
+            <Button
+            size="lg"
+            variant="outline"
+            className="hidden sm:flex w-full sm:w-auto border-2 border-amber-700 dark:border-amber-300 text-amber-800 dark:text-amber-200 hover:bg-white hover:text-orange-600 px-8 md:px-10 py-3 md:py-4 text-base md:text-lg rounded-full font-semibold transform transition-all duration-300 hover:scale-105 min-w-[200px] items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+            disabled={isLoading}
+            onClick={async () => {
+          setIsLoading(true)
+          try {
+          if (window.Clerk?.user) {
+            router.push('/profile')
+          } else {
+            router.push('/auth/sign-up')
+          }
+          } finally {
+          setIsLoading(false)
+          }
+            }}
+            >
+            {isLoading ? (
+          <svg className="animate-spin h-4 w-4 md:h-5 md:w-5 text-orange-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+          </svg>
+            ) : null}
+            Sign Up Free
+            </Button>
+        </div>
 
-            {/* Trust Indicators
-            <div className="mt-8 md:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 max-w-2xl mx-auto">
-              <div className="text-center">
-                <div className="text-2xl md:text-3xl font-bold mb-2">4.9★</div>
-                <div className="text-xs md:text-sm text-amber-700 dark:text-amber-300">Customer Rating</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl md:text-3xl font-bold mb-2">10K+</div>
-                <div className="text-xs md:text-sm text-amber-700 dark:text-amber-300">Happy Orders</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl md:text-3xl font-bold mb-2">30min</div>
-                <div className="text-xs md:text-sm text-amber-700 dark:text-amber-300">Average Delivery</div>
-              </div>
-            </div> */}
+        {/* Trust Indicators
+        <div className="mt-8 md:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 max-w-2xl mx-auto">
+          <div className="text-center">
+            <div className="text-2xl md:text-3xl font-bold mb-2">4.9★</div>
+            <div className="text-xs md:text-sm text-amber-700 dark:text-amber-300">Customer Rating</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl md:text-3xl font-bold mb-2">10K+</div>
+            <div className="text-xs md:text-sm text-amber-700 dark:text-amber-300">Happy Orders</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl md:text-3xl font-bold mb-2">30min</div>
+            <div className="text-xs md:text-sm text-amber-700 dark:text-amber-300">Average Delivery</div>
+          </div>
+        </div> */}
           </div>
         </div>
       </section>

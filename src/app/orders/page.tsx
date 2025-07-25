@@ -226,7 +226,7 @@ export default function OrdersPage() {
                         <div className="space-y-4">
                           {/* Items */}
                           <div>
-                            <h4 className="font-medium mb-2">Items:</h4>
+                            {/* <h4 className="font-medium mb-2">Items:</h4> */}
                             <div className="text-sm text-gray-600">
                               {order.items && order.items.length > 0 ? (
                                 <ul>
@@ -279,14 +279,16 @@ export default function OrdersPage() {
 
                           {/* Actions */}
                           <div className="flex space-x-2 pt-2">
-                            <Button size="sm" variant="outline">
+                            {/* <Button size="sm" variant="outline">
                               <MapPin className="w-4 h-4 mr-2" />
                               Track Order
-                            </Button>
-                            <Button size="sm" variant="outline">
-                              <Phone className="w-4 h-4 mr-2" />
-                              Contact Support
-                            </Button>
+                            </Button> */}
+                            <Link href="/contact">
+                              <Button size="sm" variant="outline">
+                                <Phone className="w-4 h-4 mr-2" />
+                                Contact Support
+                              </Button>
+                            </Link>
                           </div>
                         </div>
                       </CardContent>
@@ -319,7 +321,6 @@ export default function OrdersPage() {
                       <div className="space-y-4">
                         {/* Items */}
                         <div>
-                          <h4 className="font-medium mb-2">Items:</h4>
                           <div className="text-sm text-gray-600">
                             {order.items && order.items.length > 0 ? (
                               <ul>
