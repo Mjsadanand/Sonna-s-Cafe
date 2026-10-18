@@ -13,11 +13,8 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { Footer } from '@/components/layout/footer'
-import { Search, MapPin, Clock, Star, ArrowRight, ChefHat, Truck, Shield, Users, Heart, TrendingUp, AlertCircle } from 'lucide-react'
+import { Search, ArrowRight, ChefHat, TrendingUp, AlertCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 // import { useTheme } from 'next-themes'
 
@@ -84,10 +81,10 @@ export default function Home() {
     e.preventDefault()
     setSearchError('')
 
-    if (searchQuery.trim().length < 2) {
-      setSearchError('Please enter at least 2 characters')
-      return
-    }
+    // if (searchQuery.trim().length < 2) {
+    //   setSearchError('Please enter at least 2 characters')
+    //   return
+    // }
 
     if (searchQuery.trim()) {
       router.push(`/menu?search=${encodeURIComponent(searchQuery)}`)
@@ -462,7 +459,7 @@ export default function Home() {
         </div>
       </section>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   )
 }
